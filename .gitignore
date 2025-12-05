@@ -1,0 +1,125 @@
+# .NET build outputs
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+
+# Visual Studio Code
+.vscode/
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# NuGet packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Build results
+[Dd]ebugPublic/
+[Rr]eleasePublic/
+*.appx
+*.appxbundle
+*.appxupload
+*.msix
+*.msixbundle
+*.msixupload
+
+# Publish output
+publish/
+PublishOutput/
+
+# User-specific files
+*.userprefs
+
+# Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.TestResults.xml
+TestResult.xml
+
+# Coverage results
+*.coverage
+*.coveragexml
+coverage*.json
+coverage*.xml
+coverage/
+
+# NCrunch
+_NCrunch_*
+.*crunch*.local.xml
+nCrunchTemp_*
+
+# Code coverage
+coverage/
+*.opencover.xml
+
+# Benchmark results
+BenchmarkDotNet.Artifacts/
+
+# Publish profiles
+*.pubxml
+*.publishproj
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Desktop Services Store
+.DS_Store
+
+# Windows shortcuts
+*.lnk
+
+# Claude Code
+.claude/
+
+# Sensitive files
+*.pfx
+*.p12
+*.snk
+appsettings.*.json
+!appsettings.json
+secrets.json
+*.env
+.env.*
+
+# SQLite databases (local development)
+*.db
+*.db-shm
+*.db-wal
+
+# Log files
+*.log
+
+# Backup files
+*.bak
+*.backup
+
+# Temporary files
+*.tmp
+*.temp
+~$*

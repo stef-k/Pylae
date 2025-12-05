@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App_Title" xml:space="preserve">
+    <value>Πύλαι</value>
+  </data>
+  <data name="App_Subtitle" xml:space="preserve">
+    <value>Διαχείριση Εισόδου</value>
+  </data>
+  <data name="Login_Title" xml:space="preserve">
+    <value>Είσοδος</value>
+  </data>
+  <data name="Login_Username" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="Login_Password" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="Login_QuickCode" xml:space="preserve">
+    <value>Γρήγορος Κωδικός</value>
+  </data>
+  <data name="Login_Button" xml:space="preserve">
+    <value>Είσοδος</value>
+  </data>
+  <data name="Gate_Mode_Entry" xml:space="preserve">
+    <value>Είσοδος</value>
+  </data>
+  <data name="Gate_Mode_Exit" xml:space="preserve">
+    <value>Έξοδος</value>
+  </data>
+  <data name="Gate_MemberNumber" xml:space="preserve">
+    <value>Αριθμός Δελτίου Εισόδου</value>
+  </data>
+  <data name="Gate_Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Gate_LogButton" xml:space="preserve">
+    <value>Καταγραφή επίσκεψης</value>
+  </data>
+  <data name="Gate_LastResult" xml:space="preserve">
+    <value>Τελευταίο αποτέλεσμα</value>
+  </data>
+  <data name="Gate_InvalidMemberNumber" xml:space="preserve">
+    <value>Εισάγεται ένα έγκυρο αριθμό δελτίου εισόδου.</value>
+  </data>
+  <data name="Gate_MemberNotFound" xml:space="preserve">
+    <value>Το Δελτίο Εισόδου δεν βρέθηκε ή είναι ανενεργό.</value>
+  </data>
+  <data name="Gate_LogSuccess" xml:space="preserve">
+    <value>Καταγράφηκε  {0} {1} ({2}).</value>
+  </data>
+  <data name="Gate_LogFailed" xml:space="preserve">
+    <value>Αποτυχία καταγραφής επίσκεψης: {0}</value>
+  </data>
+  <data name="Gate_BadgeExpired" xml:space="preserve">
+    <value>Το δελτίο έληξε την  {0}.</value>
+  </data>
+  <data name="Gate_BadgeExpires" xml:space="preserve">
+    <value>Το δελτίο λήγει την  {0}.</value>
+  </data>
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Main_Welcome" xml:space="preserve">
+    <value>Καλώς ήλθατε</value>
+  </data>
+  <data name="Tab_Members" xml:space="preserve">
+    <value>Δελτία Εισόδου</value>
+  </data>
+  <data name="Tab_Visits" xml:space="preserve">
+    <value>Επισκέψεις</value>
+  </data>
+  <data name="Tab_Audit" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="Button_AddEdit" xml:space="preserve">
+    <value>Προσθήκη/Επεξεργασία</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>Ανανέωση</value>
+  </data>
+  <data name="Button_Export" xml:space="preserve">
+    <value>Εξαγωγή</value>
+  </data>
+  <data name="Button_BadgePdf" xml:space="preserve">
+    <value>PDF Δελτίου Εισόδου</value>
+  </data>
+  <data name="Button_RemoteSites" xml:space="preserve">
+    <value>Απομακρυσμένες Εγκαταστάσεις</value>
+  </data>
+  <data name="Button_Filter" xml:space="preserve">
+    <value>Φίλτρο</value>
+  </data>
+  <data name="Button_Catalogs" xml:space="preserve">
+    <value>Κατάλογοι</value>
+  </data>
+  <data name="Lock_Prompt" xml:space="preserve">
+    <value>Η συνεδρία έληξε. Εισάγετε κωδικό ή γρήγορο κωδικό για είσοδο.</value>
+  </data>
+  <data name="Button_Unlock" xml:space="preserve">
+    <value>Ξεκλείδωμα</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="Button_SwitchUser" xml:space="preserve">
+    <value>Αλλαγή χρήστη</value>
+  </data>
+  <data name="Lock_InvalidCredentials" xml:space="preserve">
+    <value>Λανθασμένοι κωδικοί</value>
+  </data>
+  <data name="Lock_CurrentUser" xml:space="preserve">
+    <value>Τρέχων χρήστης: {0}</value>
+  </data>
+  <data name="Lock_NoUser" xml:space="preserve">
+    <value>Κανείς χρήστης συνδεδεμένος</value>
+  </data>
+  <data name="Lock_SwitchUserFailed" xml:space="preserve">
+    <value>Αποτυχία αλλαγής χρήστη.</value>
+  </data>
+  <data name="FirstRun_Title" xml:space="preserve">
+    <value>Εκτέλεση οδηγού πρώτης χρήσης</value>
+  </data>
+  <data name="FirstRun_SiteCode" xml:space="preserve">
+    <value>Όνομα Εγκατάστασης</value>
+  </data>
+  <data name="FirstRun_SiteName" xml:space="preserve">
+    <value>Εμφανιζόμενο Όνομα Εγκατάστασης</value>
+  </data>
+  <data name="FirstRun_Required" xml:space="preserve">
+    <value>Απαιτείται η εκτέλεση του οδηγού πρώτης χρήσης</value>
+  </data>
+  <data name="FirstRun_AdminLoginHint" xml:space="preserve">
+    <value>Όνομα χρήστη αρχικού διαχειριστή: admin</value>
+  </data>
+  <data name="FirstRun_SiteCodeHint" xml:space="preserve">
+    <value>Επιτρέπονται: Πεζοί χαρακτήρες, αριθμοί, παύλα ( - ) και κάτω παύλα ( _ ).</value>
+  </data>
+  <data name="FirstRun_SiteNameHint" xml:space="preserve">
+    <value>Εμφανίζεται στη γραμμή τίτλου και στο Δελτίο Εισόδου. Υποστηρίζονται Ελληνικοί χαρακτήρες.</value>
+  </data>
+  <data name="FirstRun_AdminHint" xml:space="preserve">
+    <value>Όνομα χρήστη αρχικού διαχειριστή: admin</value>
+  </data>
+  <data name="FirstRun_EncryptionHint" xml:space="preserve">
+    <value>Απαιτείται για πρόσβαση (αποκρυπτογράφηση) των βάσεων δεδομένων. Παρακαλώ αποθηκεύστε το και κρατήστε το ασφαλές!</value>
+  </data>
+  <data name="FirstRun_AdminPassword" xml:space="preserve">
+    <value>Κωδικός διαχειριστή</value>
+  </data>
+  <data name="FirstRun_EncryptionPassword" xml:space="preserve">
+    <value>Κωδικός Αποκρυπτογράφησης Βάσης Δεδομένων</value>
+  </data>
+  <data name="FirstRun_Language" xml:space="preserve">
+    <value>Κύρια Γλώσσα</value>
+  </data>
+  <data name="FirstRun_Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="FirstRun_Cancel" xml:space="preserve">
+    <value>Άκυρο</value>
+  </data>
+  <data name="FirstRun_InvalidSiteCode" xml:space="preserve">
+    <value>Το όνομα της εγκατάστασης πρέπει να περιέχει μόνο πεζούς λατινικούς χαρακτήρες. Επιτρέπονται παύλες ( - ) και κάτω παύλες ( _) ενδιάμεσα από τους χαρακτήρες.</value>
+  </data>
+  <data name="FirstRun_RequiredFields" xml:space="preserve">
+    <value>Απαιτούνται τα: Όνομα Εγκατάστασης, Εμφανιζόμενο Όνομα Εγκατάστασης, Κωδικός Διαχειριστή και Κωδικός Αποκρυπτογράφησης Βάσης Δεδομένων.</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Tab_Users" xml:space="preserve">
+    <value>Χρήστες</value>
+  </data>
+  <data name="Users_Username" xml:space="preserve">
+    <value>Όνομα χρήστη</value>
+  </data>
+  <data name="Users_FirstName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Users_LastName" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="Users_Role" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="Users_IsShared" xml:space="preserve">
+    <value>Κοινός λογαριασμός</value>
+  </data>
+  <data name="Users_IsActive" xml:space="preserve">
+    <value>Ενεργός</value>
+  </data>
+  <data name="Users_Password" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="Users_UsernameRequired" xml:space="preserve">
+    <value>Το όνομα χρήστη είναι υποχρεωτικό</value>
+  </data>
+  <data name="Users_AdminOnly" xml:space="preserve">
+    <value>Μόνο οι διαχειριστές μπορούν να ενημερώσουν στοιχεία χρηστών</value>
+  </data>
+  <data name="Users_SelectUser" xml:space="preserve">
+    <value>Επιλέξτε χρήστη πρώτα</value>
+  </data>
+  <data name="Users_ResetPasswordPrompt" xml:space="preserve">
+    <value>Εισάγετε νέο κωδικό για το χρήστη:</value>
+  </data>
+  <data name="Users_ResetQuickCodePrompt" xml:space="preserve">
+    <value>Εισάγετε νέο γρήγορο κωδικό (4-6 ψηφία, αφήστε κενό για διαγραφή):</value>
+  </data>
+  <data name="QuickCode_Hint" xml:space="preserve">
+    <value>Ο γρήγορος κωδικός πρέπει να είναι 4-6 ψηφία (μόνο 0-9)</value>
+  </data>
+  <data name="Users_DeleteConfirm" xml:space="preserve">
+    <value>διαγραφή του χρήστη;</value>
+  </data>
+  <data name="Users_DeactivateConfirm" xml:space="preserve">
+    <value>Απενεργοποίηση του χρήστη;</value>
+  </data>
+  <data name="Users_QuickCodeNotAllowed" xml:space="preserve">
+    <value>Ο Γρήγορος Κωδικός Σύνδεσης δεν είναι διαθέσιμος στους λογαριασμούς διαχειριστών</value>
+  </data>
+  <data name="Users_PasswordUpdated" xml:space="preserve">
+    <value>Ο κωδικός ενημερώθηκε</value>
+  </data>
+  <data name="Users_QuickCodeUpdated" xml:space="preserve">
+    <value>Ο Γρήγορος Κωδικός Σύνδεσης ενημερώθηκε</value>
+  </data>
+  <data name="Button_AddUser" xml:space="preserve">
+    <value>Προσθήκη χρήστη</value>
+  </data>
+  <data name="Button_EditUser" xml:space="preserve">
+    <value>Επεξεργασία χρήστη</value>
+  </data>
+  <data name="Button_Deactivate" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="Button_Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Button_ResetPassword" xml:space="preserve">
+    <value>Επαναφορά κωδικού πρόσβασης</value>
+  </data>
+  <data name="Button_ResetQuickCode" xml:space="preserve">
+    <value>Κωδικός γρήγορης πρόσβασης</value>
+  </data>
+  <data name="Button_Backup" xml:space="preserve">
+    <value>Αντίγραφο ασφαλείας</value>
+  </data>
+  <data name="Button_Restore" xml:space="preserve">
+    <value>Επαναφορά</value>
+  </data>
+  <data name="Backup_Saved" xml:space="preserve">
+    <value>Δημιουργήθηκε αντίγραφο ασφαλείας.</value>
+  </data>
+  <data name="Backup_Restored" xml:space="preserve">
+    <value>Έγινε επαναφορά αντιγράφων ασφαλείας. Επανεκκινήστε την εφαρμογή.</value>
+  </data>
+  <data name="Backup_RestoreConfirm" xml:space="preserve">
+    <value>Η επαναφορά θα αντικαταστήσει τις τοπικές βάσεις δεδομένων και τις φωτογραφίες. Συνέχεια;</value>
+  </data>
+  <data name="Backup_Failed" xml:space="preserve">
+    <value>Δημιουργία αντιγράφου ασφαλείας απέτυχε</value>
+  </data>
+  <data name="Sync_PushMaster" xml:space="preserve">
+    <value>Ανέβασμα κύριας βάσης δεδομένων</value>
+  </data>
+  <data name="Sync_PullVisits" xml:space="preserve">
+    <value>Καταγραφή βάσης δεδομένων επισκέψεων</value>
+  </data>
+  <data name="Sync_PushSuccess" xml:space="preserve">
+    <value>Η κύρια βάση δεδομένων μεταφορτώθηκε.</value>
+  </data>
+  <data name="Sync_PushFailed" xml:space="preserve">
+    <value>Αποτυχία ανεβάσματος κύριας βάσης δεδομένων</value>
+  </data>
+  <data name="Sync_DownloadFailed" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης της βάσης δεδομένων επισκέψεων</value>
+  </data>
+  <data name="Sync_OverwriteVisitsConfirm" xml:space="preserve">
+    <value>Αντικατάσταση της βάσης δεδομένων επισκέψεων;</value>
+  </data>
+  <data name="Sync_VisitsImported" xml:space="preserve">
+    <value>Η βάση δεδομένων επισκέψεων ενημερώθηκε.</value>
+  </data>
+  <data name="Sync_IncludePhotos" xml:space="preserve">
+    <value>Συμπεριλαμβανομένων των φωτογραφιών</value>
+  </data>
+  <data name="Sync_PullMaster" xml:space="preserve">
+    <value>Καταγραφή κύριας βάσης δεδομένων</value>
+  </data>
+  <data name="Sync_PullConfirm" xml:space="preserve">
+    <value>Ναι = συγχώνευση απομακρυσμένων στα τοπικά δεδομένα, Όχι = αντικατάσταση τοπικών δεδομένων με απομακρυσμένα. Άκυρο.</value>
+  </data>
+  <data name="Sync_Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Sync_InfoReceived" xml:space="preserve">
+    <value>Λήψη απομακρυσμένων δεδομένων.</value>
+  </data>
+  <data name="Sync_VisitsReceived" xml:space="preserve">
+    <value>Λήψη} επισκέψεων.</value>
+  </data>
+  <data name="Sync_VisitsReceivedCount" xml:space="preserve">
+    <value>Λήφθηκαν {0} επισκέψεις.</value>
+  </data>
+  <data name="Sync_MasterImported" xml:space="preserve">
+    <value>Η βάση δεδομένων ενημερώθηκε.</value>
+  </data>
+  <data name="Button_PrintBadge" xml:space="preserve">
+    <value>Εκτύπωση Δελτίου Εισόδου</value>
+  </data>
+  <data name="Badge_PrintReady" xml:space="preserve">
+    <value>Το Δελτίο Εισόδου είναι έτοιμο για εκτύπωση.</value>
+  </data>
+  <data name="Badge_PrintFailed" xml:space="preserve">
+    <value>Η εκτύπωση απέτυχε. Ανοίξτε το PDF και εκτυπώστε το χειροκίνητα.</value>
+  </data>
+  <data name="Settings_Saved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία</value>
+  </data>
+  <data name="Members_SelectFirst" xml:space="preserve">
+    <value>Επιλέξτε Δελτίο Εισόδου</value>
+  </data>
+  <data name="Members_NumberInvalid" xml:space="preserve">
+    <value>Ο αριθμός του Δελτίου Εισόδου πρέπει να αποτελείται από ψηφία (συνδυασμός αριθμών από 0 έως 9)</value>
+  </data>
+  <data name="Button_ChangePassword" xml:space="preserve">
+    <value>Αλλαγή κωδικού πρόσβασης</value>
+  </data>
+  <data name="Button_ChangeQuickCode" xml:space="preserve">
+    <value>Αλλαγή κωδικού γρήγορης πρόσβασης</value>
+  </data>
+  <data name="Account_PasswordUpdated" xml:space="preserve">
+    <value>Ο κωδικός ενημερώθηκε</value>
+  </data>
+  <data name="Account_QuickCodeUpdated" xml:space="preserve">
+    <value>Ο κωδικός γρήγορης σύνδεσης ενημερώθηκε</value>
+  </data>
+  <data name="Account_QuickCodeNotAllowed" xml:space="preserve">
+    <value>Ο κωδικός γρήγορης σύνδεσης δεν είναι διαθέσιμος για κοινούς λογαριασμούς και διαχειριστές</value>
+  </data>
+  <data name="App_UserNotAuthenticated" xml:space="preserve">
+    <value>Ο χρήστης δεν έχει συνδεθεί</value>
+  </data>
+  <data name="Export_MembersSaved" xml:space="preserve">
+    <value>Το αρχείο μελών εξάχθηκε</value>
+  </data>
+  <data name="Export_VisitsSaved" xml:space="preserve">
+    <value>Το αρχείο επισκέψεων εξάχθηκε</value>
+  </data>
+  <data name="Export_AuditSaved" xml:space="preserve">
+    <value>Το αρχείο ελέγχου εξάχθηκε.</value>
+  </data>
+  <data name="Badge_PdfSaved" xml:space="preserve">
+    <value>Το PDF του Δελτίου Εισόδου αποθηκεύτηκε.</value>
+  </data>
+  <data name="Sync_VisitsCountLabel" xml:space="preserve">
+    <value>Λήφθηκαν {0} επισκέψεις.</value>
+  </data>
+  <data name="Sync_RecentEvents" xml:space="preserve">
+    <value>Πρόσφατα γεγονότα</value>
+  </data>
+  <data name="Sync_MergeSummary" xml:space="preserve">
+    <value>Πραγματοποιημένες συγχωνεύσεις Γραφεία+{0}/{1}, Τύποι Δελτίων Εισόδου+{2}/{3}, Δελτία Εισόδου+{4}/{5}</value>
+  </data>
+  <data name="Sync_InfoDetails" xml:space="preserve">
+    <value>Εγκατάσταση: {0} ({1})
+Δελτία Εισόδου: {2}
+Επισκέψεις: {3}
+Τελευταία Επίσκεψη: {4}</value>
+  </data>
+  <data name="Sync_MasterMissing" xml:space="preserve">
+    <value>Η βάση δεδομένων δεν βρέθηκε</value>
+  </data>
+  <data name="Sync_MergeConflicts" xml:space="preserve">
+    <value>Παραλείψεις (νεότερα τοπικά δεδομέναl) - Γραφεία: {0}, Τύποι Δελτίων Εισόδου: {1}, Δελτία Εισόδου: {2}</value>
+  </data>
+  <data name="Sync_MergeConflictsOffices" xml:space="preserve">
+    <value>Παραλείψεις  Γραφείων: {0}</value>
+  </data>
+  <data name="Sync_MergeConflictsTypes" xml:space="preserve">
+    <value>Παραλείψεις Τύπων Δελτίων Εισόδου: {0}</value>
+  </data>
+  <data name="Sync_MergeConflictsMembers" xml:space="preserve">
+    <value>Παραλείψεις  Δελτίων Εισόδου: {0}</value>
+  </data>
+  <data name="Backup_Invalid" xml:space="preserve">
+    <value>Το αντίγραφο ασφαλείας είναι κατακερματισμένο ή δεν είναι πλήρης</value>
+  </data>
+  <data name="Backup_InvalidDetail" xml:space="preserve">
+    <value>Το αντίγραφο ασφαλείας δεν επαληθεύεται: {0}</value>
+  </data>
+  <data name="Backup_RestartPrompt" xml:space="preserve">
+    <value>Η επαναφορά ολοκληρώθηκε. Επανεκκίνηση τώρα;</value>
+  </data>
+  <data name="Login_Failed" xml:space="preserve">
+    <value>Αποτυχία εισόδου</value>
+  </data>
+  <data name="Users_PasswordRequired" xml:space="preserve">
+    <value>Ο κωδικός απαιτείται για νέους χρήστες</value>
+  </data>
+  <data name="Photo_None" xml:space="preserve">
+    <value>Δεν υπάρχει φωτογραφεία</value>
+  </data>
+  <data name="Photo_SelectTitle" xml:space="preserve">
+    <value>Επιλογή φωτογραφίας</value>
+  </data>
+  <data name="Photo_Filter" xml:space="preserve">
+    <value>Image Files|*.jpg;*.jpeg;*.png</value>
+  </data>
+  <data name="DbPassword_Title" xml:space="preserve">
+    <value>Κωδικός Αποκρυπτογράφησης Βάσης Δεδομένων</value>
+  </data>
+  <data name="DbPassword_Prompt" xml:space="preserve">
+    <value>Εισάγετε τον κωδικό αποκρυπτογράφησης της βάσης δεδομένων:</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Visits_UpdateNotesPrompt" xml:space="preserve">
+    <value>Ενημέρωση σημειώσεων:</value>
+  </data>
+  <data name="Visits_UpdateNotesTitle" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Backup_ReasonMissingDb" xml:space="preserve">
+    <value>Λείπει η κύρια βάση δεδομένων ή η βάση δεδομένων επισκέψεων μετά την επαναφορά.</value>
+  </data>
+  <data name="Backup_ReasonEmptyDb" xml:space="preserve">
+    <value>Το αρχείο βάσης δεδομένων που ανακτήθηκε είναι κενό.</value>
+  </data>
+  <data name="Backup_ReasonNoManifest" xml:space="preserve">
+    <value>Το μανιφέστο δεν βρέθηκε ή είναι ελλιπές.</value>
+  </data>
+  <data name="Backup_ReasonChecksumMismatch" xml:space="preserve">
+    <value>Αναντιστοιχία αθροίσματος ελέγχου για αποκατεστημένες βάσεις δεδομένων.</value>
+  </data>
+  <data name="Sync_MasterOverwritten" xml:space="preserve">
+    <value>Η βάση δεδομένων αντικαταστάθηκε</value>
+  </data>
+  <data name="Member_Number" xml:space="preserve">
+    <value>Αριθμός Δελτίου Εισόδου</value>
+  </data>
+  <data name="Member_FirstName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Member_LastName" xml:space="preserve">
+    <value>Επίθετο</value>
+  </data>
+  <data name="Member_BusinessRank" xml:space="preserve">
+    <value>Βαθμός</value>
+  </data>
+  <data name="Member_PersonalId" xml:space="preserve">
+    <value>Αριθμός Ταυτότητας</value>
+  </data>
+  <data name="Member_BusinessId" xml:space="preserve">
+    <value>Αριθμός Μητρώου</value>
+  </data>
+  <data name="Member_Office" xml:space="preserve">
+    <value>Γραφείο</value>
+  </data>
+  <data name="Member_Type" xml:space="preserve">
+    <value>Τύπος Δελτίου Εισόδου</value>
+  </data>
+  <data name="Member_PermanentStaff" xml:space="preserve">
+    <value>Μόνιμος</value>
+  </data>
+  <data name="Member_ClearPhoto" xml:space="preserve">
+    <value>Καθαρισμός Φωτογραφίας</value>
+  </data>
+  <data name="Member_NumberRequired" xml:space="preserve">
+    <value>Ο αριθμός Δελτίου Εισόδου είναι υποχρεωτικός</value>
+  </data>
+  <data name="Member_DeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή του Δελτίου Εισόδου;</value>
+  </data>
+  <data name="Member_SaveSuccess" xml:space="preserve">
+    <value>Το Δελτίο Εισόδου αποθηκεύτηκε με επιτυχία.</value>
+  </data>
+  <data name="Member_SaveFailed" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης Δελτίου Εισόδου</value>
+  </data>
+  <data name="Member_DeleteSuccess" xml:space="preserve">
+    <value>Το Δελτίο Εισόδου διαγράφηκε με επιτυχία</value>
+  </data>
+  <data name="Member_DeleteFailed" xml:space="preserve">
+    <value>Αποτυχία διαγραφής Δελτίου Εισόδου</value>
+  </data>
+  <data name="User_CannotDeleteSystem" xml:space="preserve">
+    <value>Ο  λογαριασμός του χειριστή του συστήματος δεν διαγράφεται</value>
+  </data>
+  <data name="User_SaveSuccess" xml:space="preserve">
+    <value>Ο χρήστης αποθηκεύτηκε με επιτυχία</value>
+  </data>
+  <data name="User_SaveFailed" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης χρήστη</value>
+  </data>
+  <data name="User_DeleteSuccess" xml:space="preserve">
+    <value>Αποτυχία διαγραφής χρήστη</value>
+  </data>
+  <data name="User_DeleteFailed" xml:space="preserve">
+    <value>Ο χρήστης διαγράφηκε με επιτυχία</value>
+  </data>
+  <data name="Button_New" xml:space="preserve">
+    <value>Νέο</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="DbPassword_WrongPassword" xml:space="preserve">
+    <value>Λανθασμένος κωδικός αποκρυπτογράφησης βάσης δεδομένων. Παρακαλώ προσπαθήστε πάλι.</value>
+  </data>
+  <data name="DbPassword_Cancelled" xml:space="preserve">
+    <value>Απαιτείται κωδικός αποκρυπτογράφησης της βάσης δεδομένων.</value>
+  </data>
+  <data name="DbPassword_RetryPrompt" xml:space="preserve">
+    <value>Επαλήθευση του κωδικού</value>
+  </data>
+  <data name="DbPassword_DiscoveryTitle" xml:space="preserve">
+    <value>Βρέθηκε Υπάρχουσα Βάση Δεδομένων</value>
+  </data>
+  <data name="DbPassword_DiscoveryMessage" xml:space="preserve">
+    <value>Βρέθηκε υπάρχουσα βάση δεδομένων για την εγκατάσταση: '{0}'
+
+Θέλετε να χρησιμοποιήσετε αυτή τη βάση δεδομένων;
+
+Πατήστε ΝΑΙ για χρήση αυτής της βάσης δεδομένων (Απαιτείται κωδικός αποκρυπτογράφησης της βάσης δεδομένων)
+Πατήστε ΟΧΙ για έναρξη του οδηγού πρώτης χρήσης της εφαρμογής...</value>
+  </data>
+  <data name="DbPassword_MaxAttemptsReached" xml:space="preserve">
+    <value>Μέγιστες δοκιμές κωδικού αποκρυπτογράφησης της βάσης δεδομένων.
+
+Θέλετε να εκτελέσετε τον οδηγό πρώτης χρήσης της εφαρμογής;
+
+ΠΡΟΣΟΧΗ: Η έναρξη οδηγού πρώτης χρήσης της εφαρμογής θα δημιουργήσει νέα βάση δεδομένων και δεν θα έχετε πρόσβαση στην υπάρχουσα βάση δεδομένων χωρίς τον κωδικό αποκρυπτογράφησης της βάσης δεδομένων.</value>
+  </data>
+  <data name="DbPassword_MaxAttemptsTitle" xml:space="preserve">
+    <value>Μέγιστος Αριθμός Προσπαθειών Εισαγωγής Κωδικού</value>
+  </data>
+  <data name="Tab_Gate" xml:space="preserve">
+    <value>Πύλη</value>
+  </data>
+  <data name="Tab_Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Grid_MemberNumber" xml:space="preserve">
+    <value>Αριθμός Δελτίου Εισόδου</value>
+  </data>
+  <data name="Grid_FirstName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Grid_LastName" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="Grid_PersonalIdNumber" xml:space="preserve">
+    <value>Αριθμός Ταυτότητας</value>
+  </data>
+  <data name="Grid_BusinessIdNumber" xml:space="preserve">
+    <value>Αριθμός Μητρώου</value>
+  </data>
+  <data name="Grid_BusinessRank" xml:space="preserve">
+    <value>Βαθμός</value>
+  </data>
+  <data name="Grid_Office" xml:space="preserve">
+    <value>Γραφείο</value>
+  </data>
+  <data name="Grid_MemberType" xml:space="preserve">
+    <value>Τύπος Δελτίου Εισόδου</value>
+  </data>
+  <data name="Grid_IsPermanent" xml:space="preserve">
+    <value>Μόνιμος</value>
+  </data>
+  <data name="Grid_PhotoPath" xml:space="preserve">
+    <value>Φωτογραφία</value>
+  </data>
+  <data name="Grid_CreatedAt" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="Grid_UpdatedAt" xml:space="preserve">
+    <value>Ενημερώθηκε</value>
+  </data>
+  <data name="Grid_Username" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="Grid_Role" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="Grid_IsActive" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="Grid_IsSharedLogin" xml:space="preserve">
+    <value>Κοινός Λογαριασμός</value>
+  </data>
+  <data name="Grid_LastLogin" xml:space="preserve">
+    <value>Τελευταία Είσοδος</value>
+  </data>
+  <data name="Grid_VisitType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="Grid_Timestamp" xml:space="preserve">
+    <value>Ημ/νία</value>
+  </data>
+  <data name="Grid_Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Grid_LoggedBy" xml:space="preserve">
+    <value>Καταγράφηκε Από</value>
+  </data>
+  <data name="Grid_Action" xml:space="preserve">
+    <value>Ενέργεια</value>
+  </data>
+  <data name="Grid_EntityType" xml:space="preserve">
+    <value>Οντότητα</value>
+  </data>
+  <data name="Grid_EntityId" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Grid_Changes" xml:space="preserve">
+    <value>Αλλαγές</value>
+  </data>
+  <data name="Grid_UserId" xml:space="preserve">
+    <value>ID Χρήστη</value>
+  </data>
+  <data name="Grid_Id" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Grid_OfficeId" xml:space="preserve">
+    <value>Γραφείο ID</value>
+  </data>
+  <data name="Grid_MemberTypeId" xml:space="preserve">
+    <value>Τύπος Δελτίου Εισόδου ID</value>
+  </data>
+  <data name="Grid_MemberId" xml:space="preserve">
+    <value>Αναγνωριστικό</value>
+  </data>
+</root>
