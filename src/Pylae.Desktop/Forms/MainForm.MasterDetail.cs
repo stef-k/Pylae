@@ -499,8 +499,9 @@ public partial class MainForm
         _memberPhotoLabel!.Text = Strings.Photo_None;
 
         // Set default badge dates for new member (today + validity months)
-        _memberBadgeIssuePicker!.Value = DateTime.Today;
-        _memberBadgeIssuePicker.Checked = true;
+        // Must set Checked first, then Value - ValueChanged event checks Checked flag
+        _memberBadgeIssuePicker!.Checked = true;
+        _memberBadgeIssuePicker.Value = DateTime.Today;
         // OnMemberBadgeIssueDateChanged will auto-calculate expiry
     }
 
