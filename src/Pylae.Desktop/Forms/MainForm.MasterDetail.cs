@@ -355,6 +355,11 @@ public partial class MainForm
         {
             PopulateMemberForm(member);
         }
+        else
+        {
+            // No member selected - show defaults for new member
+            ClearMemberForm();
+        }
     }
 
     private void OnSelectAllMembersClick(object? sender, EventArgs e)
@@ -484,13 +489,16 @@ public partial class MainForm
         _memberNotesTextBox!.Clear();
         _memberPermanentCheckBox!.Checked = false;
         _memberActiveCheckBox!.Checked = true;
-        _memberBadgeIssuePicker!.Checked = false;
-        _memberBadgeExpiryPicker!.Checked = false;
         _memberDateOfBirthPicker!.Checked = false;
         _memberOfficeTextBox!.Text = string.Empty;
         _memberTypeComboBox!.SelectedIndex = -1;
         _memberPhotoPath = null;
         _memberPhotoLabel!.Text = Strings.Photo_None;
+
+        // Set default badge dates for new member (today + validity months)
+        _memberBadgeIssuePicker!.Value = DateTime.Today;
+        _memberBadgeIssuePicker.Checked = true;
+        // OnMemberBadgeIssueDateChanged will auto-calculate expiry
     }
 
     private void OnMemberBadgeIssueDateChanged(object? sender, EventArgs e)
@@ -515,17 +523,8 @@ public partial class MainForm
 
     private void OnMemberNew(object? sender, EventArgs e)
     {
-        ClearMemberForm();
         membersGrid.ClearSelection();
-
-        // Default badge issue date to today for new members
-        if (_memberBadgeIssuePicker != null)
-        {
-            _memberBadgeIssuePicker.Value = DateTime.Today;
-            _memberBadgeIssuePicker.Checked = true;
-            // This triggers OnMemberBadgeIssueDateChanged which auto-calculates expiry
-        }
-
+        ClearMemberForm();
         _memberFirstNameTextBox?.Focus();
     }
 
