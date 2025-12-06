@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Pylae.Core.Constants;
 using Pylae.Core.Enums;
 using Pylae.Core.Models;
+using Pylae.Desktop.Helpers;
 using Pylae.Desktop.Resources;
 
 namespace Pylae.Desktop.Forms;
@@ -36,7 +37,7 @@ public partial class MainForm
     private Button? _memberSaveButton;
     private Button? _memberNewButton;
     private Button? _memberDeleteButton;
-    private Label? _memberPhotoLabel;
+    private PictureBox? _memberPhotoBox;
     private Button? _memberChoosePhotoButton;
     private Button? _memberClearPhotoButton;
     private string? _memberPhotoPath;
@@ -142,8 +143,6 @@ public partial class MainForm
         _memberNumberValueLabel = new Label { Dock = DockStyle.Fill, Font = new Font(inputFont, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft, Text = Strings.MemberNumber_Auto };
         _memberFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
-        _memberFirstNameTextBox.Leave += OnNameTextBoxLeave;
-        _memberLastNameTextBox.Leave += OnNameTextBoxLeave;
         _memberBusinessRankTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberPersonalIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberBusinessIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
@@ -152,6 +151,15 @@ public partial class MainForm
         _memberPhoneTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberEmailTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberNotesTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+
+        // Auto-uppercase all text fields on leave
+        _memberFirstNameTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberLastNameTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberBusinessRankTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberPersonalIdTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberBusinessIdTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberOfficeTextBox.Leave += OnTextBoxLeaveUppercase;
+        _memberNotesTextBox.Leave += OnTextBoxLeaveUppercase;
 
         // Date pickers with checkbox-style enable (ShowCheckBox allows null dates)
         // Use CurrentUICulture for date format to match app language
@@ -168,16 +176,15 @@ public partial class MainForm
         _memberActiveCheckBox = new CheckBox { Text = Strings.Member_Active, Dock = DockStyle.Fill, Font = inputFont, Checked = true };
 
         // Photo controls - PictureBox for portrait photos with click to enlarge
-        _memberPhotoLabel = new Label
+        _memberPhotoBox = new PictureBox
         {
-            Text = Strings.Photo_None,
             BorderStyle = BorderStyle.FixedSingle,
-            TextAlign = ContentAlignment.MiddleCenter,
             Dock = DockStyle.Fill,
-            Font = new Font("Segoe UI", 9F),
-            Cursor = Cursors.Hand
+            SizeMode = PictureBoxSizeMode.Zoom,
+            Cursor = Cursors.Hand,
+            BackColor = SystemColors.Control
         };
-        _memberPhotoLabel.Click += OnMemberPhotoClick;
+        _memberPhotoBox.Click += OnMemberPhotoClick;
         _memberChoosePhotoButton = new Button { Text = Strings.Photo_SelectTitle, Font = new Font("Segoe UI", 9F), Height = 28, Dock = DockStyle.Fill, AutoSize = true, UseVisualStyleBackColor = true };
         _memberClearPhotoButton = new Button { Text = Strings.Member_ClearPhoto, Font = new Font("Segoe UI", 9F), Height = 28, Dock = DockStyle.Fill, AutoSize = true, UseVisualStyleBackColor = true };
 
@@ -250,8 +257,8 @@ public partial class MainForm
         photoLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
         photoLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
-        photoLayout.Controls.Add(_memberPhotoLabel, 0, 0);
-        photoLayout.SetColumnSpan(_memberPhotoLabel, 2);
+        photoLayout.Controls.Add(_memberPhotoBox, 0, 0);
+        photoLayout.SetColumnSpan(_memberPhotoBox, 2);
         photoLayout.Controls.Add(_memberChoosePhotoButton, 0, 1);
         photoLayout.Controls.Add(_memberClearPhotoButton, 1, 1);
 
@@ -345,6 +352,7 @@ public partial class MainForm
         membersGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         membersGrid.MultiSelect = true;
         membersGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        membersGrid.EnableDoubleBuffering();
 
         layout.Controls.Add(searchPanel, 0, 0);
         layout.Controls.Add(membersGrid, 0, 1);
@@ -456,32 +464,31 @@ public partial class MainForm
             {
                 try
                 {
-                    _memberPhotoLabel!.Text = string.Empty;
-                    _memberPhotoLabel!.Image = Image.FromFile(photoPath);
-                    _memberPhotoLabel!.ImageAlign = ContentAlignment.MiddleCenter;
+                    _memberPhotoBox!.Image = Image.FromFile(photoPath);
                 }
                 catch
                 {
-                    _memberPhotoLabel!.Text = Path.GetFileName(member.PhotoFileName);
-                    _memberPhotoLabel!.Image = null;
+                    _memberPhotoBox!.Image = null;
                 }
             }
             else
             {
-                _memberPhotoLabel!.Text = Path.GetFileName(member.PhotoFileName);
-                _memberPhotoLabel!.Image = null;
+                _memberPhotoBox!.Image = null;
             }
         }
         else
         {
-            _memberPhotoLabel!.Text = Strings.Photo_None;
-            _memberPhotoLabel!.Image = null;
+            _memberPhotoBox!.Image = null;
         }
     }
 
     private void ClearMemberForm()
     {
         if (_memberNumberValueLabel == null) return;
+
+        // Clear grid selection so Save creates new member instead of updating
+        membersGrid.ClearSelection();
+        membersGrid.CurrentCell = null;
 
         _memberNumberValueLabel.Text = Strings.MemberNumber_Auto;
         _memberFirstNameTextBox!.Clear();
@@ -498,7 +505,7 @@ public partial class MainForm
         _memberOfficeTextBox!.Text = string.Empty;
         _memberTypeComboBox!.SelectedIndex = -1;
         _memberPhotoPath = null;
-        _memberPhotoLabel!.Text = Strings.Photo_None;
+        _memberPhotoBox!.Image = null;
 
         // Set default badge dates for new member (today + validity months)
         // Must set Checked first, then Value - ValueChanged event checks Checked flag
@@ -530,6 +537,7 @@ public partial class MainForm
     private void OnMemberNew(object? sender, EventArgs e)
     {
         membersGrid.ClearSelection();
+        membersGrid.CurrentCell = null; // Also clear CurrentRow so Save creates new member
         ClearMemberForm();
         _memberFirstNameTextBox?.Focus();
     }
@@ -538,8 +546,19 @@ public partial class MainForm
     {
         if (_memberFirstNameTextBox == null) return;
 
-        // MemberNumber is auto-assigned by the service, no need to set it here
-        var member = membersGrid.CurrentRow?.DataBoundItem as Member ?? new Member();
+        // Check if we have a selected member or creating new
+        Member member;
+        if (membersGrid.CurrentRow?.DataBoundItem is Member existingMember)
+        {
+            // Editing existing member
+            member = existingMember;
+        }
+        else
+        {
+            // Creating new member - clear default Id so CreateAsync is called
+            // (Member class auto-generates Id in constructor, but we need empty for create)
+            member = new Member { Id = string.Empty };
+        }
         member.FirstName = _memberFirstNameTextBox!.Text;
         member.LastName = _memberLastNameTextBox!.Text;
         member.BusinessRank = _memberBusinessRankTextBox!.Text;
@@ -555,7 +574,44 @@ public partial class MainForm
         member.DateOfBirth = _memberDateOfBirthPicker!.Checked ? _memberDateOfBirthPicker.Value : null;
         member.Office = string.IsNullOrWhiteSpace(_memberOfficeTextBox!.Text) ? null : _memberOfficeTextBox.Text.Trim();
         member.MemberTypeId = _memberTypeComboBox!.SelectedValue as int?;
-        member.PhotoFileName = _memberPhotoPath;
+
+        // Handle photo: copy to Photos directory if it's an external file
+        if (!string.IsNullOrEmpty(_memberPhotoPath))
+        {
+            if (Path.IsPathRooted(_memberPhotoPath) && File.Exists(_memberPhotoPath))
+            {
+                // Photo is an external file - copy to Photos directory
+                var photosPath = _serviceProvider.GetRequiredService<Data.Context.DatabaseOptions>().GetPhotosPath();
+                Directory.CreateDirectory(photosPath);
+
+                // Generate unique filename using GUID to avoid conflicts
+                var extension = Path.GetExtension(_memberPhotoPath);
+                var newFileName = $"{Guid.NewGuid():N}{extension}";
+                var destinationPath = Path.Combine(photosPath, newFileName);
+
+                try
+                {
+                    File.Copy(_memberPhotoPath, destinationPath, overwrite: true);
+                    member.PhotoFileName = newFileName; // Store just the filename
+                    _memberPhotoPath = newFileName; // Update local reference to be relative
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"{Strings.Photo_CopyFailed}: {ex.Message}", Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    // Continue saving without the photo
+                    member.PhotoFileName = null;
+                }
+            }
+            else
+            {
+                // Already a relative filename (existing photo)
+                member.PhotoFileName = _memberPhotoPath;
+            }
+        }
+        else
+        {
+            member.PhotoFileName = null;
+        }
 
         try
         {
@@ -564,7 +620,7 @@ public partial class MainForm
             _membersBinding = new BindingList<Member>(_membersViewModel.Members);
             membersGrid.DataSource = _membersBinding;
 
-            MessageBox.Show(Strings.Member_SaveSuccess, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UpdateStatus(Strings.Status_MemberSaved);
         }
         catch (Exception ex)
         {
@@ -593,7 +649,7 @@ public partial class MainForm
             membersGrid.DataSource = _membersBinding;
             ClearMemberForm();
 
-            MessageBox.Show(Strings.Member_DeleteSuccess, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UpdateStatus(Strings.Status_MemberDeleted);
         }
         catch (Exception ex)
         {
@@ -635,27 +691,68 @@ public partial class MainForm
 
     private void OnMemberChoosePhoto(object? sender, EventArgs e)
     {
+        // Try user's desktop first, fall back to MyPictures, then current directory
+        var initialDir = GetSafeInitialDirectory();
+
         using var dialog = new OpenFileDialog
         {
             Filter = Strings.Photo_Filter,
-            Title = Strings.Photo_SelectTitle
+            Title = Strings.Photo_SelectTitle,
+            InitialDirectory = initialDir
         };
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
         {
             _memberPhotoPath = dialog.FileName;
-            _memberPhotoLabel!.Text = Path.GetFileName(dialog.FileName);
+
+            // Load and display the image
+            try
+            {
+                _memberPhotoBox!.Image = Image.FromFile(dialog.FileName);
+            }
+            catch
+            {
+                // If image can't be loaded, clear the box
+                _memberPhotoBox!.Image = null;
+            }
         }
+    }
+
+    private static string GetSafeInitialDirectory()
+    {
+        // Try paths in order of preference, with defensive error handling
+        string[] pathsToTry =
+        [
+            Environment.GetFolderPath(Environment.SpecialFolder.Desktop),
+            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
+            Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+            AppContext.BaseDirectory
+        ];
+
+        foreach (var path in pathsToTry)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(path) && Directory.Exists(path))
+                    return path;
+            }
+            catch
+            {
+                // Access denied or other error, try next path
+            }
+        }
+
+        return string.Empty; // Let the dialog use its default
     }
 
     private void OnMemberClearPhoto(object? sender, EventArgs e)
     {
         _memberPhotoPath = null;
-        _memberPhotoLabel!.Text = Strings.Photo_None;
-        _memberPhotoLabel!.Image = null;
+        _memberPhotoBox!.Image = null;
     }
 
-    private void OnMemberPhotoClick(object? sender, EventArgs e)
+    private async void OnMemberPhotoClick(object? sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(_memberPhotoPath)) return;
 
@@ -689,7 +786,7 @@ public partial class MainForm
         };
 
         dialog.Controls.Add(pictureBox);
-        dialog.ShowDialog(this);
+        await dialog.ShowDialogAsync(this);
     }
 
     // ==================== USERS MASTER-DETAIL VIEW ====================
@@ -765,11 +862,14 @@ public partial class MainForm
         _userUsernameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _userFirstNameTextBox.Leave += OnNameTextBoxLeave;
-        _userLastNameTextBox.Leave += OnNameTextBoxLeave;
         _userRoleComboBox = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10F) };
         _userActiveCheckBox = new CheckBox { Text = Strings.Users_IsActive, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userSharedLoginCheckBox = new CheckBox { Text = Strings.Users_IsShared, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+
+        // Auto-uppercase all text fields on leave
+        _userUsernameTextBox.Leave += OnTextBoxLeaveUppercase;
+        _userFirstNameTextBox.Leave += OnTextBoxLeaveUppercase;
+        _userLastNameTextBox.Leave += OnTextBoxLeaveUppercase;
 
         // Populate role combo box
         _userRoleComboBox.DataSource = Enum.GetValues(typeof(UserRole));
@@ -882,6 +982,7 @@ public partial class MainForm
         usersGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         usersGrid.MultiSelect = false;
         usersGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        usersGrid.EnableDoubleBuffering();
 
         layout.Controls.Add(searchPanel, 0, 0);
         layout.Controls.Add(usersGrid, 0, 1);
@@ -953,7 +1054,7 @@ public partial class MainForm
             {
                 // New user - need password - open editor dialog
                 using var passwordDialog = new UserEditorForm(_usersViewModel);
-                if (passwordDialog.ShowDialog() != DialogResult.OK)
+                if (await passwordDialog.ShowDialogAsync() != DialogResult.OK)
                     return;
                 // User will be created via the dialog
             }
@@ -964,7 +1065,7 @@ public partial class MainForm
             }
 
             await LoadUsersAsync();
-            MessageBox.Show(Strings.User_SaveSuccess, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UpdateStatus(Strings.Status_UserSaved);
         }
         catch (Exception ex)
         {
@@ -996,7 +1097,7 @@ public partial class MainForm
             await LoadUsersAsync();
             ClearUserForm();
 
-            MessageBox.Show(Strings.User_DeleteSuccess, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            UpdateStatus(Strings.Status_UserDeleted);
         }
         catch (Exception ex)
         {
@@ -1046,6 +1147,7 @@ public partial class MainForm
             { nameof(Member.Office), Strings.Grid_Office },
             { nameof(Member.MemberTypeId), Strings.Grid_MemberTypeId },
             { nameof(Member.MemberType), Strings.Grid_MemberType },
+            { nameof(Member.MemberTypeName), Strings.Grid_MemberType },
             { nameof(Member.IsPermanentStaff), Strings.Grid_IsPermanent },
             { nameof(Member.PhotoFileName), Strings.Grid_PhotoPath },
             { nameof(Member.Phone), Strings.Grid_Phone },
@@ -1060,7 +1162,7 @@ public partial class MainForm
         };
 
         // Hide internal columns to save horizontal space
-        var hiddenColumns = new[] { nameof(Member.Id), nameof(Member.MemberTypeId), nameof(Member.PhotoFileName) };
+        var hiddenColumns = new[] { nameof(Member.Id), nameof(Member.MemberTypeId), nameof(Member.MemberType), nameof(Member.PhotoFileName) };
 
         foreach (DataGridViewColumn column in membersGrid.Columns)
         {
@@ -1118,13 +1220,13 @@ public partial class MainForm
     }
 
     /// <summary>
-    /// Auto-capitalize first letter of each word in name fields when focus leaves.
+    /// Auto-uppercase text fields when focus leaves.
     /// </summary>
-    private void OnNameTextBoxLeave(object? sender, EventArgs e)
+    private void OnTextBoxLeaveUppercase(object? sender, EventArgs e)
     {
         if (sender is not TextBox textBox || string.IsNullOrWhiteSpace(textBox.Text))
             return;
 
-        textBox.Text = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textBox.Text.ToLower());
+        textBox.Text = textBox.Text.ToUpperInvariant();
     }
 }

@@ -27,6 +27,11 @@ internal static class Program
         ApplicationConfiguration.Initialize();
         Application.SetColorMode(SystemColorMode.System);
 
+        // Show splash screen during initialization
+        using var splash = new SplashForm();
+        splash.Show();
+        splash.Refresh();
+
         var configuration = BuildConfiguration();
         var databaseOptions = BuildDatabaseOptions(configuration, promptForPassword: false);
 
@@ -39,6 +44,7 @@ internal static class Program
             var discoveredSiteCode = DiscoverExistingDatabase(databaseOptions.RootPath);
             if (discoveredSiteCode != null)
             {
+                splash.Close();
                 var result = MessageBox.Show(
                     string.Format(Strings.DbPassword_DiscoveryMessage, discoveredSiteCode),
                     Strings.DbPassword_DiscoveryTitle,
@@ -70,6 +76,7 @@ internal static class Program
         // IMPORTANT: Set encryption password BEFORE building service provider
         if (isFirstRun)
         {
+            splash.Close();
             using var form = new FirstRunForm();
             if (form.ShowDialog() != DialogResult.OK)
             {
@@ -105,6 +112,7 @@ internal static class Program
         }
         else if (string.IsNullOrWhiteSpace(databaseOptions.EncryptionPassword))
         {
+            splash.Close();
             // Database exists but no password provided, prompt with validation
             if (!PromptForPasswordWithRetry(databaseOptions, out var password))
             {
@@ -157,6 +165,9 @@ internal static class Program
             scope.ServiceProvider.GetRequiredService<ThemeService>();
 
             using var idleLock = ConfigureIdleLock(scope.ServiceProvider);
+
+            // Close splash before showing login
+            splash.Close();
 
 #if DEBUG
             // Dev bypass: skip login when PYLAE_DEV_AUTO_LOGIN=true
@@ -747,4 +758,5 @@ internal static class Program
             Console.WriteLine($"Warning: Could not update appsettings.json: {ex.Message}");
         }
     }
+
 }

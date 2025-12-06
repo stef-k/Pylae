@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Pylae.Desktop.Forms;
@@ -206,6 +207,7 @@ partial class FirstRunForm
         MinimizeBox = false;
         Name = "FirstRunForm";
         StartPosition = FormStartPosition.CenterScreen;
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         ResumeLayout(false);
         PerformLayout();
     }

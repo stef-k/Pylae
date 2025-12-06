@@ -20,7 +20,9 @@ public class MemberService : IMemberService
 
     public async Task<Member?> GetByIdAsync(string memberId, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Members.AsNoTracking()
+        var entity = await _dbContext.Members
+            .AsNoTracking()
+            .Include(m => m.MemberType)
             .FirstOrDefaultAsync(m => m.Id == memberId, cancellationToken);
 
         return entity is null ? null : ToDomain(entity);
@@ -28,7 +30,9 @@ public class MemberService : IMemberService
 
     public async Task<Member?> GetActiveByMemberNumberAsync(int memberNumber, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.Members.AsNoTracking()
+        var entity = await _dbContext.Members
+            .AsNoTracking()
+            .Include(m => m.MemberType)
             .Where(m => m.MemberNumber == memberNumber && m.IsActive)
             .FirstOrDefaultAsync(cancellationToken);
 
@@ -38,7 +42,10 @@ public class MemberService : IMemberService
     public async Task<IReadOnlyCollection<Member>> SearchAsync(string? query, CancellationToken cancellationToken = default)
     {
         var normalized = query?.Trim();
-        var members = _dbContext.Members.AsNoTracking().Where(m => m.IsActive);
+        var members = _dbContext.Members
+            .AsNoTracking()
+            .Include(m => m.MemberType)
+            .Where(m => m.IsActive);
 
         if (!string.IsNullOrWhiteSpace(normalized))
         {

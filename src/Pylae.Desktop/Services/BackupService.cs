@@ -3,6 +3,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Security.Cryptography;
 using Microsoft.Data.Sqlite;
+using Microsoft.Extensions.Logging;
 using Pylae.Data.Context;
 using Pylae.Desktop.Resources;
 
@@ -22,10 +23,12 @@ public record BackupRestoreResult(bool IsValid, string? Reason);
 public class BackupService : IBackupService
 {
     private readonly DatabaseOptions _options;
+    private readonly ILogger<BackupService>? _logger;
 
-    public BackupService(DatabaseOptions options)
+    public BackupService(DatabaseOptions options, ILogger<BackupService>? logger = null)
     {
         _options = options;
+        _logger = logger;
     }
 
     public async Task<byte[]> CreateBackupAsync(bool includePhotos, CancellationToken cancellationToken = default)
@@ -40,8 +43,8 @@ public class BackupService : IBackupService
             var tempVisitsPath = Path.Combine(tempDir, "visits.db");
 
             // Use SQLite online backup API to safely backup open databases
-            await BackupDatabaseSafelyAsync(_options.GetMasterDbPath(), tempMasterPath, _options.EncryptionPassword, cancellationToken);
-            await BackupDatabaseSafelyAsync(_options.GetVisitsDbPath(), tempVisitsPath, _options.EncryptionPassword, cancellationToken);
+            await BackupDatabaseSafelyAsync(_options.GetMasterDbPath(), tempMasterPath, _options.EncryptionPassword, _logger, cancellationToken);
+            await BackupDatabaseSafelyAsync(_options.GetVisitsDbPath(), tempVisitsPath, _options.EncryptionPassword, _logger, cancellationToken);
 
             // Create ZIP archive with backed up files
             await using var buffer = new MemoryStream();
@@ -83,37 +86,61 @@ public class BackupService : IBackupService
     /// <summary>
     /// Safely backs up a SQLite database using the online backup API.
     /// This works even if the database is currently open and being written to.
+    /// Includes retry logic for transient file locking issues.
     /// </summary>
-    private static async Task BackupDatabaseSafelyAsync(string sourcePath, string destinationPath, string password, CancellationToken cancellationToken)
+    private static async Task BackupDatabaseSafelyAsync(string sourcePath, string destinationPath, string password, ILogger? logger, CancellationToken cancellationToken)
     {
         if (!File.Exists(sourcePath))
         {
             return;
         }
 
-        // Use SQLite online backup API
-        var sourceConnStr = new SqliteConnectionStringBuilder
+        const int maxRetries = 3;
+        const int baseDelayMs = 500;
+        var dbName = Path.GetFileName(sourcePath);
+
+        for (var attempt = 1; attempt <= maxRetries; attempt++)
         {
-            DataSource = sourcePath,
-            Mode = SqliteOpenMode.ReadOnly,
-            Password = password
-        }.ToString();
+            try
+            {
+                // Use SQLite online backup API
+                var sourceConnStr = new SqliteConnectionStringBuilder
+                {
+                    DataSource = sourcePath,
+                    Mode = SqliteOpenMode.ReadOnly,
+                    Password = password
+                }.ToString();
 
-        var destConnStr = new SqliteConnectionStringBuilder
-        {
-            DataSource = destinationPath,
-            Mode = SqliteOpenMode.ReadWriteCreate,
-            Password = password
-        }.ToString();
+                var destConnStr = new SqliteConnectionStringBuilder
+                {
+                    DataSource = destinationPath,
+                    Mode = SqliteOpenMode.ReadWriteCreate,
+                    Password = password
+                }.ToString();
 
-        await using var sourceConn = new SqliteConnection(sourceConnStr);
-        await using var destConn = new SqliteConnection(destConnStr);
+                await using var sourceConn = new SqliteConnection(sourceConnStr);
+                await using var destConn = new SqliteConnection(destConnStr);
 
-        await sourceConn.OpenAsync(cancellationToken);
-        await destConn.OpenAsync(cancellationToken);
+                await sourceConn.OpenAsync(cancellationToken);
+                await destConn.OpenAsync(cancellationToken);
 
-        // Perform online backup (thread-safe, consistent snapshot)
-        sourceConn.BackupDatabase(destConn);
+                // Perform online backup (thread-safe, consistent snapshot)
+                sourceConn.BackupDatabase(destConn);
+
+                if (attempt > 1)
+                {
+                    logger?.LogInformation("Backup of {Database} succeeded on attempt {Attempt}", dbName, attempt);
+                }
+                return; // Success
+            }
+            catch (Exception ex) when (attempt < maxRetries)
+            {
+                // Wait before retrying with exponential backoff
+                var delay = baseDelayMs * (int)Math.Pow(2, attempt - 1);
+                logger?.LogWarning(ex, "Backup of {Database} failed on attempt {Attempt}, retrying in {Delay}ms", dbName, attempt, delay);
+                await Task.Delay(delay, cancellationToken);
+            }
+        }
     }
 
     private static void AddFileToArchive(ZipArchive archive, string path, string entryName)
@@ -123,7 +150,26 @@ public class BackupService : IBackupService
             return;
         }
 
-        archive.CreateEntryFromFile(path, entryName, CompressionLevel.Fastest);
+        // Use retry logic with file sharing to handle brief locks after SQLite backup
+        const int maxRetries = 5;
+        const int delayMs = 200;
+
+        for (var attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                // Open with FileShare.ReadWrite to allow other processes that may still have handles
+                using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                var entry = archive.CreateEntry(entryName, CompressionLevel.Fastest);
+                using var entryStream = entry.Open();
+                fileStream.CopyTo(entryStream);
+                return; // Success
+            }
+            catch (IOException) when (attempt < maxRetries)
+            {
+                Thread.Sleep(delayMs);
+            }
+        }
     }
 
     public async Task CreateBackupAsync(string destinationPath, bool includePhotos, CancellationToken cancellationToken = default)
@@ -192,10 +238,25 @@ public class BackupService : IBackupService
             return string.Empty;
         }
 
-        using var sha = SHA256.Create();
-        using var stream = File.OpenRead(path);
-        var hash = sha.ComputeHash(stream);
-        return Convert.ToHexString(hash);
+        const int maxRetries = 5;
+        const int delayMs = 200;
+
+        for (var attempt = 1; attempt <= maxRetries; attempt++)
+        {
+            try
+            {
+                using var sha = SHA256.Create();
+                using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                var hash = sha.ComputeHash(stream);
+                return Convert.ToHexString(hash);
+            }
+            catch (IOException) when (attempt < maxRetries)
+            {
+                Thread.Sleep(delayMs);
+            }
+        }
+
+        return string.Empty;
     }
 
     private static Dictionary<string, string>? ReadManifest(ZipArchive zip)

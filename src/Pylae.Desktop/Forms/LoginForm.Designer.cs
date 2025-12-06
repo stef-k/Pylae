@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Pylae.Desktop.Forms;
@@ -151,6 +152,7 @@ partial class LoginForm
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         Name = "LoginForm";
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         StartPosition = FormStartPosition.CenterScreen;
         ResumeLayout(false);
         PerformLayout();

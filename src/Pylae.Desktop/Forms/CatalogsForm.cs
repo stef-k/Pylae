@@ -56,7 +56,7 @@ public partial class CatalogsForm : Form
     {
         var editor = _services.GetRequiredService<MemberTypeEditorForm>();
         editor.LoadMemberType(new MemberType());
-        if (editor.ShowDialog(this) == DialogResult.OK)
+        if (await editor.ShowDialogAsync(this) == DialogResult.OK)
         {
             await LoadDataAsync();
         }
@@ -71,7 +71,7 @@ public partial class CatalogsForm : Form
 
         var editor = _services.GetRequiredService<MemberTypeEditorForm>();
         editor.LoadMemberType(mt);
-        if (editor.ShowDialog(this) == DialogResult.OK)
+        if (await editor.ShowDialogAsync(this) == DialogResult.OK)
         {
             await LoadDataAsync();
         }

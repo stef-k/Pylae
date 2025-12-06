@@ -11,6 +11,7 @@ public class Member
     public bool IsPermanentStaff { get; set; }
     public int? MemberTypeId { get; set; }
     public MemberType? MemberType { get; set; }
+    public string? MemberTypeName => MemberType?.DisplayName;
     public string? PersonalIdNumber { get; set; }
     public string? BusinessIdNumber { get; set; }
     public string? PhotoFileName { get; set; }

@@ -14,6 +14,9 @@ public class PylaeVisitsDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PylaeVisitsDbContext).Assembly);
+        // Only apply configurations from the Visits namespace
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(PylaeVisitsDbContext).Assembly,
+            t => t.Namespace?.Contains("Configurations.Visits") == true);
     }
 }

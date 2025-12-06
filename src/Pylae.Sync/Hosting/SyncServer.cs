@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -216,10 +217,13 @@ public class SyncServer : IAsyncDisposable
                 return Results.NotFound();
             }
 
+            // Create sanitized copy that excludes RemoteSites table (contains API keys)
+            var sanitizedDbBytes = await CreateSanitizedMasterCopyAsync(masterPath, options.EncryptionPassword, cancellationToken);
+
             var package = new MasterPackage
             {
                 SiteCode = opts.SiteCode,
-                MasterDatabase = await File.ReadAllBytesAsync(masterPath, cancellationToken),
+                MasterDatabase = sanitizedDbBytes,
                 PhotosArchive = await BuildPhotosArchiveAsync(options.GetPhotosPath(), cancellationToken)
             };
 
@@ -250,6 +254,65 @@ public class SyncServer : IAsyncDisposable
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Creates a copy of the master database with sensitive local-only data removed.
+    /// This excludes the RemoteSites table which contains API keys for connecting to other machines.
+    /// </summary>
+    private static async Task<byte[]> CreateSanitizedMasterCopyAsync(string sourcePath, string password, CancellationToken cancellationToken)
+    {
+        var tempPath = Path.Combine(Path.GetTempPath(), $"pylae_sync_{Guid.NewGuid():N}.db");
+
+        try
+        {
+            // Copy the database file
+            File.Copy(sourcePath, tempPath, overwrite: true);
+
+            // Open the copy and clear RemoteSites table
+            var connectionString = new SqliteConnectionStringBuilder
+            {
+                DataSource = tempPath,
+                Mode = SqliteOpenMode.ReadWrite,
+                Password = password
+            }.ToString();
+
+            await using var connection = new SqliteConnection(connectionString);
+            await connection.OpenAsync(cancellationToken);
+
+            // Delete all rows from RemoteSites table (table may not exist in older databases)
+            await using var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM RemoteSites WHERE 1=1";
+            try
+            {
+                await command.ExecuteNonQueryAsync(cancellationToken);
+            }
+            catch (SqliteException)
+            {
+                // Table doesn't exist yet - that's fine
+            }
+
+            // Close connection before reading file
+            await connection.CloseAsync();
+
+            // Read the sanitized database
+            return await File.ReadAllBytesAsync(tempPath, cancellationToken);
+        }
+        finally
+        {
+            // Clean up temp file
+            try
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
+            catch
+            {
+                // Ignore cleanup failures
+            }
+        }
     }
 
     private static async Task<byte[]?> BuildPhotosArchiveAsync(string photosPath, CancellationToken cancellationToken)

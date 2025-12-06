@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Pylae.Core.Enums;
 using Pylae.Core.Interfaces;
 using Pylae.Core.Models;
+using Pylae.Desktop.Helpers;
 using Pylae.Desktop.Resources;
 using Pylae.Desktop.Services;
 using Pylae.Desktop.ViewModels;
@@ -37,6 +38,13 @@ public partial class MainForm : Form
     private BindingList<Visit>? _visitsBinding;
     private BindingList<AuditEntry>? _auditBinding;
     private BindingList<User>? _usersBinding;
+
+    // Lazy loading flags for tabs
+    private bool _membersLoaded;
+    private bool _visitsLoaded;
+    private bool _auditLoaded;
+    private bool _usersLoaded;
+    private bool _settingsLoaded;
 
     public MainForm(
         MainViewModel mainViewModel,
@@ -89,56 +97,50 @@ public partial class MainForm : Form
     {
         _mainViewModel.CurrentUser = user;
         _currentUserService.CurrentUser = user;
-        UpdateWelcomeLabel(user.FirstName);
+        UpdateWelcomeLabel(user.LastName);
 
         // Enable/disable admin menu based on role
         var isAdmin = user.Role == UserRole.Admin;
         adminMenu.Enabled = isAdmin;
     }
 
-    protected override async void OnLoad(EventArgs e)
+    protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        await _mainViewModel.InitializeAsync();
-        siteLabel.Text = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
-        UpdateWelcomeLabel(_mainViewModel.CurrentUser?.FirstName);
 
-        // Set up settings form view (replaces grid)
+        // Set up UI elements synchronously (no data loading)
         SetupSettingsFormView();
-        await _settingsViewModel.LoadAsync();
-        await LoadSettingsToFormAsync();
-
-        // Set up master-detail view for Members
         SetupMembersMasterDetailView();
+        SetupUsersMasterDetailView();
 
-        await _membersViewModel.LoadAsync();
-        _membersBinding = new BindingList<Member>(_membersViewModel.Members);
-        membersGrid.DataSource = _membersBinding;
+        // Enable double buffering for better grid performance
+        visitsGrid.EnableDoubleBuffering();
+        auditGrid.EnableDoubleBuffering();
 
-        // Populate combo boxes for Members form
-        await PopulateMemberComboBoxes();
-
-        await _visitsViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
-        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
-        visitsGrid.DataSource = _visitsBinding;
+        // Initialize date pickers with default values
         visitsFromPicker.Value = DateTime.Today.AddDays(-7);
         visitsToPicker.Value = DateTime.Today;
-
-        await _auditLogViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null);
-        _auditBinding = new BindingList<AuditEntry>(_auditLogViewModel.Entries);
-        auditGrid.DataSource = _auditBinding;
         auditFromPicker.Value = DateTime.Today.AddDays(-7);
         auditToPicker.Value = DateTime.Today;
 
-        // Set up master-detail view for Users
-        SetupUsersMasterDetailView();
+        // Refresh date pickers to use app locale
+        RefreshDatePickerFormats();
+    }
 
-        await LoadUsersAsync();
+    protected override async void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
 
-        // Refresh date pickers to use app locale after all views are set up
+        // Initialize after form is visible - prevents UI blocking during first DB access
+        await _mainViewModel.InitializeAsync();
+        siteLabel.Text = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
+        UpdateWelcomeLabel(_mainViewModel.CurrentUser?.LastName);
+
+        // Refresh date pickers again after culture is loaded
         RefreshDatePickerFormats();
 
-        await TryStartSyncAsync();
+        // Start sync server in background
+        _ = TryStartSyncAsync();
     }
 
     private async Task PopulateMemberComboBoxes()
@@ -250,7 +252,6 @@ public partial class MainForm : Form
 
         try
         {
-            var previousCursor = Cursor.Current;
             Cursor.Current = Cursors.WaitCursor;
             var bytes = await _backupService.CreateBackupAsync(includePhotos: true);
             await File.WriteAllBytesAsync(dialog.FileName, bytes);
@@ -360,10 +361,10 @@ public partial class MainForm : Form
         visitsGrid.DataSource = _visitsBinding;
     }
 
-    private void OnRemoteSitesClick(object sender, EventArgs e)
+    private async void OnRemoteSitesClick(object sender, EventArgs e)
     {
         var form = _serviceProvider.GetRequiredService<RemoteSitesForm>();
-        form.ShowDialog(this);
+        await form.ShowDialogAsync(this);
     }
 
     private async void OnResetPasswordClick(object? sender, EventArgs e)
@@ -446,7 +447,7 @@ public partial class MainForm : Form
             return;
         }
 
-        var dialog = new SaveFileDialog
+        using var dialog = new SaveFileDialog
         {
             Filter = "Excel files (*.xlsx)|*.xlsx|JSON files (*.json)|*.json",
             FileName = "audit.xlsx"
@@ -469,7 +470,7 @@ public partial class MainForm : Form
             return;
         }
 
-        var dialog = new SaveFileDialog
+        using var dialog = new SaveFileDialog
         {
             Filter = "Excel files (*.xlsx)|*.xlsx|JSON files (*.json)|*.json",
             FileName = "members.xlsx"
@@ -492,7 +493,7 @@ public partial class MainForm : Form
             return;
         }
 
-        var dialog = new SaveFileDialog
+        using var dialog = new SaveFileDialog
         {
             Filter = "Excel files (*.xlsx)|*.xlsx|JSON files (*.json)|*.json",
             FileName = "visits.xlsx"
@@ -517,10 +518,11 @@ public partial class MainForm : Form
             return;
         }
 
-        var dialog = new SaveFileDialog
+        var safeName = string.Join("_", member.LastName.Split(Path.GetInvalidFileNameChars()));
+        using var dialog = new SaveFileDialog
         {
             Filter = "PDF files (*.pdf)|*.pdf",
-            FileName = $"member_{member.MemberNumber}.pdf"
+            FileName = $"{member.MemberNumber}_{safeName}.pdf"
         };
 
         if (dialog.ShowDialog(this) == DialogResult.OK)
@@ -549,7 +551,7 @@ public partial class MainForm : Form
             return;
         }
 
-        var dialog = new SaveFileDialog
+        using var dialog = new SaveFileDialog
         {
             Filter = "PDF files (*.pdf)|*.pdf",
             FileName = $"badges_{DateTime.Now:yyyyMMdd_HHmm}.pdf"
@@ -573,7 +575,7 @@ public partial class MainForm : Form
     private async void OnOpenCatalogsClick(object? sender, EventArgs e)
     {
         var form = _serviceProvider.GetRequiredService<CatalogsForm>();
-        form.ShowDialog(this);
+        await form.ShowDialogAsync(this);
         await _catalogsViewModel.LoadAsync();
         await _membersViewModel.LoadAsync();
         _membersBinding = new BindingList<Member>(_membersViewModel.Members);
@@ -711,18 +713,95 @@ public partial class MainForm : Form
         visitsPanel.Visible = panelToShow == visitsPanel;
         settingsPanel.Visible = panelToShow == settingsPanel;
         auditPanel.Visible = panelToShow == auditPanel;
+
+        // Lazy load data for the selected panel
+        if (panelToShow == membersPanel && !_membersLoaded)
+        {
+            _ = LoadMembersPanelAsync();
+        }
+        else if (panelToShow == visitsPanel && !_visitsLoaded)
+        {
+            _ = LoadVisitsPanelAsync();
+        }
+        else if (panelToShow == auditPanel && !_auditLoaded)
+        {
+            _ = LoadAuditPanelAsync();
+        }
+        else if (panelToShow == usersPanel && !_usersLoaded)
+        {
+            _ = LoadUsersPanelAsync();
+        }
+        else if (panelToShow == settingsPanel && !_settingsLoaded)
+        {
+            _ = LoadSettingsPanelAsync();
+        }
     }
 
-    private void UpdateWelcomeLabel(string? firstName)
+    private async Task LoadMembersPanelAsync()
+    {
+        _membersLoaded = true;
+
+        // Load members and catalogs in parallel
+        var membersTask = _membersViewModel.LoadAsync();
+        var catalogsTask = _catalogsViewModel.LoadAsync();
+        await Task.WhenAll(membersTask, catalogsTask);
+
+        _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+        membersGrid.DataSource = _membersBinding;
+
+        // Populate combo boxes
+        _memberTypeComboBox!.DataSource = _catalogsViewModel.MemberTypes.ToList();
+        _memberTypeComboBox.DisplayMember = "DisplayName";
+        _memberTypeComboBox.ValueMember = "Id";
+        _memberTypeComboBox.SelectedIndex = -1;
+
+        // Clear selection to start in "new member" mode
+        membersGrid.ClearSelection();
+        membersGrid.CurrentCell = null;
+        ClearMemberForm();
+
+        await InvokeAsync(() => _memberFirstNameTextBox?.Focus());
+    }
+
+    private async Task LoadVisitsPanelAsync()
+    {
+        _visitsLoaded = true;
+        await _visitsViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
+        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+        visitsGrid.DataSource = _visitsBinding;
+    }
+
+    private async Task LoadAuditPanelAsync()
+    {
+        _auditLoaded = true;
+        await _auditLogViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null);
+        _auditBinding = new BindingList<AuditEntry>(_auditLogViewModel.Entries);
+        auditGrid.DataSource = _auditBinding;
+    }
+
+    private async Task LoadUsersPanelAsync()
+    {
+        _usersLoaded = true;
+        await LoadUsersAsync();
+    }
+
+    private async Task LoadSettingsPanelAsync()
+    {
+        _settingsLoaded = true;
+        await _settingsViewModel.LoadAsync();
+        await LoadSettingsToFormAsync();
+    }
+
+    private void UpdateWelcomeLabel(string? lastName)
     {
         var site = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
-        if (string.IsNullOrEmpty(firstName))
+        if (string.IsNullOrEmpty(lastName))
         {
-            welcomeLabel.Text = $"{Strings.Main_Welcome} | {site}";
+            welcomeLabel.Text = site;
         }
         else
         {
-            welcomeLabel.Text = $"{Strings.Main_Welcome}, {firstName} | {site}";
+            welcomeLabel.Text = $"{lastName} | {site}";
         }
     }
 
@@ -762,6 +841,36 @@ public partial class MainForm : Form
             Strings.Menu_About,
             MessageBoxButtons.OK,
             MessageBoxIcon.Information);
+    }
+
+    #endregion
+
+    #region Status Bar
+
+    /// <summary>
+    /// Updates the status bar with a message. Success messages auto-clear after a delay.
+    /// </summary>
+    private void UpdateStatus(string message, bool isSuccess = true)
+    {
+        statusLabel.Text = message;
+        statusLabel.ForeColor = isSuccess ? Color.DarkGreen : Color.DarkRed;
+
+        if (isSuccess)
+        {
+            // Auto-clear success messages after 5 seconds
+            Task.Delay(5000).ContinueWith(_ =>
+            {
+                if (IsDisposed) return;
+                BeginInvoke(() =>
+                {
+                    if (statusLabel.Text == message)
+                    {
+                        statusLabel.Text = Strings.Status_Ready;
+                        statusLabel.ForeColor = SystemColors.ControlText;
+                    }
+                });
+            });
+        }
     }
 
     #endregion

@@ -43,6 +43,7 @@ public static class DataServiceCollectionExtensions
         services.AddScoped<ISettingsService, SettingsService>();
         services.AddScoped<IAuditService, AuditService>();
         services.AddScoped<IVisitService, VisitService>();
+        services.AddScoped<IRemoteSiteService, RemoteSiteService>();
         services.AddScoped<DatabaseSeeder>();
 
         return services;

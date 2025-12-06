@@ -35,7 +35,7 @@ public static class DatabaseConfig
             ForeignKeys = true,
             Password = password,
             Cache = SqliteCacheMode.Private,
-            Pooling = false  // Disable pooling for now to debug encryption issue
+            Pooling = true  // Enable pooling to reuse connections and avoid repeated key derivation
         };
 
         return builder.ToString();

@@ -1,3 +1,4 @@
+using Microsoft.Data.Sqlite;
 using Pylae.Core.Models;
 using Pylae.Data.Context;
 using Pylae.Desktop.Resources;
@@ -218,10 +219,13 @@ public partial class RemoteSitesForm : Form
             throw new FileNotFoundException(Strings.Sync_MasterMissing, masterPath);
         }
 
+        // Create a sanitized copy that excludes RemoteSites table data
+        var sanitizedDbBytes = await CreateSanitizedMasterCopyAsync(masterPath);
+
         var package = new MasterPackage
         {
             SiteCode = _options.SiteCode,
-            MasterDatabase = await File.ReadAllBytesAsync(masterPath)
+            MasterDatabase = sanitizedDbBytes
         };
 
         if (includePhotos)
@@ -230,6 +234,65 @@ public partial class RemoteSitesForm : Form
         }
 
         return package;
+    }
+
+    /// <summary>
+    /// Creates a copy of the master database with sensitive local-only data removed.
+    /// This excludes the RemoteSites table which contains API keys for connecting to other machines.
+    /// </summary>
+    private async Task<byte[]> CreateSanitizedMasterCopyAsync(string sourcePath)
+    {
+        var tempPath = Path.Combine(Path.GetTempPath(), $"pylae_sync_{Guid.NewGuid():N}.db");
+
+        try
+        {
+            // Copy the database file
+            File.Copy(sourcePath, tempPath, overwrite: true);
+
+            // Open the copy and clear RemoteSites table
+            var connectionString = new SqliteConnectionStringBuilder
+            {
+                DataSource = tempPath,
+                Mode = SqliteOpenMode.ReadWrite,
+                Password = _options.EncryptionPassword
+            }.ToString();
+
+            await using var connection = new SqliteConnection(connectionString);
+            await connection.OpenAsync();
+
+            // Delete all rows from RemoteSites table (table may not exist in older databases)
+            await using var command = connection.CreateCommand();
+            command.CommandText = "DELETE FROM RemoteSites WHERE 1=1";
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (SqliteException)
+            {
+                // Table doesn't exist yet - that's fine
+            }
+
+            // Close connection before reading file
+            await connection.CloseAsync();
+
+            // Read the sanitized database
+            return await File.ReadAllBytesAsync(tempPath);
+        }
+        finally
+        {
+            // Clean up temp file
+            try
+            {
+                if (File.Exists(tempPath))
+                {
+                    File.Delete(tempPath);
+                }
+            }
+            catch
+            {
+                // Ignore cleanup failures
+            }
+        }
     }
 
     private async Task<byte[]?> BuildPhotosArchiveAsync()

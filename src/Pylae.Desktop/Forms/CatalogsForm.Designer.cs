@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Pylae.Desktop.Resources;
 
@@ -77,6 +78,7 @@ partial class CatalogsForm
         Name = "CatalogsForm";
         StartPosition = FormStartPosition.CenterParent;
         Text = Strings.Catalogs_Title;
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         ((System.ComponentModel.ISupportInitialize)memberTypesGrid).EndInit();
         ResumeLayout(false);
     }

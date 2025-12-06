@@ -1,11 +1,11 @@
 using System.ComponentModel;
 using System.IO;
 using System.Security.Cryptography;
+using Microsoft.Extensions.DependencyInjection;
 using Pylae.Core.Constants;
 using Pylae.Core.Enums;
+using Pylae.Core.Interfaces;
 using Pylae.Desktop.Resources;
-using Pylae.Sync.Client;
-using Pylae.Sync.Models;
 
 namespace Pylae.Desktop.Forms;
 
@@ -50,7 +50,6 @@ public partial class MainForm
     private DataGridView? _remoteSitesGrid;
     private Button? _addRemoteSiteButton;
     private Button? _removeRemoteSiteButton;
-    private MachineRemoteSitesConfig? _remoteSitesConfig;
 
     /// <summary>
     /// Sets up the Settings panel with a 3-column form layout for compact display.
@@ -482,14 +481,13 @@ public partial class MainForm
         }
         _apiKeyTextBox!.Text = apiKey;
 
-        // Load remote sites from machine config
-        var siteCode = GetSettingValue(settings, SettingKeys.SiteCode, "default");
-        _remoteSitesConfig = new MachineRemoteSitesConfig(siteCode);
-        await _remoteSitesConfig.LoadAsync();
+        // Load remote sites from database
+        var remoteSiteService = _serviceProvider.GetRequiredService<IRemoteSiteService>();
+        var remoteSites = await remoteSiteService.GetAllAsync();
 
         // Populate remote sites grid
         _remoteSitesGrid!.Rows.Clear();
-        foreach (var site in _remoteSitesConfig.Sites)
+        foreach (var site in remoteSites)
         {
             _remoteSitesGrid.Rows.Add(site.SiteCode ?? "", site.DisplayName ?? "", site.Host ?? "", site.Port, site.ApiKey ?? "");
         }
@@ -562,14 +560,14 @@ public partial class MainForm
 
         await _settingsViewModel.SaveAsync();
 
-        // Save remote sites to machine config (admin only)
-        if (_remoteSitesConfig != null && _mainViewModel.CurrentUser?.Role == UserRole.Admin)
+        // Save remote sites to database (admin only)
+        if (_mainViewModel.CurrentUser?.Role == UserRole.Admin)
         {
-            // Clear and rebuild from grid
-            while (_remoteSitesConfig.Sites.Count > 0)
-            {
-                _remoteSitesConfig.RemoveSite(_remoteSitesConfig.Sites[0].SiteCode);
-            }
+            var remoteSiteService = _serviceProvider.GetRequiredService<IRemoteSiteService>();
+            var existingSites = await remoteSiteService.GetAllAsync();
+
+            // Track which sites are in the grid
+            var gridSiteCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
             foreach (DataGridViewRow row in _remoteSitesGrid!.Rows)
             {
@@ -578,18 +576,39 @@ public partial class MainForm
                 var siteCode = row.Cells["SiteCode"].Value?.ToString();
                 if (string.IsNullOrWhiteSpace(siteCode)) continue;
 
-                var site = new RemoteSiteConfig
+                gridSiteCodes.Add(siteCode);
+
+                var existingSite = existingSites.FirstOrDefault(s =>
+                    string.Equals(s.SiteCode, siteCode, StringComparison.OrdinalIgnoreCase));
+
+                var site = new Core.Models.RemoteSite
                 {
+                    Id = existingSite?.Id ?? 0,
                     SiteCode = siteCode,
                     DisplayName = row.Cells["DisplayName"].Value?.ToString(),
                     Host = row.Cells["Host"].Value?.ToString() ?? "localhost",
                     Port = int.TryParse(row.Cells["Port"].Value?.ToString(), out var p) ? p : 8080,
                     ApiKey = row.Cells["ApiKey"].Value?.ToString() ?? ""
                 };
-                _remoteSitesConfig.AddOrUpdateSite(site);
+
+                if (existingSite != null)
+                {
+                    await remoteSiteService.UpdateAsync(site);
+                }
+                else
+                {
+                    await remoteSiteService.CreateAsync(site);
+                }
             }
 
-            await _remoteSitesConfig.SaveAsync();
+            // Remove sites that are no longer in the grid
+            foreach (var existingSite in existingSites)
+            {
+                if (!gridSiteCodes.Contains(existingSite.SiteCode))
+                {
+                    await remoteSiteService.DeleteAsync(existingSite.Id);
+                }
+            }
         }
 
         MessageBox.Show(Strings.Settings_Saved, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);

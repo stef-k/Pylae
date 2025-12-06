@@ -655,6 +655,24 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string Common_No {
+            get {
+                return ResourceManager.GetString("Common_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string Common_Yes {
+            get {
+                return ResourceManager.GetString("Common_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Database password is required to continue..
         /// </summary>
         internal static string DbPassword_Cancelled {
@@ -1924,6 +1942,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to copy photo.
+        /// </summary>
+        internal static string Photo_CopyFailed {
+            get {
+                return ResourceManager.GetString("Photo_CopyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image Files|*.jpg;*.jpeg;*.png.
         /// </summary>
         internal static string Photo_Filter {
@@ -2361,6 +2388,51 @@ namespace Pylae.Desktop.Resources {
         internal static string Settings_VisitRetention {
             get {
                 return ResourceManager.GetString("Settings_VisitRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Member deleted successfully.
+        /// </summary>
+        internal static string Status_MemberDeleted {
+            get {
+                return ResourceManager.GetString("Status_MemberDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Member saved successfully.
+        /// </summary>
+        internal static string Status_MemberSaved {
+            get {
+                return ResourceManager.GetString("Status_MemberSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ready.
+        /// </summary>
+        internal static string Status_Ready {
+            get {
+                return ResourceManager.GetString("Status_Ready", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User deleted successfully.
+        /// </summary>
+        internal static string Status_UserDeleted {
+            get {
+                return ResourceManager.GetString("Status_UserDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User saved successfully.
+        /// </summary>
+        internal static string Status_UserSaved {
+            get {
+                return ResourceManager.GetString("Status_UserSaved", resourceCulture);
             }
         }
         

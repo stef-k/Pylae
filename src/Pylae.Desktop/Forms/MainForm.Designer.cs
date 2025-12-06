@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using Pylae.Desktop.Resources;
 
@@ -46,6 +47,10 @@ partial class MainForm
         helpAdminGuideMenuItem = new ToolStripMenuItem();
         helpSeparator = new ToolStripSeparator();
         helpAboutMenuItem = new ToolStripMenuItem();
+
+        // Status bar
+        statusStrip = new StatusStrip();
+        statusLabel = new ToolStripStatusLabel();
 
         // Header panel
         headerPanel = new Panel();
@@ -247,7 +252,7 @@ partial class MainForm
         headerPanel.Dock = DockStyle.Top;
         headerPanel.Location = new Point(0, 28);
         headerPanel.Name = "headerPanel";
-        headerPanel.Padding = new Padding(12, 4, 12, 4);
+        headerPanel.Padding = new Padding(12, 4, 16, 4);
         headerPanel.Size = new Size(1200, 28);
         headerPanel.TabIndex = 1;
 
@@ -263,16 +268,17 @@ partial class MainForm
         subtitleLabel.Visible = false;
 
         //
-        // welcomeLabel - positioned at right, before siteLabel
+        // welcomeLabel - positioned at right with padding
         //
         welcomeLabel.Anchor = AnchorStyles.Top | AnchorStyles.Right;
         welcomeLabel.AutoSize = true;
         welcomeLabel.Font = labelFont;
         welcomeLabel.Location = new Point(900, 4);
+        welcomeLabel.Margin = new Padding(3, 0, 10, 0);
         welcomeLabel.Name = "welcomeLabel";
         welcomeLabel.Size = new Size(57, 20);
         welcomeLabel.TabIndex = 1;
-        welcomeLabel.Text = "Welcome";
+        welcomeLabel.Text = "";
         welcomeLabel.TextAlign = ContentAlignment.MiddleRight;
 
         //
@@ -764,6 +770,21 @@ partial class MainForm
         auditGrid.TabIndex = 6;
 
         //
+        // statusStrip
+        //
+        statusStrip.Items.Add(statusLabel);
+        statusStrip.Dock = DockStyle.Bottom;
+        statusStrip.Name = "statusStrip";
+        statusStrip.Size = new Size(1200, 22);
+        statusStrip.TabIndex = 100;
+        //
+        // statusLabel
+        //
+        statusLabel.Name = "statusLabel";
+        statusLabel.Text = Strings.Status_Ready;
+        statusLabel.Spring = true;
+        statusLabel.TextAlign = ContentAlignment.MiddleLeft;
+        //
         // MainForm
         //
         AutoScaleDimensions = new SizeF(7F, 15F);
@@ -776,10 +797,12 @@ partial class MainForm
         Controls.Add(settingsPanel);
         Controls.Add(auditPanel);
         Controls.Add(headerPanel);
+        Controls.Add(statusStrip);
         Controls.Add(mainMenuStrip);
         MainMenuStrip = mainMenuStrip;
         MinimumSize = new Size(900, 600);
         Name = "MainForm";
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         KeyPreview = true;
         KeyDown += OnMainFormKeyDown;
         StartPosition = FormStartPosition.CenterScreen;
@@ -813,6 +836,10 @@ partial class MainForm
     }
 
     #endregion
+
+    // Status bar
+    private StatusStrip statusStrip;
+    private ToolStripStatusLabel statusLabel;
 
     // Menu
     private MenuStrip mainMenuStrip;

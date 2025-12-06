@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Pylae.Desktop.Forms;
@@ -290,6 +291,7 @@ partial class RemoteSitesForm
         Name = "RemoteSitesForm";
         StartPosition = FormStartPosition.CenterParent;
         Text = "Remote Sites";
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         ((System.ComponentModel.ISupportInitialize)portNumeric).EndInit();
         ResumeLayout(false);
         PerformLayout();

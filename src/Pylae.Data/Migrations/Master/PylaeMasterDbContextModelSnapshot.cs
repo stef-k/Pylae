@@ -118,9 +118,6 @@ namespace Pylae.Data.Migrations.Master
                     b.Property<int?>("MemberTypeId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("MemberTypeId1")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Notes")
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
@@ -151,8 +148,6 @@ namespace Pylae.Data.Migrations.Master
                     b.HasIndex("MemberNumber");
 
                     b.HasIndex("MemberTypeId");
-
-                    b.HasIndex("MemberTypeId1");
 
                     b.ToTable("Members", (string)null);
                 });
@@ -199,6 +194,48 @@ namespace Pylae.Data.Migrations.Master
                         .IsUnique();
 
                     b.ToTable("MemberTypes", (string)null);
+                });
+
+            modelBuilder.Entity("Pylae.Data.Entities.Master.RemoteSite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ApiKey")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("DisplayName")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Host")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Port")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SiteCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("UpdatedAtUtc")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SiteCode")
+                        .IsUnique();
+
+                    b.ToTable("RemoteSites", (string)null);
                 });
 
             modelBuilder.Entity("Pylae.Data.Entities.Master.Setting", b =>
@@ -296,120 +333,12 @@ namespace Pylae.Data.Migrations.Master
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Pylae.Data.Entities.Visits.Visit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Direction")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberBusinessIdNumber")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberBusinessRank")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberFirstName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("MemberIsPermanentStaff")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("MemberLastName")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("MemberNumber")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("MemberOfficeName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberPersonalIdNumber")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberTypeCode")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("MemberTypeName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Method")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SiteCode")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("TimestampLocal")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("TimestampUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UserDisplayName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("VisitGuid")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("WorkstationId")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TimestampUtc");
-
-                    b.HasIndex("MemberNumber", "TimestampUtc");
-
-                    b.HasIndex("SiteCode", "TimestampUtc");
-
-                    b.ToTable("Visits", (string)null);
-                });
-
             modelBuilder.Entity("Pylae.Data.Entities.Master.Member", b =>
                 {
-                    b.HasOne("Pylae.Data.Entities.Master.MemberType", null)
+                    b.HasOne("Pylae.Data.Entities.Master.MemberType", "MemberType")
                         .WithMany()
                         .HasForeignKey("MemberTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Pylae.Data.Entities.Master.MemberType", "MemberType")
-                        .WithMany()
-                        .HasForeignKey("MemberTypeId1");
 
                     b.Navigation("MemberType");
                 });

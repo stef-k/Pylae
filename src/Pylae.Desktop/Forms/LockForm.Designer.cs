@@ -1,4 +1,5 @@
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace Pylae.Desktop.Forms;
@@ -133,6 +134,7 @@ partial class LockForm
         Name = "LockForm";
         StartPosition = FormStartPosition.CenterParent;
         Text = "Locked";
+        Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
         ResumeLayout(false);
         PerformLayout();
     }

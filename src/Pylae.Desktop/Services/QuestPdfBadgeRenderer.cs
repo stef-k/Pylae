@@ -9,6 +9,8 @@ namespace Pylae.Desktop.Services;
 
 public class QuestPdfBadgeRenderer : IBadgeRenderer
 {
+    // Font family with Greek/Unicode support - Segoe UI is available on Windows and supports Greek
+    private const string FontFamily = "Segoe UI";
     public Task<byte[]> RenderBadgeAsync(Member member, CancellationToken cancellationToken = default)
     {
         var qrBytes = GenerateQr(member.MemberNumber.ToString());
@@ -19,6 +21,7 @@ public class QuestPdfBadgeRenderer : IBadgeRenderer
             {
                 page.Size(PageSizes.A6.Landscape());
                 page.Margin(10);
+                page.DefaultTextStyle(x => x.FontFamily(FontFamily));
                 page.Content().Row(row =>
                 {
                     row.RelativeItem(2).Column(col =>
@@ -57,6 +60,7 @@ public class QuestPdfBadgeRenderer : IBadgeRenderer
             {
                 page.Size(PageSizes.A4);
                 page.Margin(15);
+                page.DefaultTextStyle(x => x.FontFamily(FontFamily));
                 page.Content().Column(col =>
                 {
                     // A4 portrait can fit 4 badges (2x2 layout, A6 landscape = half of A5 portrait)

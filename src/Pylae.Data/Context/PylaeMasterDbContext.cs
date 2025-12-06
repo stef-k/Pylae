@@ -20,8 +20,13 @@ public class PylaeMasterDbContext : DbContext
 
     public DbSet<AuditEntry> AuditEntries => Set<AuditEntry>();
 
+    public DbSet<RemoteSite> RemoteSites => Set<RemoteSite>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.ApplyConfigurationsFromAssembly(typeof(PylaeMasterDbContext).Assembly);
+        // Only apply configurations from the Master namespace
+        modelBuilder.ApplyConfigurationsFromAssembly(
+            typeof(PylaeMasterDbContext).Assembly,
+            t => t.Namespace?.Contains("Configurations.Master") == true);
     }
 }

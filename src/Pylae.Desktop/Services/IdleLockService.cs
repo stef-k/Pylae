@@ -29,7 +29,7 @@ public class IdleLockService : IDisposable
         SystemEvents.SessionSwitch += OnSessionSwitch;
     }
 
-    private void CheckIdle(object? sender, EventArgs e)
+    private async void CheckIdle(object? sender, EventArgs e)
     {
         if (_timeoutMinutes <= 0)
         {
@@ -51,7 +51,7 @@ public class IdleLockService : IDisposable
 
         using var lockForm = _services.GetRequiredService<LockForm>();
         lockForm.SetCurrentUser(user);
-        var result = lockForm.ShowDialog();
+        var result = await lockForm.ShowDialogAsync();
 
         switch (result)
         {
@@ -59,7 +59,7 @@ public class IdleLockService : IDisposable
                 _lastInput = DateTime.Now;
                 break;
             case DialogResult.Retry:
-                PromptSwitchUser();
+                await PromptSwitchUserAsync();
                 break;
             default:
                 _lastInput = DateTime.Now;
@@ -69,11 +69,11 @@ public class IdleLockService : IDisposable
         _timer.Start();
     }
 
-    private void PromptSwitchUser()
+    private async Task PromptSwitchUserAsync()
     {
         using var loginForm = _services.GetRequiredService<LoginForm>();
         loginForm.PrepareForReauthentication(null);
-        var dialogResult = loginForm.ShowDialog();
+        var dialogResult = await loginForm.ShowDialogAsync();
         if (dialogResult == DialogResult.OK && loginForm.AuthenticatedUser is not null)
         {
             _currentUserService.CurrentUser = loginForm.AuthenticatedUser;

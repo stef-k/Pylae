@@ -58,7 +58,7 @@ public class MemberConfiguration : IEntityTypeConfiguration<Member>
         builder.HasIndex(x => x.MemberNumber);
         builder.HasIndex(x => x.LastName);
 
-        builder.HasOne<MemberType>()
+        builder.HasOne(x => x.MemberType)
             .WithMany()
             .HasForeignKey(x => x.MemberTypeId)
             .OnDelete(DeleteBehavior.Restrict);
