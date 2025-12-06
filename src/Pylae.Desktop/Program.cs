@@ -254,7 +254,6 @@ internal static class Program
 
         services.AddTransient<LoginForm>();
         services.AddTransient<MainForm>();
-        services.AddTransient<MemberEditorForm>();
         services.AddTransient<RemoteSitesForm>();
         services.AddTransient<CatalogsForm>();
         services.AddTransient<MemberTypeEditorForm>();

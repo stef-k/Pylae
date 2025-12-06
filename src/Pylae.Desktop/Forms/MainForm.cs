@@ -313,21 +313,6 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnAddMemberClick(object sender, EventArgs e)
-    {
-        var selected = membersGrid.CurrentRow?.DataBoundItem as Member;
-        var selectedMember = selected is null ? new Member { Id = string.Empty } : CloneMember(selected);
-
-        var editor = _serviceProvider.GetRequiredService<MemberEditorForm>();
-        editor.LoadMember(selectedMember);
-        if (editor.ShowDialog(this) == DialogResult.OK)
-        {
-            await _membersViewModel.LoadAsync();
-            _membersBinding = new BindingList<Member>(_membersViewModel.Members);
-            membersGrid.DataSource = _membersBinding;
-        }
-    }
-
     private async void OnRefreshMembersClick(object sender, EventArgs e)
     {
         await _membersViewModel.LoadAsync();
@@ -741,33 +726,6 @@ public partial class MainForm : Form
         await _membersViewModel.LoadAsync();
         _membersBinding = new BindingList<Member>(_membersViewModel.Members);
         membersGrid.DataSource = _membersBinding;
-    }
-
-    private static Member CloneMember(Member source)
-    {
-        return new Member
-        {
-            Id = source.Id,
-            MemberNumber = source.MemberNumber,
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            BusinessRank = source.BusinessRank,
-            Office = source.Office,
-            MemberTypeId = source.MemberTypeId,
-            PersonalIdNumber = source.PersonalIdNumber,
-            BusinessIdNumber = source.BusinessIdNumber,
-            IsPermanentStaff = source.IsPermanentStaff,
-            PhotoFileName = source.PhotoFileName,
-            BadgeIssueDate = source.BadgeIssueDate,
-            BadgeExpiryDate = source.BadgeExpiryDate,
-            DateOfBirth = source.DateOfBirth,
-            Phone = source.Phone,
-            Email = source.Email,
-            Notes = source.Notes,
-            IsActive = source.IsActive,
-            CreatedAtUtc = source.CreatedAtUtc,
-            UpdatedAtUtc = source.UpdatedAtUtc
-        };
     }
 
     private static User CloneUser(User source)

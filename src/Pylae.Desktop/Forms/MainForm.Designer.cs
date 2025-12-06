@@ -76,7 +76,6 @@ partial class MainForm
 
         // Members panel controls
         membersGrid = new DataGridView();
-        addMemberButton = new Button();
         refreshMembersButton = new Button();
         exportMembersButton = new Button();
         badgeButton = new Button();
@@ -451,7 +450,6 @@ partial class MainForm
         // membersPanel - Badges/Members view
         //
         membersPanel.Controls.Add(membersGrid);
-        membersPanel.Controls.Add(addMemberButton);
         membersPanel.Controls.Add(exportMembersButton);
         membersPanel.Controls.Add(badgeButton);
         membersPanel.Controls.Add(printBadgeButton);
@@ -477,33 +475,17 @@ partial class MainForm
         membersGrid.TabIndex = 0;
 
         //
-        // addMemberButton
-        //
-        addMemberButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        addMemberButton.AutoSize = true;
-        addMemberButton.Font = buttonFont;
-        addMemberButton.Location = new Point(10, 680);
-        addMemberButton.MinimumSize = new Size(120, 35);
-        addMemberButton.Name = "addMemberButton";
-        addMemberButton.Padding = new Padding(8, 3, 8, 3);
-        addMemberButton.Size = new Size(120, 35);
-        addMemberButton.TabIndex = 1;
-        addMemberButton.Text = Strings.Button_AddEdit;
-        addMemberButton.UseVisualStyleBackColor = true;
-        addMemberButton.Click += OnAddMemberClick;
-
-        //
         // exportMembersButton
         //
         exportMembersButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         exportMembersButton.AutoSize = true;
         exportMembersButton.Font = buttonFont;
-        exportMembersButton.Location = new Point(140, 680);
+        exportMembersButton.Location = new Point(10, 680);
         exportMembersButton.MinimumSize = new Size(120, 35);
         exportMembersButton.Name = "exportMembersButton";
         exportMembersButton.Padding = new Padding(8, 3, 8, 3);
         exportMembersButton.Size = new Size(120, 35);
-        exportMembersButton.TabIndex = 2;
+        exportMembersButton.TabIndex = 1;
         exportMembersButton.Text = Strings.Button_Export;
         exportMembersButton.UseVisualStyleBackColor = true;
         exportMembersButton.Click += OnExportMembersClick;
@@ -514,12 +496,12 @@ partial class MainForm
         badgeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         badgeButton.AutoSize = true;
         badgeButton.Font = buttonFont;
-        badgeButton.Location = new Point(270, 680);
+        badgeButton.Location = new Point(140, 680);
         badgeButton.MinimumSize = new Size(120, 35);
         badgeButton.Name = "badgeButton";
         badgeButton.Padding = new Padding(8, 3, 8, 3);
         badgeButton.Size = new Size(120, 35);
-        badgeButton.TabIndex = 3;
+        badgeButton.TabIndex = 2;
         badgeButton.Text = Strings.Button_BadgePdf;
         badgeButton.UseVisualStyleBackColor = true;
         badgeButton.Click += OnBadgeClick;
@@ -530,12 +512,12 @@ partial class MainForm
         printBadgeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         printBadgeButton.AutoSize = true;
         printBadgeButton.Font = buttonFont;
-        printBadgeButton.Location = new Point(400, 680);
+        printBadgeButton.Location = new Point(270, 680);
         printBadgeButton.MinimumSize = new Size(120, 35);
         printBadgeButton.Name = "printBadgeButton";
         printBadgeButton.Padding = new Padding(8, 3, 8, 3);
         printBadgeButton.Size = new Size(120, 35);
-        printBadgeButton.TabIndex = 4;
+        printBadgeButton.TabIndex = 3;
         printBadgeButton.Text = Strings.Button_PrintBadge;
         printBadgeButton.UseVisualStyleBackColor = true;
         printBadgeButton.Click += OnPrintBadgeClick;
@@ -1104,7 +1086,6 @@ partial class MainForm
 
     // Members panel controls
     private DataGridView membersGrid;
-    private Button addMemberButton;
     private Button refreshMembersButton;
     private Button exportMembersButton;
     private Button badgeButton;
