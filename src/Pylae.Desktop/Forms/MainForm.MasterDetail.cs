@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 using Microsoft.Extensions.DependencyInjection;
+using Pylae.Core.Constants;
 using Pylae.Core.Enums;
 using Pylae.Core.Models;
 using Pylae.Desktop.Resources;
@@ -153,6 +154,9 @@ public partial class MainForm
         _memberBadgeIssuePicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
         _memberBadgeExpiryPicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
         _memberDateOfBirthPicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
+
+        // Auto-calculate expiry date when issue date changes (if BadgeValidityMonths > 0)
+        _memberBadgeIssuePicker.ValueChanged += OnMemberBadgeIssueDateChanged;
 
         // Checkboxes
         _memberPermanentCheckBox = new CheckBox { Text = Strings.Member_PermanentStaff, Dock = DockStyle.Fill, Font = inputFont };
@@ -487,6 +491,26 @@ public partial class MainForm
         _memberTypeComboBox!.SelectedIndex = -1;
         _memberPhotoPath = null;
         _memberPhotoLabel!.Text = Strings.Photo_None;
+    }
+
+    private void OnMemberBadgeIssueDateChanged(object? sender, EventArgs e)
+    {
+        if (_memberBadgeIssuePicker == null || _memberBadgeExpiryPicker == null) return;
+
+        // Only auto-calculate if issue date is checked (has value)
+        if (!_memberBadgeIssuePicker.Checked) return;
+
+        // Get BadgeValidityMonths from settings
+        var validityMonthsSetting = _settingsViewModel.Settings
+            .FirstOrDefault(s => s.Key == SettingKeys.BadgeValidityMonths)?.Value;
+
+        if (!int.TryParse(validityMonthsSetting, out var validityMonths) || validityMonths <= 0)
+            return;
+
+        // Auto-calculate expiry date
+        var expiryDate = _memberBadgeIssuePicker.Value.Date.AddMonths(validityMonths);
+        _memberBadgeExpiryPicker.Value = expiryDate;
+        _memberBadgeExpiryPicker.Checked = true;
     }
 
     private void OnMemberNew(object? sender, EventArgs e)
