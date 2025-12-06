@@ -517,6 +517,15 @@ public partial class MainForm
     {
         ClearMemberForm();
         membersGrid.ClearSelection();
+
+        // Default badge issue date to today for new members
+        if (_memberBadgeIssuePicker != null)
+        {
+            _memberBadgeIssuePicker.Value = DateTime.Today;
+            _memberBadgeIssuePicker.Checked = true;
+            // This triggers OnMemberBadgeIssueDateChanged which auto-calculates expiry
+        }
+
         _memberFirstNameTextBox?.Focus();
     }
 
