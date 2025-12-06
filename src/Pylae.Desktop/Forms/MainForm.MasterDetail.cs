@@ -100,6 +100,9 @@ public partial class MainForm
 
         // Wire up data binding event to localize column headers
         membersGrid.DataBindingComplete += OnMembersGridDataBindingComplete;
+
+        // Initialize form with defaults for new member
+        ClearMemberForm();
     }
 
     private Panel CreateMemberFormPanel()
