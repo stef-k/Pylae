@@ -142,6 +142,8 @@ public partial class MainForm
         _memberNumberValueLabel = new Label { Dock = DockStyle.Fill, Font = new Font(inputFont, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft, Text = Strings.MemberNumber_Auto };
         _memberFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberFirstNameTextBox.Leave += OnNameTextBoxLeave;
+        _memberLastNameTextBox.Leave += OnNameTextBoxLeave;
         _memberBusinessRankTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberPersonalIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberBusinessIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
@@ -763,6 +765,8 @@ public partial class MainForm
         _userUsernameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+        _userFirstNameTextBox.Leave += OnNameTextBoxLeave;
+        _userLastNameTextBox.Leave += OnNameTextBoxLeave;
         _userRoleComboBox = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10F) };
         _userActiveCheckBox = new CheckBox { Text = Strings.Users_IsActive, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userSharedLoginCheckBox = new CheckBox { Text = Strings.Users_IsShared, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
@@ -1111,5 +1115,16 @@ public partial class MainForm
                 column.Visible = false;
             }
         }
+    }
+
+    /// <summary>
+    /// Auto-capitalize first letter of each word in name fields when focus leaves.
+    /// </summary>
+    private void OnNameTextBoxLeave(object? sender, EventArgs e)
+    {
+        if (sender is not TextBox textBox || string.IsNullOrWhiteSpace(textBox.Text))
+            return;
+
+        textBox.Text = System.Globalization.CultureInfo.CurrentCulture.TextInfo.ToTitleCase(textBox.Text.ToLower());
     }
 }
