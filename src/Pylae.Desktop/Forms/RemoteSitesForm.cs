@@ -30,46 +30,100 @@ public partial class RemoteSitesForm : Form
         _auditService = auditService;
         _settingsService = settingsService;
         InitializeComponent();
+
+        // Localize labels
+        hostLabel.Text = Strings.RemoteSite_Host;
+        portLabel.Text = Strings.RemoteSite_Port;
+        apiKeyLabel.Text = Strings.RemoteSite_ApiKey;
+        fromLabel.Text = Strings.Sync_From;
+        toLabel.Text = Strings.Sync_To;
+        infoButton.Text = Strings.Sync_FetchInfo;
+        fetchVisitsButton.Text = Strings.Sync_FetchVisits;
         pushMasterButton.Text = Strings.Sync_PushMaster;
         downloadVisitsButton.Text = Strings.Sync_PullVisits;
         includePhotosCheckBox.Text = Strings.Sync_IncludePhotos;
         pullMasterButton.Text = Strings.Sync_PullMaster;
         statusLabel.Text = Strings.Sync_Status;
-        Text = Strings.Button_RemoteSites;
         recentEventsLabel.Text = Strings.Sync_RecentEvents;
+        Text = Strings.Button_RemoteSites;
+
+        // Apply selected UI culture date format to date pickers
+        var culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
+        var format = culture.DateTimeFormat.ShortDatePattern;
+        fromPicker.Format = DateTimePickerFormat.Custom;
+        fromPicker.CustomFormat = format;
+        toPicker.Format = DateTimePickerFormat.Custom;
+        toPicker.CustomFormat = format;
+
         LoadRecentHistory();
     }
 
     private async void OnFetchInfoClick(object sender, EventArgs e)
     {
-        var config = BuildConfig();
-        var info = await _client.GetInfoAsync(config);
-        if (info is null)
+        try
+        {
+            var config = BuildConfig();
+            if (string.IsNullOrWhiteSpace(config.Host))
+            {
+                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var info = await _client.GetInfoAsync(config);
+            if (info is null)
+            {
+                MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            infoTextBox.Text = string.Format(
+                Strings.Sync_InfoDetails,
+                info.SiteCode,
+                info.SiteDisplayName,
+                info.MemberCount,
+                info.VisitsCount,
+                info.LastVisitTimestampUtc?.ToString("g") ?? "-");
+            AppendStatus(Strings.Sync_InfoReceived);
+            _history.Add("pull-info", Strings.Sync_InfoReceived);
+            await LogAuditAsync(Strings.Sync_InfoReceived, "info", info.SiteCode);
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show(Strings.Sync_ConnectionFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendStatus(Strings.Sync_ConnectionFailed);
+        }
+        catch (Exception)
         {
             MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
         }
-
-        infoTextBox.Text = string.Format(
-            Strings.Sync_InfoDetails,
-            info.SiteCode,
-            info.SiteDisplayName,
-            info.MemberCount,
-            info.VisitsCount,
-            info.LastVisitTimestampUtc?.ToString("g") ?? "-");
-        AppendStatus(Strings.Sync_InfoReceived);
-        _history.Add("pull-info", Strings.Sync_InfoReceived);
-        await LogAuditAsync(Strings.Sync_InfoReceived, "info", info.SiteCode);
     }
 
     private async void OnFetchVisitsClick(object sender, EventArgs e)
     {
-        var config = BuildConfig();
-        var visits = await _client.GetVisitsAsync(config, fromPicker.Value, toPicker.Value);
-        visitsCountLabel.Text = string.Format(Strings.Sync_VisitsCountLabel, visits.Count);
-        AppendStatus(string.Format(Strings.Sync_VisitsReceivedCount, visits.Count));
-        _history.Add("pull-visits", string.Format(Strings.Sync_VisitsReceivedCount, visits.Count));
-        await LogAuditAsync(string.Format(Strings.Sync_VisitsReceivedCount, visits.Count), "visits-range", config.SiteCode);
+        try
+        {
+            var config = BuildConfig();
+            if (string.IsNullOrWhiteSpace(config.Host))
+            {
+                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var visits = await _client.GetVisitsAsync(config, fromPicker.Value, toPicker.Value);
+            visitsCountLabel.Text = string.Format(Strings.Sync_VisitsCountLabel, visits.Count);
+            AppendStatus(string.Format(Strings.Sync_VisitsReceivedCount, visits.Count));
+            _history.Add("pull-visits", string.Format(Strings.Sync_VisitsReceivedCount, visits.Count));
+            await LogAuditAsync(string.Format(Strings.Sync_VisitsReceivedCount, visits.Count), "visits-range", config.SiteCode);
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show(Strings.Sync_ConnectionFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendStatus(Strings.Sync_ConnectionFailed);
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private async void OnPushMasterClick(object sender, EventArgs e)
@@ -77,44 +131,73 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
+            if (string.IsNullOrWhiteSpace(config.Host))
+            {
+                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             var package = await BuildMasterPackageAsync(includePhotosCheckBox.Checked);
-        var ok = await _client.UploadMasterPackageAsync(config, package);
-        MessageBox.Show(ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed, Strings.App_Title, MessageBoxButtons.OK, ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
-        AppendStatus(ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed);
-        _history.Add("push-master", ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed);
-        if (ok)
-        {
-            await LogAuditAsync(Strings.Sync_PushSuccess, "master-push", config.SiteCode);
+            var ok = await _client.UploadMasterPackageAsync(config, package);
+            MessageBox.Show(ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed, Strings.App_Title, MessageBoxButtons.OK, ok ? MessageBoxIcon.Information : MessageBoxIcon.Error);
+            AppendStatus(ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed);
+            _history.Add("push-master", ok ? Strings.Sync_PushSuccess : Strings.Sync_PushFailed);
+            if (ok)
+            {
+                await LogAuditAsync(Strings.Sync_PushSuccess, "master-push", config.SiteCode);
+            }
         }
-        }
-        catch (Exception ex)
+        catch (HttpRequestException)
         {
-            MessageBox.Show($"{Strings.Sync_PushFailed}\n{ex.Message}", Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            MessageBox.Show(Strings.Sync_ConnectionFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendStatus(Strings.Sync_ConnectionFailed);
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(Strings.Sync_PushFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 
     private async void OnDownloadVisitsClick(object sender, EventArgs e)
     {
-        var config = BuildConfig();
-        var bytes = await _client.GetFullVisitsDatabaseAsync(config);
-        if (bytes is null)
+        try
+        {
+            var config = BuildConfig();
+            if (string.IsNullOrWhiteSpace(config.Host))
+            {
+                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var bytes = await _client.GetFullVisitsDatabaseAsync(config);
+            if (bytes is null)
+            {
+                MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var destination = _options.GetVisitsDbPath();
+            if (MessageBox.Show(Strings.Sync_OverwriteVisitsConfirm, Strings.App_Title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+            {
+                return;
+            }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
+            await File.WriteAllBytesAsync(destination, bytes);
+            MessageBox.Show(Strings.Sync_VisitsImported, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AppendStatus(Strings.Sync_VisitsImported);
+            _history.Add("pull-visits-db", Strings.Sync_VisitsImported);
+            await LogAuditAsync(Strings.Sync_VisitsImported, "visits-db", config.SiteCode);
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show(Strings.Sync_ConnectionFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendStatus(Strings.Sync_ConnectionFailed);
+        }
+        catch (Exception)
         {
             MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
         }
-
-        var destination = _options.GetVisitsDbPath();
-        if (MessageBox.Show(Strings.Sync_OverwriteVisitsConfirm, Strings.App_Title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-        {
-            return;
-        }
-
-        Directory.CreateDirectory(Path.GetDirectoryName(destination)!);
-        await File.WriteAllBytesAsync(destination, bytes);
-        MessageBox.Show(Strings.Sync_VisitsImported, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        AppendStatus(Strings.Sync_VisitsImported);
-        _history.Add("pull-visits-db", Strings.Sync_VisitsImported);
-        await LogAuditAsync(Strings.Sync_VisitsImported, "visits-db", config.SiteCode);
     }
 
     private RemoteSiteConfig BuildConfig()
@@ -170,61 +253,79 @@ public partial class RemoteSitesForm : Form
 
     private async void OnPullMasterClick(object sender, EventArgs e)
     {
-        var config = BuildConfig();
-        var package = await _client.GetMasterPackageAsync(config);
-        if (package is null || package.MasterDatabase.Length == 0)
+        try
         {
-            MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            return;
-        }
-
-        var choice = MessageBox.Show(Strings.Sync_PullConfirm, Strings.App_Title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
-        if (choice == DialogResult.Cancel)
-        {
-            return;
-        }
-
-        var merge = choice == DialogResult.Yes;
-        if (merge)
-        {
-            var result = await _mergeService.MergeAsync(package.MasterDatabase);
-            var summary = string.Format(Strings.Sync_MergeSummary, result.Offices.Added, result.Offices.Updated, result.MemberTypes.Added, result.MemberTypes.Updated, result.Members.Added, result.Members.Updated);
-            _history.Add("merge-master", summary);
-            AppendStatus(summary);
-
-            if (result.HasConflicts)
+            var config = BuildConfig();
+            if (string.IsNullOrWhiteSpace(config.Host))
             {
-                var conflicts = string.Format(Strings.Sync_MergeConflicts, result.Offices.Skipped, result.MemberTypes.Skipped, result.Members.Skipped);
-                AppendStatus(conflicts);
-                var details = BuildConflictDetails(result);
-                if (!string.IsNullOrWhiteSpace(details))
+                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var package = await _client.GetMasterPackageAsync(config);
+            if (package is null || package.MasterDatabase.Length == 0)
+            {
+                MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            var choice = MessageBox.Show(Strings.Sync_PullConfirm, Strings.App_Title, MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1);
+            if (choice == DialogResult.Cancel)
+            {
+                return;
+            }
+
+            var merge = choice == DialogResult.Yes;
+            if (merge)
+            {
+                var result = await _mergeService.MergeAsync(package.MasterDatabase);
+                var summary = string.Format(Strings.Sync_MergeSummary, result.MemberTypes.Added, result.MemberTypes.Updated, result.Members.Added, result.Members.Updated);
+                _history.Add("merge-master", summary);
+                AppendStatus(summary);
+
+                if (result.HasConflicts)
                 {
-                    AppendStatus(details);
+                    var conflicts = string.Format(Strings.Sync_MergeConflicts, result.MemberTypes.Skipped, result.Members.Skipped);
+                    AppendStatus(conflicts);
+                    var details = BuildConflictDetails(result);
+                    if (!string.IsNullOrWhiteSpace(details))
+                    {
+                        AppendStatus(details);
+                    }
+                    await LogAuditAsync($"{summary} {conflicts} {details}".Trim(), "master-merge", config.SiteCode);
                 }
-                await LogAuditAsync($"{summary} {conflicts} {details}".Trim(), "master-merge", config.SiteCode);
+                else
+                {
+                    await LogAuditAsync(summary, "master-merge", config.SiteCode);
+                }
             }
             else
             {
-                await LogAuditAsync(summary, "master-merge", config.SiteCode);
+                Directory.CreateDirectory(Path.GetDirectoryName(_options.GetMasterDbPath())!);
+                await File.WriteAllBytesAsync(_options.GetMasterDbPath(), package.MasterDatabase);
+                _history.Add("pull-master-overwrite", Strings.Sync_MasterOverwritten);
+                await LogAuditAsync(Strings.Sync_MasterOverwritten, "master-overwrite", config.SiteCode);
             }
-        }
-        else
-        {
-            Directory.CreateDirectory(Path.GetDirectoryName(_options.GetMasterDbPath())!);
-            await File.WriteAllBytesAsync(_options.GetMasterDbPath(), package.MasterDatabase);
-            _history.Add("pull-master-overwrite", Strings.Sync_MasterOverwritten);
-            await LogAuditAsync(Strings.Sync_MasterOverwritten, "master-overwrite", config.SiteCode);
-        }
 
-        if (package.PhotosArchive is { Length: > 0 })
-        {
-            await ExtractPhotosAsync(package.PhotosArchive, _options.GetPhotosPath());
-        }
+            if (package.PhotosArchive is { Length: > 0 })
+            {
+                await ExtractPhotosAsync(package.PhotosArchive, _options.GetPhotosPath());
+            }
 
-        MessageBox.Show(Strings.Sync_MasterImported, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-        AppendStatus(Strings.Sync_MasterImported);
-        _history.Add("pull-master", Strings.Sync_MasterImported);
-        await LogAuditAsync(Strings.Sync_MasterImported, "master-pull", config.SiteCode);
+            MessageBox.Show(Strings.Sync_MasterImported, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            AppendStatus(Strings.Sync_MasterImported);
+            _history.Add("pull-master", Strings.Sync_MasterImported);
+            await LogAuditAsync(Strings.Sync_MasterImported, "master-pull", config.SiteCode);
+        }
+        catch (HttpRequestException)
+        {
+            MessageBox.Show(Strings.Sync_ConnectionFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            AppendStatus(Strings.Sync_ConnectionFailed);
+        }
+        catch (Exception)
+        {
+            MessageBox.Show(Strings.Sync_DownloadFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 
     private static string? BuildConflictDetails(MergeResult result)
@@ -247,7 +348,6 @@ public partial class RemoteSitesForm : Form
             parts.Add(string.Format(label, preview));
         }
 
-        AddDetails(Strings.Sync_MergeConflictsOffices, result.Offices.SkippedItems);
         AddDetails(Strings.Sync_MergeConflictsTypes, result.MemberTypes.SkippedItems);
         AddDetails(Strings.Sync_MergeConflictsMembers, result.Members.SkippedItems);
 

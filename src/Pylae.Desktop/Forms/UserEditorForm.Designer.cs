@@ -165,9 +165,10 @@ partial class UserEditorForm
         quickCodeText.Name = "quickCodeText";
         quickCodeText.Size = new Size(100, 23);
         quickCodeText.TabIndex = 13;
-        // 
+        //
         // saveButton
-        // 
+        //
+        saveButton.ForeColor = Color.Blue;
         saveButton.Location = new Point(152, 350);
         saveButton.Name = "saveButton";
         saveButton.Size = new Size(80, 30);

@@ -125,11 +125,9 @@ namespace Pylae.Data.Migrations.Master
                         .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("OfficeId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int?>("OfficeId1")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Office")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("PersonalIdNumber")
                         .HasMaxLength(200)
@@ -155,10 +153,6 @@ namespace Pylae.Data.Migrations.Master
                     b.HasIndex("MemberTypeId");
 
                     b.HasIndex("MemberTypeId1");
-
-                    b.HasIndex("OfficeId");
-
-                    b.HasIndex("OfficeId1");
 
                     b.ToTable("Members", (string)null);
                 });
@@ -205,66 +199,6 @@ namespace Pylae.Data.Migrations.Master
                         .IsUnique();
 
                     b.ToTable("MemberTypes", (string)null);
-                });
-
-            modelBuilder.Entity("Pylae.Data.Entities.Master.Office", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("DisplayOrder")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(0);
-
-                    b.Property<string>("HeadBusinessRank")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HeadBusinessTitle")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("HeadFullName")
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(true);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(100)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime?>("UpdatedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.ToTable("Offices", (string)null);
                 });
 
             modelBuilder.Entity("Pylae.Data.Entities.Master.Setting", b =>
@@ -477,18 +411,7 @@ namespace Pylae.Data.Migrations.Master
                         .WithMany()
                         .HasForeignKey("MemberTypeId1");
 
-                    b.HasOne("Pylae.Data.Entities.Master.Office", null)
-                        .WithMany()
-                        .HasForeignKey("OfficeId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Pylae.Data.Entities.Master.Office", "Office")
-                        .WithMany()
-                        .HasForeignKey("OfficeId1");
-
                     b.Navigation("MemberType");
-
-                    b.Navigation("Office");
                 });
 #pragma warning restore 612, 618
         }

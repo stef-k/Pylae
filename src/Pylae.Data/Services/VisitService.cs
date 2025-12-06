@@ -7,7 +7,6 @@ using Pylae.Data.Context;
 using VisitEntity = Pylae.Data.Entities.Visits.Visit;
 using MemberEntity = Pylae.Data.Entities.Master.Member;
 using MemberTypeEntity = Pylae.Data.Entities.Master.MemberType;
-using OfficeEntity = Pylae.Data.Entities.Master.Office;
 
 namespace Pylae.Data.Services;
 
@@ -47,7 +46,6 @@ public class VisitService : IVisitService
     {
         var member = await _masterDb.Members
             .Include(m => m.MemberType)
-            .Include(m => m.Office)
             .AsNoTracking()
             .FirstOrDefaultAsync(m => m.MemberNumber == memberNumber && m.IsActive, cancellationToken);
 
@@ -72,7 +70,7 @@ public class VisitService : IVisitService
             MemberFirstName = member.FirstName,
             MemberLastName = member.LastName,
             MemberBusinessRank = member.BusinessRank,
-            MemberOfficeName = member.Office?.Name,
+            MemberOfficeName = member.Office,
             MemberIsPermanentStaff = member.IsPermanentStaff,
             MemberTypeCode = member.MemberType?.Code,
             MemberTypeName = member.MemberType?.DisplayName,
@@ -192,8 +190,7 @@ public class VisitService : IVisitService
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             BusinessRank = entity.BusinessRank,
-            OfficeId = entity.OfficeId,
-            Office = entity.Office is null ? null : ToDomain(entity.Office),
+            Office = entity.Office,
             IsPermanentStaff = entity.IsPermanentStaff,
             MemberTypeId = entity.MemberTypeId,
             MemberType = entity.MemberType is null ? null : ToDomain(entity.MemberType),
@@ -220,25 +217,6 @@ public class VisitService : IVisitService
             Code = entity.Code,
             DisplayName = entity.DisplayName,
             Description = entity.Description,
-            IsActive = entity.IsActive,
-            DisplayOrder = entity.DisplayOrder,
-            CreatedAtUtc = entity.CreatedAtUtc,
-            UpdatedAtUtc = entity.UpdatedAtUtc
-        };
-    }
-
-    private static Office ToDomain(OfficeEntity entity)
-    {
-        return new Office
-        {
-            Id = entity.Id,
-            Code = entity.Code,
-            Name = entity.Name,
-            Phone = entity.Phone,
-            HeadFullName = entity.HeadFullName,
-            HeadBusinessTitle = entity.HeadBusinessTitle,
-            HeadBusinessRank = entity.HeadBusinessRank,
-            Notes = entity.Notes,
             IsActive = entity.IsActive,
             DisplayOrder = entity.DisplayOrder,
             CreatedAtUtc = entity.CreatedAtUtc,

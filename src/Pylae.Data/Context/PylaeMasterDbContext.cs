@@ -14,8 +14,6 @@ public class PylaeMasterDbContext : DbContext
 
     public DbSet<MemberType> MemberTypes => Set<MemberType>();
 
-    public DbSet<Office> Offices => Set<Office>();
-
     public DbSet<User> Users => Set<User>();
 
     public DbSet<Setting> Settings => Set<Setting>();

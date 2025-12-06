@@ -61,6 +61,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Version.
+        /// </summary>
+        internal static string About_Version {
+            get {
+                return ResourceManager.GetString("About_Version", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password updated..
         /// </summary>
         internal static string Account_PasswordUpdated {
@@ -88,6 +97,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New API key generated. Make sure to save settings and share with authorized remote sites..
+        /// </summary>
+        internal static string ApiKey_Generated {
+            get {
+                return ResourceManager.GetString("ApiKey_Generated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Gate &amp; Reception Control.
         /// </summary>
         internal static string App_Subtitle {
@@ -111,6 +129,24 @@ namespace Pylae.Desktop.Resources {
         internal static string App_UserNotAuthenticated {
             get {
                 return ResourceManager.GetString("App_UserNotAuthenticated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Action type.
+        /// </summary>
+        internal static string Audit_ActionType {
+            get {
+                return ResourceManager.GetString("Audit_ActionType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Target type.
+        /// </summary>
+        internal static string Audit_TargetType {
+            get {
+                return ResourceManager.GetString("Audit_TargetType", resourceCulture);
             }
         }
         
@@ -214,6 +250,24 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Batch badges PDF saved ({0} members)..
+        /// </summary>
+        internal static string Badge_BatchSaved {
+            get {
+                return ResourceManager.GetString("Badge_BatchSaved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to generate badge PDF..
+        /// </summary>
+        internal static string Badge_PdfFailed {
+            get {
+                return ResourceManager.GetString("Badge_PdfFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Badge PDF saved..
         /// </summary>
         internal static string Badge_PdfSaved {
@@ -250,6 +304,33 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Type.
+        /// </summary>
+        internal static string Button_AddMemberType {
+            get {
+                return ResourceManager.GetString("Button_AddMemberType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Office.
+        /// </summary>
+        internal static string Button_AddOffice {
+            get {
+                return ResourceManager.GetString("Button_AddOffice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Site.
+        /// </summary>
+        internal static string Button_AddSite {
+            get {
+                return ResourceManager.GetString("Button_AddSite", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add user.
         /// </summary>
         internal static string Button_AddUser {
@@ -277,6 +358,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Batch Badges.
+        /// </summary>
+        internal static string Button_BatchBadges {
+            get {
+                return ResourceManager.GetString("Button_BatchBadges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string Button_Cancel {
@@ -286,7 +376,7 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Catalogs.
+        ///   Looks up a localized string similar to Member Types.
         /// </summary>
         internal static string Button_Catalogs {
             get {
@@ -331,6 +421,42 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Deselect All.
+        /// </summary>
+        internal static string Button_DeselectAll {
+            get {
+                return ResourceManager.GetString("Button_DeselectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string Button_Edit {
+            get {
+                return ResourceManager.GetString("Button_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Type.
+        /// </summary>
+        internal static string Button_EditMemberType {
+            get {
+                return ResourceManager.GetString("Button_EditMemberType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Office.
+        /// </summary>
+        internal static string Button_EditOffice {
+            get {
+                return ResourceManager.GetString("Button_EditOffice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit user.
         /// </summary>
         internal static string Button_EditUser {
@@ -354,6 +480,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Button_Filter {
             get {
                 return ResourceManager.GetString("Button_Filter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Generate.
+        /// </summary>
+        internal static string Button_GenerateApiKey {
+            get {
+                return ResourceManager.GetString("Button_GenerateApiKey", resourceCulture);
             }
         }
         
@@ -385,6 +520,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Quick Code.
+        /// </summary>
+        internal static string Button_QuickCode {
+            get {
+                return ResourceManager.GetString("Button_QuickCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Refresh.
         /// </summary>
         internal static string Button_Refresh {
@@ -394,11 +538,29 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Regenerate.
+        /// </summary>
+        internal static string Button_RegenerateApiKey {
+            get {
+                return ResourceManager.GetString("Button_RegenerateApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Remote Sites.
         /// </summary>
         internal static string Button_RemoteSites {
             get {
                 return ResourceManager.GetString("Button_RemoteSites", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove.
+        /// </summary>
+        internal static string Button_RemoveSite {
+            get {
+                return ResourceManager.GetString("Button_RemoveSite", resourceCulture);
             }
         }
         
@@ -439,6 +601,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select All.
+        /// </summary>
+        internal static string Button_SelectAll {
+            get {
+                return ResourceManager.GetString("Button_SelectAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Switch user.
         /// </summary>
         internal static string Button_SwitchUser {
@@ -453,6 +624,33 @@ namespace Pylae.Desktop.Resources {
         internal static string Button_Unlock {
             get {
                 return ResourceManager.GetString("Button_Unlock", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Member Types.
+        /// </summary>
+        internal static string Catalogs_MemberTypes {
+            get {
+                return ResourceManager.GetString("Catalogs_MemberTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Offices.
+        /// </summary>
+        internal static string Catalogs_Offices {
+            get {
+                return ResourceManager.GetString("Catalogs_Offices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Member Types.
+        /// </summary>
+        internal static string Catalogs_Title {
+            get {
+                return ResourceManager.GetString("Catalogs_Title", resourceCulture);
             }
         }
         
@@ -736,6 +934,33 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Direction.
+        /// </summary>
+        internal static string Gate_Direction {
+            get {
+                return ResourceManager.GetString("Gate_Direction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entry.
+        /// </summary>
+        internal static string Gate_Entry {
+            get {
+                return ResourceManager.GetString("Gate_Entry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        internal static string Gate_Exit {
+            get {
+                return ResourceManager.GetString("Gate_Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enter a valid member number..
         /// </summary>
         internal static string Gate_InvalidMemberNumber {
@@ -777,6 +1002,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Gate_LogSuccess {
             get {
                 return ResourceManager.GetString("Gate_LogSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log Visit.
+        /// </summary>
+        internal static string Gate_LogVisit {
+            get {
+                return ResourceManager.GetString("Gate_LogVisit", resourceCulture);
             }
         }
         
@@ -835,6 +1069,24 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Badge Expiry.
+        /// </summary>
+        internal static string Grid_BadgeExpiryDate {
+            get {
+                return ResourceManager.GetString("Grid_BadgeExpiryDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badge Issue.
+        /// </summary>
+        internal static string Grid_BadgeIssueDate {
+            get {
+                return ResourceManager.GetString("Grid_BadgeIssueDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Business ID.
         /// </summary>
         internal static string Grid_BusinessIdNumber {
@@ -871,6 +1123,51 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Date of Birth.
+        /// </summary>
+        internal static string Grid_DateOfBirth {
+            get {
+                return ResourceManager.GetString("Grid_DateOfBirth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string Grid_Description {
+            get {
+                return ResourceManager.GetString("Grid_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string Grid_DisplayName {
+            get {
+                return ResourceManager.GetString("Grid_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Order.
+        /// </summary>
+        internal static string Grid_DisplayOrder {
+            get {
+                return ResourceManager.GetString("Grid_DisplayOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string Grid_Email {
+            get {
+                return ResourceManager.GetString("Grid_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ID.
         /// </summary>
         internal static string Grid_EntityId {
@@ -880,7 +1177,7 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entity.
+        ///   Looks up a localized string similar to Affected Entity.
         /// </summary>
         internal static string Grid_EntityType {
             get {
@@ -930,6 +1227,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Grid_IsSharedLogin {
             get {
                 return ResourceManager.GetString("Grid_IsSharedLogin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to System.
+        /// </summary>
+        internal static string Grid_IsSystem {
+            get {
+                return ResourceManager.GetString("Grid_IsSystem", resourceCulture);
             }
         }
         
@@ -997,6 +1303,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Log Visit Method.
+        /// </summary>
+        internal static string Grid_Method {
+            get {
+                return ResourceManager.GetString("Grid_Method", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Notes.
         /// </summary>
         internal static string Grid_Notes {
@@ -1033,6 +1348,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Phone.
+        /// </summary>
+        internal static string Grid_Phone {
+            get {
+                return ResourceManager.GetString("Grid_Phone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Photo.
         /// </summary>
         internal static string Grid_PhotoPath {
@@ -1047,6 +1371,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Grid_Role {
             get {
                 return ResourceManager.GetString("Grid_Role", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site.
+        /// </summary>
+        internal static string Grid_SiteCode {
+            get {
+                return ResourceManager.GetString("Grid_SiteCode", resourceCulture);
             }
         }
         
@@ -1092,6 +1425,33 @@ namespace Pylae.Desktop.Resources {
         internal static string Grid_VisitType {
             get {
                 return ResourceManager.GetString("Grid_VisitType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Workstation.
+        /// </summary>
+        internal static string Grid_Workstation {
+            get {
+                return ResourceManager.GetString("Grid_Workstation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin Guide documentation is not yet available..
+        /// </summary>
+        internal static string Help_AdminGuideNotAvailable {
+            get {
+                return ResourceManager.GetString("Help_AdminGuideNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Guide documentation is not yet available..
+        /// </summary>
+        internal static string Help_UserGuideNotAvailable {
+            get {
+                return ResourceManager.GetString("Help_UserGuideNotAvailable", resourceCulture);
             }
         }
         
@@ -1159,6 +1519,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to — or —.
+        /// </summary>
+        internal static string Login_Or {
+            get {
+                return ResourceManager.GetString("Login_Or", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Password.
         /// </summary>
         internal static string Login_Password {
@@ -1204,6 +1573,33 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Active.
+        /// </summary>
+        internal static string Member_Active {
+            get {
+                return ResourceManager.GetString("Member_Active", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badge Expiry Date.
+        /// </summary>
+        internal static string Member_BadgeExpiry {
+            get {
+                return ResourceManager.GetString("Member_BadgeExpiry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badge Issue Date.
+        /// </summary>
+        internal static string Member_BadgeIssue {
+            get {
+                return ResourceManager.GetString("Member_BadgeIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Business ID.
         /// </summary>
         internal static string Member_BusinessId {
@@ -1227,6 +1623,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Member_ClearPhoto {
             get {
                 return ResourceManager.GetString("Member_ClearPhoto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date of Birth.
+        /// </summary>
+        internal static string Member_DateOfBirth {
+            get {
+                return ResourceManager.GetString("Member_DateOfBirth", resourceCulture);
             }
         }
         
@@ -1258,6 +1663,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Email.
+        /// </summary>
+        internal static string Member_Email {
+            get {
+                return ResourceManager.GetString("Member_Email", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to First Name.
         /// </summary>
         internal static string Member_FirstName {
@@ -1272,6 +1686,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Member_LastName {
             get {
                 return ResourceManager.GetString("Member_LastName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notes.
+        /// </summary>
+        internal static string Member_Notes {
+            get {
+                return ResourceManager.GetString("Member_Notes", resourceCulture);
             }
         }
         
@@ -1321,6 +1744,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Phone.
+        /// </summary>
+        internal static string Member_Phone {
+            get {
+                return ResourceManager.GetString("Member_Phone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to save member.
         /// </summary>
         internal static string Member_SaveFailed {
@@ -1366,6 +1798,123 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About.
+        /// </summary>
+        internal static string Menu_About {
+            get {
+                return ResourceManager.GetString("Menu_About", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin.
+        /// </summary>
+        internal static string Menu_Admin {
+            get {
+                return ResourceManager.GetString("Menu_Admin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Admin Guide.
+        /// </summary>
+        internal static string Menu_AdminGuide {
+            get {
+                return ResourceManager.GetString("Menu_AdminGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audit.
+        /// </summary>
+        internal static string Menu_Audit {
+            get {
+                return ResourceManager.GetString("Menu_Audit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badges.
+        /// </summary>
+        internal static string Menu_Badges {
+            get {
+                return ResourceManager.GetString("Menu_Badges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Exit.
+        /// </summary>
+        internal static string Menu_Exit {
+            get {
+                return ResourceManager.GetString("Menu_Exit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File.
+        /// </summary>
+        internal static string Menu_File {
+            get {
+                return ResourceManager.GetString("Menu_File", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        internal static string Menu_Help {
+            get {
+                return ResourceManager.GetString("Menu_Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Main Page (Pylae).
+        /// </summary>
+        internal static string Menu_MainPage {
+            get {
+                return ResourceManager.GetString("Menu_MainPage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string Menu_Settings {
+            get {
+                return ResourceManager.GetString("Menu_Settings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User Guide.
+        /// </summary>
+        internal static string Menu_UserGuide {
+            get {
+                return ResourceManager.GetString("Menu_UserGuide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Users.
+        /// </summary>
+        internal static string Menu_Users {
+            get {
+                return ResourceManager.GetString("Menu_Users", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visits.
+        /// </summary>
+        internal static string Menu_Visits {
+            get {
+                return ResourceManager.GetString("Menu_Visits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Image Files|*.jpg;*.jpeg;*.png.
         /// </summary>
         internal static string Photo_Filter {
@@ -1380,6 +1929,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Photo_None {
             get {
                 return ResourceManager.GetString("Photo_None", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Photo Preview.
+        /// </summary>
+        internal static string Photo_Preview {
+            get {
+                return ResourceManager.GetString("Photo_Preview", resourceCulture);
             }
         }
         
@@ -1402,6 +1960,51 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to API Key.
+        /// </summary>
+        internal static string RemoteSite_ApiKey {
+            get {
+                return ResourceManager.GetString("RemoteSite_ApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display Name.
+        /// </summary>
+        internal static string RemoteSite_DisplayName {
+            get {
+                return ResourceManager.GetString("RemoteSite_DisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Host/IP.
+        /// </summary>
+        internal static string RemoteSite_Host {
+            get {
+                return ResourceManager.GetString("RemoteSite_Host", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        internal static string RemoteSite_Port {
+            get {
+                return ResourceManager.GetString("RemoteSite_Port", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site Code.
+        /// </summary>
+        internal static string RemoteSite_SiteCode {
+            get {
+                return ResourceManager.GetString("RemoteSite_SiteCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Search.
         /// </summary>
         internal static string Search {
@@ -1411,11 +2014,326 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Settings saved..
+        ///   Looks up a localized string similar to API Key.
+        /// </summary>
+        internal static string Settings_ApiKey {
+            get {
+                return ResourceManager.GetString("Settings_ApiKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Audit (years).
+        /// </summary>
+        internal static string Settings_AuditRetention {
+            get {
+                return ResourceManager.GetString("Settings_AuditRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Auto Backup.
+        /// </summary>
+        internal static string Settings_AutoBackupEnabled {
+            get {
+                return ResourceManager.GetString("Settings_AutoBackupEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automated Backup.
+        /// </summary>
+        internal static string Settings_Backup {
+            get {
+                return ResourceManager.GetString("Settings_Backup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Include Photos.
+        /// </summary>
+        internal static string Settings_BackupIncludePhotos {
+            get {
+                return ResourceManager.GetString("Settings_BackupIncludePhotos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval (hours).
+        /// </summary>
+        internal static string Settings_BackupInterval {
+            get {
+                return ResourceManager.GetString("Settings_BackupInterval", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Backup Path.
+        /// </summary>
+        internal static string Settings_BackupPath {
+            get {
+                return ResourceManager.GetString("Settings_BackupPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keep Backups.
+        /// </summary>
+        internal static string Settings_BackupRetention {
+            get {
+                return ResourceManager.GetString("Settings_BackupRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badge Settings.
+        /// </summary>
+        internal static string Settings_Badge {
+            get {
+                return ResourceManager.GetString("Settings_Badge", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Expiry Warning (days).
+        /// </summary>
+        internal static string Settings_BadgeExpiryWarning {
+            get {
+                return ResourceManager.GetString("Settings_BadgeExpiryWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Badge Issuing Office.
+        /// </summary>
+        internal static string Settings_BadgeIssuingOffice {
+            get {
+                return ResourceManager.GetString("Settings_BadgeIssuingOffice", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Head Full Name.
+        /// </summary>
+        internal static string Settings_BadgeOfficeHeadFullName {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficeHeadFullName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Head Job Title.
+        /// </summary>
+        internal static string Settings_BadgeOfficeHeadJobTitle {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficeHeadJobTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Head Rank.
+        /// </summary>
+        internal static string Settings_BadgeOfficeHeadRank {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficeHeadRank", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Office Name.
+        /// </summary>
+        internal static string Settings_BadgeOfficeName {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficeName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Notes.
+        /// </summary>
+        internal static string Settings_BadgeOfficeNotes {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficeNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phone.
+        /// </summary>
+        internal static string Settings_BadgeOfficePhone {
+            get {
+                return ResourceManager.GetString("Settings_BadgeOfficePhone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Validity (months, -1=never).
+        /// </summary>
+        internal static string Settings_BadgeValidity {
+            get {
+                return ResourceManager.GetString("Settings_BadgeValidity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data Retention.
+        /// </summary>
+        internal static string Settings_DataRetention {
+            get {
+                return ResourceManager.GetString("Settings_DataRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Idle Timeout (minutes).
+        /// </summary>
+        internal static string Settings_IdleTimeout {
+            get {
+                return ResourceManager.GetString("Settings_IdleTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string Settings_Language {
+            get {
+                return ResourceManager.GetString("Settings_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Logging.
+        /// </summary>
+        internal static string Settings_Logging {
+            get {
+                return ResourceManager.GetString("Settings_Logging", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log Level.
+        /// </summary>
+        internal static string Settings_LogLevel {
+            get {
+                return ResourceManager.GetString("Settings_LogLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Log Retention (days).
+        /// </summary>
+        internal static string Settings_LogRetention {
+            get {
+                return ResourceManager.GetString("Settings_LogRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network &amp; Sync.
+        /// </summary>
+        internal static string Settings_Network {
+            get {
+                return ResourceManager.GetString("Settings_Network", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable Network Server.
+        /// </summary>
+        internal static string Settings_NetworkEnabled {
+            get {
+                return ResourceManager.GetString("Settings_NetworkEnabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port.
+        /// </summary>
+        internal static string Settings_NetworkPort {
+            get {
+                return ResourceManager.GetString("Settings_NetworkPort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organization.
+        /// </summary>
+        internal static string Settings_Organization {
+            get {
+                return ResourceManager.GetString("Settings_Organization", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organization Phone.
+        /// </summary>
+        internal static string Settings_OrgPhone {
+            get {
+                return ResourceManager.GetString("Settings_OrgPhone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Organization Name.
+        /// </summary>
+        internal static string Settings_OrgTitle {
+            get {
+                return ResourceManager.GetString("Settings_OrgTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remote Sites.
+        /// </summary>
+        internal static string Settings_RemoteSites {
+            get {
+                return ResourceManager.GetString("Settings_RemoteSites", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings saved successfully..
         /// </summary>
         internal static string Settings_Saved {
             get {
                 return ResourceManager.GetString("Settings_Saved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security.
+        /// </summary>
+        internal static string Settings_Security {
+            get {
+                return ResourceManager.GetString("Settings_Security", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site Code.
+        /// </summary>
+        internal static string Settings_SiteCode {
+            get {
+                return ResourceManager.GetString("Settings_SiteCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site Display Name.
+        /// </summary>
+        internal static string Settings_SiteDisplayName {
+            get {
+                return ResourceManager.GetString("Settings_SiteDisplayName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Site Identity.
+        /// </summary>
+        internal static string Settings_SiteIdentity {
+            get {
+                return ResourceManager.GetString("Settings_SiteIdentity", resourceCulture);
             }
         }
         
@@ -1429,11 +2347,65 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Visits (years).
+        /// </summary>
+        internal static string Settings_VisitRetention {
+            get {
+                return ResourceManager.GetString("Settings_VisitRetention", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connection failed. Check network settings and firewall..
+        /// </summary>
+        internal static string Sync_ConnectionFailed {
+            get {
+                return ResourceManager.GetString("Sync_ConnectionFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to download visits database..
         /// </summary>
         internal static string Sync_DownloadFailed {
             get {
                 return ResourceManager.GetString("Sync_DownloadFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fetch Info.
+        /// </summary>
+        internal static string Sync_FetchInfo {
+            get {
+                return ResourceManager.GetString("Sync_FetchInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fetch Visits.
+        /// </summary>
+        internal static string Sync_FetchVisits {
+            get {
+                return ResourceManager.GetString("Sync_FetchVisits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From.
+        /// </summary>
+        internal static string Sync_From {
+            get {
+                return ResourceManager.GetString("Sync_From", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please enter a host address..
+        /// </summary>
+        internal static string Sync_HostRequired {
+            get {
+                return ResourceManager.GetString("Sync_HostRequired", resourceCulture);
             }
         }
         
@@ -1495,7 +2467,7 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Skipped (newer local) - Offices: {0}, MemberTypes: {1}, Members: {2}.
+        ///   Looks up a localized string similar to Skipped (newer local) - MemberTypes: {0}, Members: {1}.
         /// </summary>
         internal static string Sync_MergeConflicts {
             get {
@@ -1513,15 +2485,6 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Offices skipped: {0}.
-        /// </summary>
-        internal static string Sync_MergeConflictsOffices {
-            get {
-                return ResourceManager.GetString("Sync_MergeConflictsOffices", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to MemberTypes skipped: {0}.
         /// </summary>
         internal static string Sync_MergeConflictsTypes {
@@ -1531,7 +2494,7 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Merge applied. Offices +{0}/{1}, MemberTypes +{2}/{3}, Members +{4}/{5}.
+        ///   Looks up a localized string similar to Merge applied. MemberTypes +{0}/{1}, Members +{2}/{3}.
         /// </summary>
         internal static string Sync_MergeSummary {
             get {
@@ -1617,6 +2580,15 @@ namespace Pylae.Desktop.Resources {
         internal static string Sync_Status {
             get {
                 return ResourceManager.GetString("Sync_Status", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To.
+        /// </summary>
+        internal static string Sync_To {
+            get {
+                return ResourceManager.GetString("Sync_To", resourceCulture);
             }
         }
         

@@ -30,10 +30,7 @@ public partial class MemberEditorForm : Form
         personalIdTextBox.Text = member.PersonalIdNumber;
         businessIdTextBox.Text = member.BusinessIdNumber;
         isPermanentCheckBox.Checked = member.IsPermanentStaff;
-        officeCombo.DataSource = _viewModel.Offices;
-        officeCombo.DisplayMember = nameof(Office.Name);
-        officeCombo.ValueMember = nameof(Office.Id);
-        officeCombo.SelectedValue = member.OfficeId ?? 0;
+        officeTextBox.Text = member.Office ?? string.Empty;
 
         memberTypeCombo.DataSource = _viewModel.MemberTypes;
         memberTypeCombo.DisplayMember = nameof(MemberType.DisplayName);
@@ -57,7 +54,7 @@ public partial class MemberEditorForm : Form
         _member.PersonalIdNumber = personalIdTextBox.Text.Trim();
         _member.BusinessIdNumber = businessIdTextBox.Text.Trim();
         _member.IsPermanentStaff = isPermanentCheckBox.Checked;
-        _member.OfficeId = officeCombo.SelectedValue is int officeId ? officeId : null;
+        _member.Office = string.IsNullOrWhiteSpace(officeTextBox.Text) ? null : officeTextBox.Text.Trim();
         _member.MemberTypeId = memberTypeCombo.SelectedValue is int memberTypeId ? memberTypeId : null;
 
         await _viewModel.SaveAsync(_member);

@@ -39,7 +39,6 @@ public static class DataServiceCollectionExtensions
         services.AddSingleton<IClock, Core.Services.SystemClock>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IMemberService, MemberService>();
-        services.AddScoped<IOfficeService, OfficeService>();
         services.AddScoped<IMemberTypeService, MemberTypeService>();
         services.AddScoped<ISettingsService, SettingsService>();
         services.AddScoped<IAuditService, AuditService>();

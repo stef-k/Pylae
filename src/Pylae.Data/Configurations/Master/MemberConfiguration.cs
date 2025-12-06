@@ -28,6 +28,9 @@ public class MemberConfiguration : IEntityTypeConfiguration<Member>
         builder.Property(x => x.BusinessRank)
             .HasMaxLength(200);
 
+        builder.Property(x => x.Office)
+            .HasMaxLength(200);
+
         builder.Property(x => x.PersonalIdNumber)
             .HasMaxLength(200);
 
@@ -54,11 +57,6 @@ public class MemberConfiguration : IEntityTypeConfiguration<Member>
 
         builder.HasIndex(x => x.MemberNumber);
         builder.HasIndex(x => x.LastName);
-
-        builder.HasOne<Office>()
-            .WithMany()
-            .HasForeignKey(x => x.OfficeId)
-            .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasOne<MemberType>()
             .WithMany()

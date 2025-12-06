@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Pylae.Desktop": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "PYLAE_DEV_AUTO_LOGIN": "true"
+      }
+    }
+  }
+}

@@ -35,9 +35,9 @@ public partial class LoginForm : Form
         titleLabel.Text = Strings.Login_Title;
         usernameLabel.Text = Strings.Login_Username;
         passwordLabel.Text = Strings.Login_Password;
+        orLabel.Text = Strings.Login_Or;
         quickCodeLabel.Text = Strings.Login_QuickCode;
         loginButton.Text = Strings.Login_Button;
-        quickCodeButton.Text = Strings.Login_Button;
     }
 
     public void PrepareForReauthentication(User? currentUser = null)
@@ -49,14 +49,35 @@ public partial class LoginForm : Form
         errorLabel.Text = string.Empty;
     }
 
-    private async void OnPasswordLoginClick(object sender, EventArgs e)
+    private bool _suppressClear;
+
+    private void OnCredentialTextChanged(object? sender, EventArgs e)
     {
-        await HandleLoginAsync(useQuickCode: false);
+        if (_suppressClear) return;
+        if (!string.IsNullOrEmpty(usernameTextBox.Text) || !string.IsNullOrEmpty(passwordTextBox.Text))
+        {
+            _suppressClear = true;
+            quickCodeTextBox.Clear();
+            _suppressClear = false;
+        }
     }
 
-    private async void OnQuickCodeLoginClick(object sender, EventArgs e)
+    private void OnQuickCodeTextChanged(object? sender, EventArgs e)
     {
-        await HandleLoginAsync(useQuickCode: true);
+        if (_suppressClear) return;
+        if (!string.IsNullOrEmpty(quickCodeTextBox.Text))
+        {
+            _suppressClear = true;
+            usernameTextBox.Clear();
+            passwordTextBox.Clear();
+            _suppressClear = false;
+        }
+    }
+
+    private async void OnLoginClick(object sender, EventArgs e)
+    {
+        var useQuickCode = !string.IsNullOrEmpty(quickCodeTextBox.Text.Trim());
+        await HandleLoginAsync(useQuickCode);
     }
 
     private async Task HandleLoginAsync(bool useQuickCode)

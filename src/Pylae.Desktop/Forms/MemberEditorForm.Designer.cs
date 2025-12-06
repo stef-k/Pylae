@@ -34,7 +34,7 @@ partial class MemberEditorForm
         businessIdLabel = new Label();
         businessIdTextBox = new TextBox();
         officeLabel = new Label();
-        officeCombo = new ComboBox();
+        officeTextBox = new TextBox();
         memberTypeLabel = new Label();
         memberTypeCombo = new ComboBox();
         isPermanentCheckBox = new CheckBox();
@@ -149,15 +149,13 @@ partial class MemberEditorForm
         officeLabel.Size = new Size(38, 15);
         officeLabel.TabIndex = 12;
         officeLabel.Text = "Office";
-        // 
-        // officeCombo
-        // 
-        officeCombo.DropDownStyle = ComboBoxStyle.DropDownList;
-        officeCombo.FormattingEnabled = true;
-        officeCombo.Location = new Point(210, 183);
-        officeCombo.Name = "officeCombo";
-        officeCombo.Size = new Size(180, 23);
-        officeCombo.TabIndex = 13;
+        //
+        // officeTextBox
+        //
+        officeTextBox.Location = new Point(210, 183);
+        officeTextBox.Name = "officeTextBox";
+        officeTextBox.Size = new Size(180, 23);
+        officeTextBox.TabIndex = 13;
         // 
         // memberTypeLabel
         // 
@@ -186,9 +184,10 @@ partial class MemberEditorForm
         isPermanentCheckBox.TabIndex = 16;
         isPermanentCheckBox.Text = "Permanent staff";
         isPermanentCheckBox.UseVisualStyleBackColor = true;
-        // 
+        //
         // saveButton
-        // 
+        //
+        saveButton.ForeColor = Color.Blue;
         saveButton.Location = new Point(234, 275);
         saveButton.Name = "saveButton";
         saveButton.Size = new Size(75, 30);
@@ -251,7 +250,7 @@ partial class MemberEditorForm
         Controls.Add(isPermanentCheckBox);
         Controls.Add(memberTypeCombo);
         Controls.Add(memberTypeLabel);
-        Controls.Add(officeCombo);
+        Controls.Add(officeTextBox);
         Controls.Add(officeLabel);
         Controls.Add(businessIdTextBox);
         Controls.Add(businessIdLabel);
@@ -290,7 +289,7 @@ partial class MemberEditorForm
     private Label businessIdLabel;
     private TextBox businessIdTextBox;
     private Label officeLabel;
-    private ComboBox officeCombo;
+    private TextBox officeTextBox;
     private Label memberTypeLabel;
     private ComboBox memberTypeCombo;
     private CheckBox isPermanentCheckBox;

@@ -33,10 +33,10 @@ partial class LoginForm
         usernameTextBox = new TextBox();
         passwordLabel = new Label();
         passwordTextBox = new TextBox();
+        orLabel = new Label();
         quickCodeLabel = new Label();
         quickCodeTextBox = new TextBox();
         loginButton = new Button();
-        quickCodeButton = new Button();
         errorLabel = new Label();
         SuspendLayout();
         // 
@@ -58,13 +58,14 @@ partial class LoginForm
         usernameLabel.Size = new Size(63, 15);
         usernameLabel.TabIndex = 1;
         usernameLabel.Text = "Username";
-        // 
+        //
         // usernameTextBox
-        // 
+        //
         usernameTextBox.Location = new Point(22, 73);
         usernameTextBox.Name = "usernameTextBox";
         usernameTextBox.Size = new Size(240, 23);
         usernameTextBox.TabIndex = 2;
+        usernameTextBox.TextChanged += OnCredentialTextChanged;
         // 
         // passwordLabel
         // 
@@ -74,71 +75,74 @@ partial class LoginForm
         passwordLabel.Size = new Size(57, 15);
         passwordLabel.TabIndex = 3;
         passwordLabel.Text = "Password";
-        // 
+        //
         // passwordTextBox
-        // 
+        //
         passwordTextBox.Location = new Point(22, 123);
         passwordTextBox.Name = "passwordTextBox";
         passwordTextBox.Size = new Size(240, 23);
         passwordTextBox.TabIndex = 4;
         passwordTextBox.UseSystemPasswordChar = true;
-        // 
+        passwordTextBox.TextChanged += OnCredentialTextChanged;
+        //
+        // orLabel
+        //
+        orLabel.AutoSize = true;
+        orLabel.ForeColor = Color.Gray;
+        orLabel.Location = new Point(22, 155);
+        orLabel.Name = "orLabel";
+        orLabel.Size = new Size(18, 15);
+        orLabel.TabIndex = 5;
+        orLabel.Text = "—";
+        //
         // quickCodeLabel
-        // 
+        //
         quickCodeLabel.AutoSize = true;
-        quickCodeLabel.Location = new Point(22, 155);
+        quickCodeLabel.Location = new Point(22, 180);
         quickCodeLabel.Name = "quickCodeLabel";
         quickCodeLabel.Size = new Size(66, 15);
-        quickCodeLabel.TabIndex = 5;
+        quickCodeLabel.TabIndex = 6;
         quickCodeLabel.Text = "Quick code";
-        // 
+        //
         // quickCodeTextBox
-        // 
-        quickCodeTextBox.Location = new Point(22, 173);
+        //
+        quickCodeTextBox.Location = new Point(22, 198);
         quickCodeTextBox.MaxLength = 6;
         quickCodeTextBox.Name = "quickCodeTextBox";
         quickCodeTextBox.Size = new Size(120, 23);
-        quickCodeTextBox.TabIndex = 6;
-        // 
+        quickCodeTextBox.TabIndex = 7;
+        quickCodeTextBox.TextChanged += OnQuickCodeTextChanged;
+        //
         // loginButton
-        // 
-        loginButton.Location = new Point(280, 73);
+        //
+        loginButton.Location = new Point(22, 235);
         loginButton.Name = "loginButton";
-        loginButton.Size = new Size(100, 40);
-        loginButton.TabIndex = 7;
+        loginButton.Size = new Size(240, 35);
+        loginButton.TabIndex = 8;
         loginButton.Text = "Login";
         loginButton.UseVisualStyleBackColor = true;
-        loginButton.Click += OnPasswordLoginClick;
-        // 
-        // quickCodeButton
-        // 
-        quickCodeButton.Location = new Point(280, 123);
-        quickCodeButton.Name = "quickCodeButton";
-        quickCodeButton.Size = new Size(100, 40);
-        quickCodeButton.TabIndex = 8;
-        quickCodeButton.Text = "Quick login";
-        quickCodeButton.UseVisualStyleBackColor = true;
-        quickCodeButton.Click += OnQuickCodeLoginClick;
-        // 
+        loginButton.Click += OnLoginClick;
+        //
         // errorLabel
-        // 
+        //
         errorLabel.AutoSize = true;
         errorLabel.ForeColor = Color.IndianRed;
-        errorLabel.Location = new Point(22, 210);
+        errorLabel.Location = new Point(22, 280);
         errorLabel.Name = "errorLabel";
         errorLabel.Size = new Size(0, 15);
         errorLabel.TabIndex = 9;
-        // 
+        //
         // LoginForm
-        // 
+        //
+        AcceptButton = loginButton;
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(400, 240);
+        ClientSize = new Size(285, 310);
         Controls.Add(errorLabel);
-        Controls.Add(quickCodeButton);
         Controls.Add(loginButton);
         Controls.Add(quickCodeTextBox);
         Controls.Add(quickCodeLabel);
+        Controls.Add(orLabel);
         Controls.Add(passwordTextBox);
         Controls.Add(passwordLabel);
         Controls.Add(usernameTextBox);
@@ -159,9 +163,9 @@ partial class LoginForm
     private TextBox usernameTextBox;
     private Label passwordLabel;
     private TextBox passwordTextBox;
+    private Label orLabel;
     private Label quickCodeLabel;
     private TextBox quickCodeTextBox;
     private Button loginButton;
-    private Button quickCodeButton;
     private Label errorLabel;
 }

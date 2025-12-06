@@ -7,22 +7,17 @@ namespace Pylae.Desktop.ViewModels;
 public partial class MembersViewModel : ObservableObject
 {
     private readonly IMemberService _memberService;
-    private readonly IOfficeService _officeService;
     private readonly IMemberTypeService _memberTypeService;
 
     [ObservableProperty]
     private List<Member> _members = new();
 
     [ObservableProperty]
-    private List<Office> _offices = new();
-
-    [ObservableProperty]
     private List<MemberType> _memberTypes = new();
 
-    public MembersViewModel(IMemberService memberService, IOfficeService officeService, IMemberTypeService memberTypeService)
+    public MembersViewModel(IMemberService memberService, IMemberTypeService memberTypeService)
     {
         _memberService = memberService;
-        _officeService = officeService;
         _memberTypeService = memberTypeService;
     }
 
@@ -31,7 +26,6 @@ public partial class MembersViewModel : ObservableObject
         var items = await _memberService.SearchAsync(null, cancellationToken);
         Members = items.ToList();
 
-        Offices = (await _officeService.GetAllAsync(cancellationToken)).ToList();
         MemberTypes = (await _memberTypeService.GetAllAsync(cancellationToken)).ToList();
     }
 

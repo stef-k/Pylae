@@ -138,6 +138,9 @@
   <data name="Login_Button" xml:space="preserve">
     <value>Είσοδος</value>
   </data>
+  <data name="Login_Or" xml:space="preserve">
+    <value>— ή —</value>
+  </data>
   <data name="Gate_Mode_Entry" xml:space="preserve">
     <value>Είσοδος</value>
   </data>
@@ -177,6 +180,180 @@
   <data name="Settings_Title" xml:space="preserve">
     <value>Ρυθμίσεις</value>
   </data>
+  <data name="Settings_SiteIdentity" xml:space="preserve">
+    <value>Ταυτότητα Εγκατάστασης</value>
+  </data>
+  <data name="Settings_SiteCode" xml:space="preserve">
+    <value>Ονομασία Εγκατάστασης</value>
+  </data>
+  <data name="Settings_SiteDisplayName" xml:space="preserve">
+    <value>Εμφανιζόμενη Ονομασία Εγκατάστασης</value>
+  </data>
+  <data name="Settings_Language" xml:space="preserve">
+    <value>Γλώσσα</value>
+  </data>
+  <data name="Settings_Organization" xml:space="preserve">
+    <value>Οργανισμός</value>
+  </data>
+  <data name="Settings_OrgTitle" xml:space="preserve">
+    <value>Ονομασία Οργανισμού</value>
+  </data>
+  <data name="Settings_OrgPhone" xml:space="preserve">
+    <value>Τηλέφωνο Οργανισμού</value>
+  </data>
+  <data name="Settings_Security" xml:space="preserve">
+    <value>Ασφάλεια</value>
+  </data>
+  <data name="Settings_IdleTimeout" xml:space="preserve">
+    <value>Αυτόματο Κλείδωμα (σε λεπτά)</value>
+  </data>
+  <data name="Settings_Badge" xml:space="preserve">
+    <value>Ρυθμίσεις Δελτίων Εισόδου</value>
+  </data>
+  <data name="Settings_BadgeValidity" xml:space="preserve">
+    <value>Ισχύ Δελτίων (σε μήνες, -1 = απεριόριστη)</value>
+  </data>
+  <data name="Settings_BadgeExpiryWarning" xml:space="preserve">
+    <value>Ειδοποίηση Λήξης (ημέρες)</value>
+  </data>
+  <data name="Settings_BadgeIssuingOffice" xml:space="preserve">
+    <value>Γραφείο Έκδοσης Δελτίων</value>
+  </data>
+  <data name="Settings_BadgeOfficeName" xml:space="preserve">
+    <value>Ονομασία Γραφείου</value>
+  </data>
+  <data name="Settings_BadgeOfficePhone" xml:space="preserve">
+    <value>Τηλέφωνο</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadFullName" xml:space="preserve">
+    <value>Ονοματεπώνυμο Προϊσταμένου</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadJobTitle" xml:space="preserve">
+    <value>Τίτλος Θέσης</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadRank" xml:space="preserve">
+    <value>Βαθμός Υπαλλήλου</value>
+  </data>
+  <data name="Settings_BadgeOfficeNotes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Settings_Logging" xml:space="preserve">
+    <value>Καταγραφή Συμβάντων</value>
+  </data>
+  <data name="Settings_LogLevel" xml:space="preserve">
+    <value>Επίπεδο Λεπτομέρειας Καταγραφής Συμβάντων</value>
+  </data>
+  <data name="Settings_LogRetention" xml:space="preserve">
+    <value>Διατήρηση Καταγραφής Συμβάντων (ημέρες)</value>
+  </data>
+  <data name="Settings_Backup" xml:space="preserve">
+    <value>Αυτόματα Αντίγραφα Ασφαλείας</value>
+  </data>
+  <data name="Settings_AutoBackupEnabled" xml:space="preserve">
+    <value>Ενεργοποίηση Αυτόματων Αντιγράφων Ασφαλείας</value>
+  </data>
+  <data name="Settings_BackupIncludePhotos" xml:space="preserve">
+    <value>Συμπεριλαμβάνονται Φωτογραφίες</value>
+  </data>
+  <data name="Settings_BackupInterval" xml:space="preserve">
+    <value>Περιοδικότητα (ώρες)</value>
+  </data>
+  <data name="Settings_BackupRetention" xml:space="preserve">
+    <value>Τήρηση Αντιγράφων Ασφαλείας</value>
+  </data>
+  <data name="Settings_BackupPath" xml:space="preserve">
+    <value>Διαδρομή Αποθήκευσης Αντιγράφων Ασφαλείας</value>
+  </data>
+  <data name="Settings_DataRetention" xml:space="preserve">
+    <value>Διατήρηση Δεδομένων</value>
+  </data>
+  <data name="Settings_AuditRetention" xml:space="preserve">
+    <value>Έλεγχος (έτη)</value>
+  </data>
+  <data name="Settings_VisitRetention" xml:space="preserve">
+    <value>Επισκέψεις (έτη)</value>
+  </data>
+  <data name="Settings_Saved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία</value>
+  </data>
+  <data name="Settings_Network" xml:space="preserve">
+    <value>Δίκτυο &amp; Συγχρονισμός</value>
+  </data>
+  <data name="Settings_NetworkEnabled" xml:space="preserve">
+    <value>Ενεργοποίηση Δικτύου</value>
+  </data>
+  <data name="Settings_NetworkPort" xml:space="preserve">
+    <value>Θύρα Δικτύου</value>
+  </data>
+  <data name="Settings_ApiKey" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <data name="Button_GenerateApiKey" xml:space="preserve">
+    <value>Δημιουργία</value>
+  </data>
+  <data name="Button_RegenerateApiKey" xml:space="preserve">
+    <value>Αναδημιουργία</value>
+  </data>
+  <data name="Settings_RemoteSites" xml:space="preserve">
+    <value>Απομακρυσμένες Εγκαταστάσεις</value>
+  </data>
+  <data name="Button_AddSite" xml:space="preserve">
+    <value>Προσθήκη Εγκατάστασης</value>
+  </data>
+  <data name="Button_RemoveSite" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="RemoteSite_Host" xml:space="preserve">
+    <value>Διεύθυνση IP</value>
+  </data>
+  <data name="RemoteSite_Port" xml:space="preserve">
+    <value>Πόρτα Δικτύου</value>
+  </data>
+  <data name="RemoteSite_SiteCode" xml:space="preserve">
+    <value>Ονομασία Εγκατάστασης</value>
+  </data>
+  <data name="RemoteSite_DisplayName" xml:space="preserve">
+    <value>Εμφανιζόμενη Ονομασία</value>
+  </data>
+  <data name="RemoteSite_ApiKey" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <data name="Sync_From" xml:space="preserve">
+    <value>Από</value>
+  </data>
+  <data name="Sync_To" xml:space="preserve">
+    <value>Σε</value>
+  </data>
+  <data name="Sync_FetchInfo" xml:space="preserve">
+    <value>Λήψη Πληροφοριών</value>
+  </data>
+  <data name="Sync_FetchVisits" xml:space="preserve">
+    <value>Λήψη Επισκέψεων</value>
+  </data>
+  <data name="ApiKey_Generated" xml:space="preserve">
+    <value>Έχει εκδοθεί νέος Κλειδί API. Αποθηκεύστε τις ρυθμίσεις εδώ και στις απομακρυσμένες εγκαταστάσεις.</value>
+  </data>
+  <data name="Catalogs_Title" xml:space="preserve">
+    <value>Τύποι Δελτίων</value>
+  </data>
+  <data name="Catalogs_Offices" xml:space="preserve">
+    <value>Γραφεία</value>
+  </data>
+  <data name="Catalogs_MemberTypes" xml:space="preserve">
+    <value>Τύποι Δελτίων Εισόδου</value>
+  </data>
+  <data name="Button_AddOffice" xml:space="preserve">
+    <value>Προσθήκη Γραφείου</value>
+  </data>
+  <data name="Button_EditOffice" xml:space="preserve">
+    <value>Διόρθωση Γραφείου</value>
+  </data>
+  <data name="Button_AddMemberType" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="Button_EditMemberType" xml:space="preserve">
+    <value>Διόρθωση</value>
+  </data>
   <data name="Main_Welcome" xml:space="preserve">
     <value>Καλώς ήλθατε</value>
   </data>
@@ -201,6 +378,15 @@
   <data name="Button_BadgePdf" xml:space="preserve">
     <value>PDF Δελτίου Εισόδου</value>
   </data>
+  <data name="Button_BatchBadges" xml:space="preserve">
+    <value>Δελτία Εισόδου</value>
+  </data>
+  <data name="Button_SelectAll" xml:space="preserve">
+    <value>Επιλογή Όλων</value>
+  </data>
+  <data name="Button_DeselectAll" xml:space="preserve">
+    <value>Αποεπιλογή Όλων</value>
+  </data>
   <data name="Button_RemoteSites" xml:space="preserve">
     <value>Απομακρυσμένες Εγκαταστάσεις</value>
   </data>
@@ -208,7 +394,7 @@
     <value>Φίλτρο</value>
   </data>
   <data name="Button_Catalogs" xml:space="preserve">
-    <value>Κατάλογοι</value>
+    <value>Τύποι Δελτίων</value>
   </data>
   <data name="Lock_Prompt" xml:space="preserve">
     <value>Η συνεδρία έληξε. Εισάγετε κωδικό ή γρήγορο κωδικό για είσοδο.</value>
@@ -400,7 +586,7 @@
     <value>Η βάση δεδομένων επισκέψεων ενημερώθηκε.</value>
   </data>
   <data name="Sync_IncludePhotos" xml:space="preserve">
-    <value>Συμπεριλαμβανομένων των φωτογραφιών</value>
+    <value>Με τις φωτογραφίες</value>
   </data>
   <data name="Sync_PullMaster" xml:space="preserve">
     <value>Καταγραφή κύριας βάσης δεδομένων</value>
@@ -431,9 +617,6 @@
   </data>
   <data name="Badge_PrintFailed" xml:space="preserve">
     <value>Η εκτύπωση απέτυχε. Ανοίξτε το PDF και εκτυπώστε το χειροκίνητα.</value>
-  </data>
-  <data name="Settings_Saved" xml:space="preserve">
-    <value>Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία</value>
   </data>
   <data name="Members_SelectFirst" xml:space="preserve">
     <value>Επιλέξτε Δελτίο Εισόδου</value>
@@ -471,6 +654,12 @@
   <data name="Badge_PdfSaved" xml:space="preserve">
     <value>Το PDF του Δελτίου Εισόδου αποθηκεύτηκε.</value>
   </data>
+  <data name="Badge_BatchSaved" xml:space="preserve">
+    <value>Αποθηκεύτηκαν σε PDF ({0} δελτία)</value>
+  </data>
+  <data name="Badge_PdfFailed" xml:space="preserve">
+    <value>Αποτυχία δημιουργίας PDF</value>
+  </data>
   <data name="Sync_VisitsCountLabel" xml:space="preserve">
     <value>Λήφθηκαν {0} επισκέψεις.</value>
   </data>
@@ -478,7 +667,7 @@
     <value>Πρόσφατα γεγονότα</value>
   </data>
   <data name="Sync_MergeSummary" xml:space="preserve">
-    <value>Πραγματοποιημένες συγχωνεύσεις Γραφεία+{0}/{1}, Τύποι Δελτίων Εισόδου+{2}/{3}, Δελτία Εισόδου+{4}/{5}</value>
+    <value>Πραγματοποιημένες συγχωνεύσεις Τύποι Δελτίων Εισόδου+{0}/{1}, Δελτία Εισόδου+{2}/{3}</value>
   </data>
   <data name="Sync_InfoDetails" xml:space="preserve">
     <value>Εγκατάσταση: {0} ({1})
@@ -490,10 +679,7 @@
     <value>Η βάση δεδομένων δεν βρέθηκε</value>
   </data>
   <data name="Sync_MergeConflicts" xml:space="preserve">
-    <value>Παραλείψεις (νεότερα τοπικά δεδομέναl) - Γραφεία: {0}, Τύποι Δελτίων Εισόδου: {1}, Δελτία Εισόδου: {2}</value>
-  </data>
-  <data name="Sync_MergeConflictsOffices" xml:space="preserve">
-    <value>Παραλείψεις  Γραφείων: {0}</value>
+    <value>Παραλείψεις (νεότερα τοπικά δεδομένα) - Τύποι Δελτίων Εισόδου: {0}, Δελτία Εισόδου: {1}</value>
   </data>
   <data name="Sync_MergeConflictsTypes" xml:space="preserve">
     <value>Παραλείψεις Τύπων Δελτίων Εισόδου: {0}</value>
@@ -518,6 +704,9 @@
   </data>
   <data name="Photo_None" xml:space="preserve">
     <value>Δεν υπάρχει φωτογραφεία</value>
+  </data>
+  <data name="Photo_Preview" xml:space="preserve">
+    <value>Προεπισκόπηση Φωτογραφίας</value>
   </data>
   <data name="Photo_SelectTitle" xml:space="preserve">
     <value>Επιλογή φωτογραφίας</value>
@@ -555,6 +744,12 @@
   <data name="Sync_MasterOverwritten" xml:space="preserve">
     <value>Η βάση δεδομένων αντικαταστάθηκε</value>
   </data>
+  <data name="Sync_HostRequired" xml:space="preserve">
+    <value>Παρακαλώ εισάγεται τη διεύθυνση IP της εγκατάστασης</value>
+  </data>
+  <data name="Sync_ConnectionFailed" xml:space="preserve">
+    <value>Αποτυχία σύνδεσης. Ελέγξτε τις ρυθμίσεις δικτύου, τα δικαιώματα σας και το τείχος προστασίας.</value>
+  </data>
   <data name="Member_Number" xml:space="preserve">
     <value>Αριθμός Δελτίου Εισόδου</value>
   </data>
@@ -584,6 +779,27 @@
   </data>
   <data name="Member_ClearPhoto" xml:space="preserve">
     <value>Καθαρισμός Φωτογραφίας</value>
+  </data>
+  <data name="Member_Phone" xml:space="preserve">
+    <value>Τηλέφωνο</value>
+  </data>
+  <data name="Member_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Member_DateOfBirth" xml:space="preserve">
+    <value>Ημ/νια Γέννησης</value>
+  </data>
+  <data name="Member_BadgeIssue" xml:space="preserve">
+    <value>Ημ/νια Έκδοσης Δελτίου</value>
+  </data>
+  <data name="Member_BadgeExpiry" xml:space="preserve">
+    <value>Ημ/νια Λήξης Δελτίου</value>
+  </data>
+  <data name="Member_Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="Member_Active" xml:space="preserve">
+    <value>Ενεργό</value>
   </data>
   <data name="Member_NumberRequired" xml:space="preserve">
     <value>Ο αριθμός Δελτίου Εισόδου είναι υποχρεωτικός</value>
@@ -696,6 +912,24 @@
   <data name="Grid_UpdatedAt" xml:space="preserve">
     <value>Ενημερώθηκε</value>
   </data>
+  <data name="Grid_Phone" xml:space="preserve">
+    <value>Τηλέφωνο</value>
+  </data>
+  <data name="Grid_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Grid_DateOfBirth" xml:space="preserve">
+    <value>Ημ/νια γέννησης</value>
+  </data>
+  <data name="Grid_BadgeIssueDate" xml:space="preserve">
+    <value>Ημ/νια έκδοσης</value>
+  </data>
+  <data name="Grid_BadgeExpiryDate" xml:space="preserve">
+    <value>Λήξη ισχύος δελτίου</value>
+  </data>
+  <data name="Grid_Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
   <data name="Grid_Username" xml:space="preserve">
     <value>Όνομα Χρήστη</value>
   </data>
@@ -711,23 +945,35 @@
   <data name="Grid_LastLogin" xml:space="preserve">
     <value>Τελευταία Είσοδος</value>
   </data>
+  <data name="Grid_IsSystem" xml:space="preserve">
+    <value>Σύστημα</value>
+  </data>
+  <data name="Grid_DisplayName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Grid_Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Grid_DisplayOrder" xml:space="preserve">
+    <value>Σειρά</value>
+  </data>
   <data name="Grid_VisitType" xml:space="preserve">
     <value>Τύπος</value>
   </data>
   <data name="Grid_Timestamp" xml:space="preserve">
     <value>Ημ/νία</value>
   </data>
-  <data name="Grid_Notes" xml:space="preserve">
-    <value>Σημειώσεις</value>
-  </data>
   <data name="Grid_LoggedBy" xml:space="preserve">
     <value>Καταγράφηκε Από</value>
+  </data>
+  <data name="Grid_SiteCode" xml:space="preserve">
+    <value>Εγκατάσταση</value>
   </data>
   <data name="Grid_Action" xml:space="preserve">
     <value>Ενέργεια</value>
   </data>
   <data name="Grid_EntityType" xml:space="preserve">
-    <value>Οντότητα</value>
+    <value>Επηρεαζόμενη Οντότητα</value>
   </data>
   <data name="Grid_EntityId" xml:space="preserve">
     <value>ID</value>
@@ -749,5 +995,83 @@
   </data>
   <data name="Grid_MemberId" xml:space="preserve">
     <value>Αναγνωριστικό</value>
+  </data>
+  <data name="Grid_Method" xml:space="preserve">
+    <value>Μέθοδος Καταγραφής</value>
+  </data>
+  <data name="Grid_Workstation" xml:space="preserve">
+    <value>Σταθμός Εργασίας</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>Αρχείο</value>
+  </data>
+  <data name="Menu_MainPage" xml:space="preserve">
+    <value>Κύρια Οθόνη (Πύλαι)</value>
+  </data>
+  <data name="Menu_Visits" xml:space="preserve">
+    <value>Επισκέψεις</value>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>Έξοδος</value>
+  </data>
+  <data name="Menu_Admin" xml:space="preserve">
+    <value>Διαχειριστής</value>
+  </data>
+  <data name="Menu_Badges" xml:space="preserve">
+    <value>Δελτία Εισόδου</value>
+  </data>
+  <data name="Menu_Users" xml:space="preserve">
+    <value>Χρήστες</value>
+  </data>
+  <data name="Menu_Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="Menu_Audit" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>Βοήθεια</value>
+  </data>
+  <data name="Menu_UserGuide" xml:space="preserve">
+    <value>Οδηγίες Χρήστη</value>
+  </data>
+  <data name="Menu_AdminGuide" xml:space="preserve">
+    <value>Οδηγίες Διαχειριστή</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>Πληροφορίες</value>
+  </data>
+  <data name="Gate_Direction" xml:space="preserve">
+    <value>Κατεύθυνση</value>
+  </data>
+  <data name="Gate_Entry" xml:space="preserve">
+    <value>Είσοδος</value>
+  </data>
+  <data name="Gate_Exit" xml:space="preserve">
+    <value>Έξοδος</value>
+  </data>
+  <data name="Gate_LogVisit" xml:space="preserve">
+    <value>Καταγραφή</value>
+  </data>
+  <data name="Button_Edit" xml:space="preserve">
+    <value>Διόρθωση</value>
+  </data>
+  <data name="Button_QuickCode" xml:space="preserve">
+    <value>Γρήγορος Κωδικός Εισόδου</value>
+  </data>
+  <data name="Audit_ActionType" xml:space="preserve">
+    <value>Επιλογή Συβάντος</value>
+  </data>
+  <data name="Audit_TargetType" xml:space="preserve">
+    <value>Επιλογή Εγκατάστασης</value>
+  </data>
+  <data name="Help_UserGuideNotAvailable" xml:space="preserve">
+    <value>Οι οδηγίες χρήστη δεν είναι διαθέσιμες</value>
+  </data>
+  <data name="Help_AdminGuideNotAvailable" xml:space="preserve">
+    <value>Οι οδηγίες για διαχειριστές δεν είναι διαθέσιμες</value>
+  </data>
+  <data name="About_Version" xml:space="preserve">
+    <value>Έκδοση</value>
   </data>
 </root>

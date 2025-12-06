@@ -4,7 +4,6 @@ using Pylae.Core.Models;
 using Pylae.Data.Context;
 using MemberEntity = Pylae.Data.Entities.Master.Member;
 using MemberTypeEntity = Pylae.Data.Entities.Master.MemberType;
-using OfficeEntity = Pylae.Data.Entities.Master.Office;
 
 namespace Pylae.Data.Services;
 
@@ -157,7 +156,7 @@ public class MemberService : IMemberService
         target.FirstName = source.FirstName;
         target.LastName = source.LastName;
         target.BusinessRank = source.BusinessRank;
-        target.OfficeId = source.OfficeId;
+        target.Office = source.Office;
         target.IsPermanentStaff = source.IsPermanentStaff;
         target.MemberTypeId = source.MemberTypeId;
         target.PersonalIdNumber = source.PersonalIdNumber;
@@ -183,8 +182,7 @@ public class MemberService : IMemberService
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             BusinessRank = entity.BusinessRank,
-            OfficeId = entity.OfficeId,
-            Office = entity.Office is null ? null : ToDomain(entity.Office),
+            Office = entity.Office,
             IsPermanentStaff = entity.IsPermanentStaff,
             MemberTypeId = entity.MemberTypeId,
             MemberType = entity.MemberType is null ? null : ToDomain(entity.MemberType),
@@ -211,25 +209,6 @@ public class MemberService : IMemberService
             Code = entity.Code,
             DisplayName = entity.DisplayName,
             Description = entity.Description,
-            IsActive = entity.IsActive,
-            DisplayOrder = entity.DisplayOrder,
-            CreatedAtUtc = entity.CreatedAtUtc,
-            UpdatedAtUtc = entity.UpdatedAtUtc
-        };
-    }
-
-    private static Office ToDomain(OfficeEntity entity)
-    {
-        return new Office
-        {
-            Id = entity.Id,
-            Code = entity.Code,
-            Name = entity.Name,
-            Phone = entity.Phone,
-            HeadFullName = entity.HeadFullName,
-            HeadBusinessTitle = entity.HeadBusinessTitle,
-            HeadBusinessRank = entity.HeadBusinessRank,
-            Notes = entity.Notes,
             IsActive = entity.IsActive,
             DisplayOrder = entity.DisplayOrder,
             CreatedAtUtc = entity.CreatedAtUtc,

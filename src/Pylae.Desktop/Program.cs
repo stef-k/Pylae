@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Pylae.Core.Constants;
+using Pylae.Core.Enums;
 using Pylae.Core.Interfaces;
 using Pylae.Data.Context;
 using Pylae.Data.Seed;
@@ -94,11 +95,10 @@ internal static class Program
             // Save site code to appsettings.json for future runs
             SaveSiteCodeToConfig(databaseOptions.SiteCode, databaseOptions.SiteDisplayName);
 
-            // Save encryption password to Windows Credential Manager
-            WindowsCredentialManager.SaveCredential(
-                GetCredentialTargetName(databaseOptions.SiteCode),
-                "Pylae",
-                databaseOptions.EncryptionPassword);
+            // Save encryption password to Windows Credential Manager (delete any old one first)
+            var credentialTarget = GetCredentialTargetName(databaseOptions.SiteCode);
+            WindowsCredentialManager.DeleteCredential(credentialTarget);
+            WindowsCredentialManager.SaveCredential(credentialTarget, "Pylae", databaseOptions.EncryptionPassword);
 
             // Create directories only after we know the actual site code
             DatabaseConfig.EnsureDirectories(databaseOptions);
@@ -158,8 +158,32 @@ internal static class Program
 
             using var idleLock = ConfigureIdleLock(scope.ServiceProvider);
 
-            var loginForm = scope.ServiceProvider.GetRequiredService<LoginForm>();
-            Application.Run(loginForm);
+#if DEBUG
+            // Dev bypass: skip login when PYLAE_DEV_AUTO_LOGIN=true
+            if (Environment.GetEnvironmentVariable("PYLAE_DEV_AUTO_LOGIN") == "true")
+            {
+                var devUser = GetDevAutoLoginUser(scope.ServiceProvider);
+                if (devUser != null)
+                {
+                    var currentUserService = scope.ServiceProvider.GetRequiredService<CurrentUserService>();
+                    currentUserService.CurrentUser = devUser;
+                    var mainForm = scope.ServiceProvider.GetRequiredService<MainForm>();
+                    mainForm.SetCurrentUser(devUser);
+                    Application.Run(mainForm);
+                }
+                else
+                {
+                    // Fall back to normal login if no admin user found
+                    var loginForm = scope.ServiceProvider.GetRequiredService<LoginForm>();
+                    Application.Run(loginForm);
+                }
+            }
+            else
+#endif
+            {
+                var loginForm = scope.ServiceProvider.GetRequiredService<LoginForm>();
+                Application.Run(loginForm);
+            }
 
             // Perform shutdown tasks before disposal
             ShutdownServicesAsync(scope.ServiceProvider).GetAwaiter().GetResult();
@@ -233,7 +257,6 @@ internal static class Program
         services.AddTransient<MemberEditorForm>();
         services.AddTransient<RemoteSitesForm>();
         services.AddTransient<CatalogsForm>();
-        services.AddTransient<OfficeEditorForm>();
         services.AddTransient<MemberTypeEditorForm>();
         services.AddTransient<UserEditorForm>();
         services.AddTransient<LockForm>();
@@ -436,11 +459,10 @@ internal static class Program
                 {
                     password = enteredPassword;
 
-                    // Save password to Windows Credential Manager for future use
-                    WindowsCredentialManager.SaveCredential(
-                        GetCredentialTargetName(options.SiteCode),
-                        "Pylae",
-                        enteredPassword);
+                    // Save password to Windows Credential Manager for future use (delete any old one first)
+                    var credTarget = GetCredentialTargetName(options.SiteCode);
+                    WindowsCredentialManager.DeleteCredential(credTarget);
+                    WindowsCredentialManager.SaveCredential(credTarget, "Pylae", enteredPassword);
 
                     return true;
                 }
@@ -660,6 +682,30 @@ internal static class Program
     {
         return $"Pylae_Database_{siteCode}";
     }
+
+#if DEBUG
+    private static User? GetDevAutoLoginUser(IServiceProvider provider)
+    {
+        try
+        {
+            var userService = provider.GetRequiredService<IUserService>();
+            // Try to get "admin" user first, fall back to any admin role user
+            var adminUser = userService.GetByUsernameAsync("admin").GetAwaiter().GetResult();
+            if (adminUser != null)
+            {
+                return adminUser;
+            }
+
+            // Fall back to first user with Admin role
+            var users = userService.GetAllAsync().GetAwaiter().GetResult();
+            return users.FirstOrDefault(u => u.Role == UserRole.Admin);
+        }
+        catch
+        {
+            return null;
+        }
+    }
+#endif
 
     private static void SaveSiteCodeToConfig(string siteCode, string siteDisplayName)
     {

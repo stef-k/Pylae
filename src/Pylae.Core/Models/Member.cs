@@ -7,8 +7,7 @@ public class Member
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string? BusinessRank { get; set; }
-    public int? OfficeId { get; set; }
-    public Office? Office { get; set; }
+    public string? Office { get; set; }
     public bool IsPermanentStaff { get; set; }
     public int? MemberTypeId { get; set; }
     public MemberType? MemberType { get; set; }

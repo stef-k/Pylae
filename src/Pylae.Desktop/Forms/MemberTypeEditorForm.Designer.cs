@@ -20,8 +20,6 @@ partial class MemberTypeEditorForm
 
     private void InitializeComponent()
     {
-        codeLabel = new Label();
-        codeText = new TextBox();
         nameLabel = new Label();
         nameText = new TextBox();
         descriptionLabel = new Label();
@@ -33,38 +31,22 @@ partial class MemberTypeEditorForm
         cancelButton = new Button();
         ((System.ComponentModel.ISupportInitialize)displayOrderNumeric).BeginInit();
         SuspendLayout();
-        // 
-        // codeLabel
-        // 
-        codeLabel.AutoSize = true;
-        codeLabel.Location = new Point(12, 15);
-        codeLabel.Name = "codeLabel";
-        codeLabel.Size = new Size(34, 15);
-        codeLabel.TabIndex = 0;
-        codeLabel.Text = "Code";
-        // 
-        // codeText
-        // 
-        codeText.Location = new Point(12, 33);
-        codeText.Name = "codeText";
-        codeText.Size = new Size(120, 23);
-        codeText.TabIndex = 1;
-        // 
+        //
         // nameLabel
-        // 
+        //
         nameLabel.AutoSize = true;
-        nameLabel.Location = new Point(150, 15);
+        nameLabel.Location = new Point(12, 15);
         nameLabel.Name = "nameLabel";
         nameLabel.Size = new Size(39, 15);
-        nameLabel.TabIndex = 2;
+        nameLabel.TabIndex = 0;
         nameLabel.Text = "Name";
-        // 
+        //
         // nameText
-        // 
-        nameText.Location = new Point(150, 33);
+        //
+        nameText.Location = new Point(12, 33);
         nameText.Name = "nameText";
-        nameText.Size = new Size(200, 23);
-        nameText.TabIndex = 3;
+        nameText.Size = new Size(518, 23);
+        nameText.TabIndex = 1;
         // 
         // descriptionLabel
         // 
@@ -74,13 +56,13 @@ partial class MemberTypeEditorForm
         descriptionLabel.Size = new Size(67, 15);
         descriptionLabel.TabIndex = 4;
         descriptionLabel.Text = "Description";
-        // 
+        //
         // descriptionText
-        // 
+        //
         descriptionText.Location = new Point(12, 83);
         descriptionText.Multiline = true;
         descriptionText.Name = "descriptionText";
-        descriptionText.Size = new Size(338, 80);
+        descriptionText.Size = new Size(518, 80);
         descriptionText.TabIndex = 5;
         // 
         // displayOrderLabel
@@ -111,32 +93,33 @@ partial class MemberTypeEditorForm
         isActiveCheck.TabIndex = 8;
         isActiveCheck.Text = "Active";
         isActiveCheck.UseVisualStyleBackColor = true;
-        // 
+        //
         // saveButton
-        // 
-        saveButton.Location = new Point(194, 210);
+        //
+        saveButton.ForeColor = Color.Blue;
+        saveButton.Location = new Point(374, 210);
         saveButton.Name = "saveButton";
         saveButton.Size = new Size(75, 30);
         saveButton.TabIndex = 9;
         saveButton.Text = "Save";
         saveButton.UseVisualStyleBackColor = true;
         saveButton.Click += OnSaveClick;
-        // 
+        //
         // cancelButton
-        // 
-        cancelButton.Location = new Point(275, 210);
+        //
+        cancelButton.Location = new Point(455, 210);
         cancelButton.Name = "cancelButton";
         cancelButton.Size = new Size(75, 30);
         cancelButton.TabIndex = 10;
         cancelButton.Text = "Cancel";
         cancelButton.UseVisualStyleBackColor = true;
         cancelButton.Click += OnCancelClick;
-        // 
+        //
         // MemberTypeEditorForm
-        // 
+        //
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(362, 252);
+        ClientSize = new Size(542, 252);
         Controls.Add(cancelButton);
         Controls.Add(saveButton);
         Controls.Add(isActiveCheck);
@@ -146,8 +129,6 @@ partial class MemberTypeEditorForm
         Controls.Add(descriptionLabel);
         Controls.Add(nameText);
         Controls.Add(nameLabel);
-        Controls.Add(codeText);
-        Controls.Add(codeLabel);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
         MinimizeBox = false;
@@ -161,8 +142,6 @@ partial class MemberTypeEditorForm
 
     #endregion
 
-    private Label codeLabel;
-    private TextBox codeText;
     private Label nameLabel;
     private TextBox nameText;
     private Label descriptionLabel;

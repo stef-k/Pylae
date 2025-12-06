@@ -37,7 +37,6 @@ Key goals:
   - Full CRUD on:
     - Members
     - Users
-    - Offices
     - MemberTypes
   - Manage Settings (SiteCode, network, logging, idle timeout, language, badge validity, etc.).
   - Import/export encrypted DBs and photos (backup, sync, copy).
@@ -49,7 +48,7 @@ Key goals:
   - View member details and photos.
   - Add / edit **Notes** on Visits.
   - Change their **own** password and QuickCode (except for special shared account).
-  - Cannot create or edit Members, Users, Offices, MemberTypes, or Settings.
+  - Cannot create or edit Members, Users, MemberTypes, or Settings.
 
 ### 2.2 Special Accounts
 
@@ -131,7 +130,7 @@ Key goals:
 Two separate encrypted SQLite databases per installation/site:
 
 - `master.db`
-  - Members, Users, Offices, MemberTypes, Settings, AuditLog.
+  - Members, Users, MemberTypes, Settings, AuditLog.
 - `visits.db`
   - Visits only (append-only log).
 
@@ -261,7 +260,7 @@ Represents visitors/members who receive badges and can appear in visits.
 - `FirstName` – `TEXT`, NOT NULL.
 - `LastName` – `TEXT`, NOT NULL.
 - `BusinessRank` – `TEXT` (rank/grade/position).
-- `OfficeId` – `INTEGER` (FK → Offices.Id).
+- `Office` – `TEXT` (office/department name, free-form text).
 - `IsPermanentStaff` – `INTEGER` (0/1).
 - `MemberTypeId` – `INTEGER` (FK → MemberTypes.Id).
 - `PersonalIdNumber` – `TEXT` (government ID).
@@ -296,24 +295,7 @@ Categories like STAFF, VISITOR, THIRD_PARTY_SUPPLIER.
 - `CreatedAtUtc` – `TEXT`.
 - `UpdatedAtUtc` – `TEXT`.
 
-### 6.3 Offices
-
-Issuing offices.
-
-- `Id` – `INTEGER` PK AUTOINCREMENT.
-- `Code` – `TEXT`, UNIQUE, NOT NULL.
-- `Name` – `TEXT`, NOT NULL (localized).
-- `Phone` – `TEXT`.
-- `HeadFullName` – `TEXT`.
-- `HeadBusinessTitle` – `TEXT`.
-- `HeadBusinessRank` – `TEXT`.
-- `Notes` – `TEXT` (printed on badge).
-- `IsActive` – `INTEGER`.
-- `DisplayOrder` – `INTEGER`.
-- `CreatedAtUtc` – `TEXT`.
-- `UpdatedAtUtc` – `TEXT`.
-
-### 6.4 Users
+### 6.3 Users
 
 Application accounts, including protected admin and shared gate account.
 
@@ -340,7 +322,7 @@ Account management rules:
 - Attempts to delete or deactivate a `IsSystem = 1` user are forbidden.
 - Attempts to delete/deactivate any admin that would leave **zero active admins** are forbidden.
 
-### 6.5 Settings
+### 6.4 Settings
 
 Key/value pairs.
 
@@ -374,8 +356,15 @@ Key groups:
 - Organization Identity
   - `OrgBusinessTitle` (for badge).
   - `OrgBusinessTel` (for badge).
+- Badge Office (for badge printing)
+  - `BadgeOfficeName`
+  - `BadgeOfficePhone`
+  - `BadgeOfficeHeadFullName`
+  - `BadgeOfficeHeadJobTitle`
+  - `BadgeOfficeHeadRank`
+  - `BadgeOfficeNotes`
 
-### 6.6 AuditLog
+### 6.5 AuditLog
 
 Structured audit trail.
 
@@ -392,7 +381,7 @@ Structured audit trail.
 Covers:
 
 - Logins/logouts.
-- Member/Office/MemberType/User CRUD.
+- Member/MemberType/User CRUD.
 - Settings changes (including network, badge validity).
 - DB import/export operations.
 - HTTP sync operations.
@@ -486,12 +475,10 @@ If badge validity is enabled (`BadgeValidityMonths > 0`) and `BadgeIssueDate` is
 
 - **Fixed text**:
   - Titles/instructions/tips (localized from resx).
-- **Org/office data** (from Settings + Offices):
+- **Org data** (from Settings):
   - `OrgBusinessTitle`, `OrgBusinessTel`.
-  - `Offices.Name`.
-  - `HeadFullName`, `HeadBusinessTitle`, `HeadBusinessRank`.
-  - `Offices.Notes`.
-- **Member data** (from Members & MemberTypes & Offices):
+  - Badge office settings: `BadgeOfficeName`, `BadgeOfficePhone`, `BadgeOfficeHeadFullName`, `BadgeOfficeHeadJobTitle`, `BadgeOfficeHeadRank`, `BadgeOfficeNotes`.
+- **Member data** (from Members & MemberTypes):
   - `MemberNumber` (digits).
   - QR code encoding `MemberNumber`.
   - Name (FirstName + LastName).

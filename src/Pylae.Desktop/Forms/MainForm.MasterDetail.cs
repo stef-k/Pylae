@@ -14,15 +14,24 @@ namespace Pylae.Desktop.Forms;
 public partial class MainForm
 {
     private TextBox? _memberSearchBox;
+    private Button? _selectAllMembersButton;
+    private bool _allMembersSelected;
     private TextBox? _memberNumberTextBox;
     private TextBox? _memberFirstNameTextBox;
     private TextBox? _memberLastNameTextBox;
     private TextBox? _memberBusinessRankTextBox;
     private TextBox? _memberPersonalIdTextBox;
     private TextBox? _memberBusinessIdTextBox;
-    private ComboBox? _memberOfficeComboBox;
+    private TextBox? _memberOfficeTextBox;
     private ComboBox? _memberTypeComboBox;
     private CheckBox? _memberPermanentCheckBox;
+    private CheckBox? _memberActiveCheckBox;
+    private DateTimePicker? _memberBadgeIssuePicker;
+    private DateTimePicker? _memberBadgeExpiryPicker;
+    private DateTimePicker? _memberDateOfBirthPicker;
+    private TextBox? _memberPhoneTextBox;
+    private TextBox? _memberEmailTextBox;
+    private TextBox? _memberNotesTextBox;
     private Button? _memberSaveButton;
     private Button? _memberNewButton;
     private Button? _memberDeleteButton;
@@ -50,28 +59,40 @@ public partial class MainForm
     private void SetupMembersMasterDetailView()
     {
         // Clear existing controls
-        membersTab.Controls.Clear();
+        membersPanel.Controls.Clear();
 
-        // Create main layout (vertical split: form top, grid bottom)
-        var mainLayout = new TableLayoutPanel
+        // Create SplitContainer for adjustable form/grid ratio
+        var splitContainer = new SplitContainer
         {
             Dock = DockStyle.Fill,
-            RowCount = 2,
-            ColumnCount = 1,
-            Padding = new Padding(10)
+            Orientation = Orientation.Horizontal,
+            SplitterWidth = 6,
+            BorderStyle = BorderStyle.None,
+            BackColor = SystemColors.Control
         };
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 220)); // Form height
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Grid fills remaining
+        // Defer min sizes and splitter distance until control is properly sized
+        splitContainer.HandleCreated += (s, e) =>
+        {
+            splitContainer.Panel1MinSize = 220;
+            splitContainer.Panel2MinSize = 200;
+            splitContainer.FixedPanel = FixedPanel.Panel1;
+            if (splitContainer.Height > 500)
+                splitContainer.SplitterDistance = 300;
+            else if (splitContainer.Height > 400)
+                splitContainer.SplitterDistance = splitContainer.Height / 2;
+        };
 
         // === TOP PANEL: Member Form ===
         var formPanel = CreateMemberFormPanel();
-        mainLayout.Controls.Add(formPanel, 0, 0);
+        splitContainer.Panel1.Controls.Add(formPanel);
+        splitContainer.Panel1.Padding = new Padding(5, 5, 5, 0);
 
         // === BOTTOM PANEL: Grid with Search ===
         var gridPanel = CreateMemberGridPanel();
-        mainLayout.Controls.Add(gridPanel, 0, 1);
+        splitContainer.Panel2.Controls.Add(gridPanel);
+        splitContainer.Panel2.Padding = new Padding(5, 2, 5, 5);
 
-        membersTab.Controls.Add(mainLayout);
+        membersPanel.Controls.Add(splitContainer);
 
         // Wire up grid selection event
         membersGrid.SelectionChanged += OnMemberGridSelectionChanged;
@@ -86,109 +107,149 @@ public partial class MainForm
         {
             Dock = DockStyle.Fill,
             BackColor = SystemColors.Control,
-            Padding = new Padding(5)
+            Padding = new Padding(0)
         };
 
-        // Create form layout (3 columns: labels, fields, photo)
+        // Create form layout - expanded to 7 rows for all fields
         var formLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            RowCount = 4,
+            RowCount = 7,
             ColumnCount = 5,
             Padding = new Padding(5),
             CellBorderStyle = TableLayoutPanelCellBorderStyle.None
         };
 
-        // Column styles: Label | Field | Label | Field | Photo
-        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120)); // Label 1
-        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));   // Field 1
-        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120)); // Label 2
-        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 34));   // Field 2
-        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 33));   // Photo column
+        // Column styles: Label | Field | Label | Field | Photo/Buttons
+        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130)); // Label 1
+        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));   // Field 1
+        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130)); // Label 2
+        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30));   // Field 2
+        formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 40));   // Photo/buttons column
 
-        // Row styles: even height for 4 rows
-        for (int i = 0; i < 4; i++)
-            formLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+        // Row styles: 7 rows
+        for (int i = 0; i < 7; i++)
+            formLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100f / 7f));
+
+        var labelFont = new Font("Segoe UI", 10F);
+        var inputFont = new Font("Segoe UI", 10F);
 
         // Initialize controls
-        _memberNumberTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberBusinessRankTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberPersonalIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberBusinessIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        _memberOfficeComboBox = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10F) };
-        _memberTypeComboBox = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = new Font("Segoe UI", 10F) };
-        _memberPermanentCheckBox = new CheckBox { Text = Strings.Member_PermanentStaff, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+        _memberNumberTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberBusinessRankTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberPersonalIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberBusinessIdTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberOfficeTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberTypeComboBox = new ComboBox { Dock = DockStyle.Fill, DropDownStyle = ComboBoxStyle.DropDownList, Font = inputFont };
+        _memberPhoneTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberEmailTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberNotesTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
 
-        // Photo controls
+        // Date pickers with checkbox-style enable (ShowCheckBox allows null dates)
+        // Use CurrentUICulture for date format to match app language
+        var dateFormat = System.Threading.Thread.CurrentThread.CurrentUICulture.DateTimeFormat.ShortDatePattern;
+        _memberBadgeIssuePicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
+        _memberBadgeExpiryPicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
+        _memberDateOfBirthPicker = new DateTimePicker { Dock = DockStyle.Fill, Font = inputFont, Format = DateTimePickerFormat.Custom, CustomFormat = dateFormat, ShowCheckBox = true, Checked = false };
+
+        // Checkboxes
+        _memberPermanentCheckBox = new CheckBox { Text = Strings.Member_PermanentStaff, Dock = DockStyle.Fill, Font = inputFont };
+        _memberActiveCheckBox = new CheckBox { Text = Strings.Member_Active, Dock = DockStyle.Fill, Font = inputFont, Checked = true };
+
+        // Photo controls - PictureBox for portrait photos with click to enlarge
         _memberPhotoLabel = new Label
         {
             Text = Strings.Photo_None,
             BorderStyle = BorderStyle.FixedSingle,
             TextAlign = ContentAlignment.MiddleCenter,
             Dock = DockStyle.Fill,
-            Font = new Font("Segoe UI", 9F)
+            Font = new Font("Segoe UI", 9F),
+            Cursor = Cursors.Hand
         };
-        _memberChoosePhotoButton = new Button { Text = Strings.Photo_SelectTitle, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F) };
-        _memberClearPhotoButton = new Button { Text = Strings.Member_ClearPhoto, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F) };
+        _memberPhotoLabel.Click += OnMemberPhotoClick;
+        _memberChoosePhotoButton = new Button { Text = Strings.Photo_SelectTitle, Font = new Font("Segoe UI", 9F), Height = 28, Dock = DockStyle.Fill, AutoSize = true, UseVisualStyleBackColor = true };
+        _memberClearPhotoButton = new Button { Text = Strings.Member_ClearPhoto, Font = new Font("Segoe UI", 9F), Height = 28, Dock = DockStyle.Fill, AutoSize = true, UseVisualStyleBackColor = true };
 
         _memberChoosePhotoButton.Click += OnMemberChoosePhoto;
         _memberClearPhotoButton.Click += OnMemberClearPhoto;
 
-        // Action buttons
-        _memberNewButton = new Button { Text = Strings.Button_New, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
-        _memberSaveButton = new Button { Text = Strings.Button_Save, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
-        _memberDeleteButton = new Button { Text = Strings.Button_Delete, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+        // Action buttons - same height as photo buttons
+        _memberNewButton = new Button { Text = Strings.Button_New, Font = new Font("Segoe UI", 9F, FontStyle.Bold), Height = 28, Dock = DockStyle.Fill, UseVisualStyleBackColor = true };
+        _memberSaveButton = new Button { Text = Strings.Button_Save, Font = new Font("Segoe UI", 9F, FontStyle.Bold), Height = 28, Dock = DockStyle.Fill, MinimumSize = new Size(100, 28), UseVisualStyleBackColor = true, ForeColor = Color.Blue };
+        _memberDeleteButton = new Button { Text = Strings.Button_Delete, Font = new Font("Segoe UI", 9F), Height = 28, Dock = DockStyle.Fill, UseVisualStyleBackColor = true, ForeColor = Color.Red };
 
         _memberNewButton.Click += OnMemberNew;
         _memberSaveButton.Click += OnMemberSave;
         _memberDeleteButton.Click += OnMemberDelete;
 
         // Row 0: Member Number | First Name
-        formLayout.Controls.Add(new Label { Text = Strings.Member_Number + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 0, 0);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_Number + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 0);
         formLayout.Controls.Add(_memberNumberTextBox, 1, 0);
-        formLayout.Controls.Add(new Label { Text = Strings.Member_FirstName + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 2, 0);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_FirstName + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 0);
         formLayout.Controls.Add(_memberFirstNameTextBox, 3, 0);
 
         // Row 1: Last Name | Business Rank
-        formLayout.Controls.Add(new Label { Text = Strings.Member_LastName + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 0, 1);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_LastName + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 1);
         formLayout.Controls.Add(_memberLastNameTextBox, 1, 1);
-        formLayout.Controls.Add(new Label { Text = Strings.Member_BusinessRank + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 2, 1);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_BusinessRank + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 1);
         formLayout.Controls.Add(_memberBusinessRankTextBox, 3, 1);
 
         // Row 2: Personal ID | Business ID
-        formLayout.Controls.Add(new Label { Text = Strings.Member_PersonalId + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 0, 2);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_PersonalId + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 2);
         formLayout.Controls.Add(_memberPersonalIdTextBox, 1, 2);
-        formLayout.Controls.Add(new Label { Text = Strings.Member_BusinessId + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 2, 2);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_BusinessId + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 2);
         formLayout.Controls.Add(_memberBusinessIdTextBox, 3, 2);
 
-        // Row 3: Office | Member Type | Permanent
-        formLayout.Controls.Add(new Label { Text = Strings.Member_Office + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 0, 3);
-        formLayout.Controls.Add(_memberOfficeComboBox, 1, 3);
-        formLayout.Controls.Add(new Label { Text = Strings.Member_Type + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill }, 2, 3);
+        // Row 3: Office | Member Type
+        formLayout.Controls.Add(new Label { Text = Strings.Member_Office + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 3);
+        formLayout.Controls.Add(_memberOfficeTextBox, 1, 3);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_Type + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 3);
         formLayout.Controls.Add(_memberTypeComboBox, 3, 3);
 
-        // Photo column (spans all rows)
+        // Row 4: Phone | Email
+        formLayout.Controls.Add(new Label { Text = Strings.Member_Phone + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 4);
+        formLayout.Controls.Add(_memberPhoneTextBox, 1, 4);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_Email + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 4);
+        formLayout.Controls.Add(_memberEmailTextBox, 3, 4);
+
+        // Row 5: Badge Issue | Badge Expiry
+        formLayout.Controls.Add(new Label { Text = Strings.Member_BadgeIssue + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 5);
+        formLayout.Controls.Add(_memberBadgeIssuePicker, 1, 5);
+        formLayout.Controls.Add(new Label { Text = Strings.Member_BadgeExpiry + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 5);
+        formLayout.Controls.Add(_memberBadgeExpiryPicker, 3, 5);
+
+        // Row 6: Date of Birth | Notes | Checkboxes
+        formLayout.Controls.Add(new Label { Text = Strings.Member_DateOfBirth + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 6);
+        formLayout.Controls.Add(_memberDateOfBirthPicker, 1, 6);
+        var checkboxPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight };
+        checkboxPanel.Controls.Add(_memberPermanentCheckBox);
+        checkboxPanel.Controls.Add(_memberActiveCheckBox);
+        formLayout.Controls.Add(checkboxPanel, 2, 6);
+        formLayout.SetColumnSpan(checkboxPanel, 2);
+
+        // Photo column (spans rows 0-5) - photo preview takes most space
         var photoLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            RowCount = 4,
-            ColumnCount = 1
+            RowCount = 2,
+            ColumnCount = 2
         };
-        photoLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 60)); // Photo
-        photoLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20)); // Choose button
-        photoLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20)); // Clear button
-        photoLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 0));  // Spacer
+        photoLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Photo takes remaining
+        photoLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 32)); // Buttons row
+        photoLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
+        photoLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));
 
         photoLayout.Controls.Add(_memberPhotoLabel, 0, 0);
+        photoLayout.SetColumnSpan(_memberPhotoLabel, 2);
         photoLayout.Controls.Add(_memberChoosePhotoButton, 0, 1);
-        photoLayout.Controls.Add(_memberClearPhotoButton, 0, 2);
+        photoLayout.Controls.Add(_memberClearPhotoButton, 1, 1);
 
         formLayout.Controls.Add(photoLayout, 4, 0);
-        formLayout.SetRowSpan(photoLayout, 3);
+        formLayout.SetRowSpan(photoLayout, 6);
 
-        // Button panel in last column, bottom row
+        // Button panel in last column, row 6
         var buttonLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -204,13 +265,8 @@ public partial class MainForm
         buttonLayout.Controls.Add(_memberSaveButton, 1, 0);
         buttonLayout.Controls.Add(_memberDeleteButton, 2, 0);
 
-        formLayout.Controls.Add(buttonLayout, 4, 3);
-
-        // Permanent checkbox in remaining space
-        var permanentPanel = new Panel { Dock = DockStyle.Fill };
-        permanentPanel.Controls.Add(_memberPermanentCheckBox);
-        formLayout.Controls.Add(permanentPanel, 0, 3);
-        formLayout.SetColumnSpan(permanentPanel, 2);
+        formLayout.Controls.Add(buttonLayout, 4, 6);
+        formLayout.SetRowSpan(buttonLayout, 1);
 
         panel.Controls.Add(formLayout);
         return panel;
@@ -221,7 +277,7 @@ public partial class MainForm
         var panel = new Panel
         {
             Dock = DockStyle.Fill,
-            Padding = new Padding(5)
+            Padding = new Padding(0)
         };
 
         // Layout: search bar on top, grid below
@@ -234,43 +290,52 @@ public partial class MainForm
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40)); // Search bar
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Grid
 
-        // Search bar
+        // Search bar - narrower search, compact buttons
         var searchPanel = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
             RowCount = 1,
-            ColumnCount = 4,
-            Padding = new Padding(5, 0, 5, 0)
+            ColumnCount = 6,
+            Padding = new Padding(5, 0, 5, 0),
+            BackColor = SystemColors.Control
         };
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120));
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70));  // Label
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180)); // Search box
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Export
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Badge PDF
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Select All
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Batch Badges
 
         var searchLabel = new Label { Text = Strings.Search + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _memberSearchBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _memberSearchBox.TextChanged += OnMemberSearch;
 
-        var exportButton = new Button { Text = Strings.Button_Export, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
-        var badgeButton = new Button { Text = Strings.Button_BadgePdf, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+        var exportButton = new Button { Text = Strings.Button_Export, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F), UseVisualStyleBackColor = true };
+        var badgeButton = new Button { Text = Strings.Button_BadgePdf, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F), UseVisualStyleBackColor = true };
+        _selectAllMembersButton = new Button { Text = Strings.Button_SelectAll, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F), UseVisualStyleBackColor = true };
+        var batchBadgeButton = new Button { Text = Strings.Button_BatchBadges, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 9F), UseVisualStyleBackColor = true };
 
         exportButton.Click += OnExportMembersClick;
         badgeButton.Click += OnBadgeClick;
+        _selectAllMembersButton.Click += OnSelectAllMembersClick;
+        batchBadgeButton.Click += OnBatchBadgeClick;
 
         searchPanel.Controls.Add(searchLabel, 0, 0);
         searchPanel.Controls.Add(_memberSearchBox, 1, 0);
         searchPanel.Controls.Add(exportButton, 2, 0);
         searchPanel.Controls.Add(badgeButton, 3, 0);
+        searchPanel.Controls.Add(_selectAllMembersButton, 4, 0);
+        searchPanel.Controls.Add(batchBadgeButton, 5, 0);
 
-        // Grid
+        // Grid - enable multi-select for batch badge export
         membersGrid.Dock = DockStyle.Fill;
         membersGrid.Font = new Font("Segoe UI", 10F);
         membersGrid.RowTemplate.Height = 30;
         membersGrid.AllowUserToAddRows = false;
         membersGrid.AllowUserToDeleteRows = false;
-        membersGrid.ReadOnly = true;
         membersGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        membersGrid.MultiSelect = false;
+        membersGrid.MultiSelect = true;
+        membersGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
         layout.Controls.Add(searchPanel, 0, 0);
         layout.Controls.Add(membersGrid, 0, 1);
@@ -288,6 +353,22 @@ public partial class MainForm
         }
     }
 
+    private void OnSelectAllMembersClick(object? sender, EventArgs e)
+    {
+        _allMembersSelected = !_allMembersSelected;
+
+        if (_allMembersSelected)
+        {
+            membersGrid.SelectAll();
+            _selectAllMembersButton!.Text = Strings.Button_DeselectAll;
+        }
+        else
+        {
+            membersGrid.ClearSelection();
+            _selectAllMembersButton!.Text = Strings.Button_SelectAll;
+        }
+    }
+
     private void PopulateMemberForm(Member member)
     {
         if (_memberNumberTextBox == null) return;
@@ -299,27 +380,88 @@ public partial class MainForm
         _memberPersonalIdTextBox!.Text = member.PersonalIdNumber ?? string.Empty;
         _memberBusinessIdTextBox!.Text = member.BusinessIdNumber ?? string.Empty;
         _memberPermanentCheckBox!.Checked = member.IsPermanentStaff;
+        _memberActiveCheckBox!.Checked = member.IsActive;
+
+        // New text fields
+        _memberPhoneTextBox!.Text = member.Phone ?? string.Empty;
+        _memberEmailTextBox!.Text = member.Email ?? string.Empty;
+        _memberNotesTextBox!.Text = member.Notes ?? string.Empty;
+
+        // Date pickers
+        if (member.BadgeIssueDate.HasValue)
+        {
+            _memberBadgeIssuePicker!.Checked = true;
+            _memberBadgeIssuePicker.Value = member.BadgeIssueDate.Value;
+        }
+        else
+        {
+            _memberBadgeIssuePicker!.Checked = false;
+        }
+
+        if (member.BadgeExpiryDate.HasValue)
+        {
+            _memberBadgeExpiryPicker!.Checked = true;
+            _memberBadgeExpiryPicker.Value = member.BadgeExpiryDate.Value;
+        }
+        else
+        {
+            _memberBadgeExpiryPicker!.Checked = false;
+        }
+
+        if (member.DateOfBirth.HasValue)
+        {
+            _memberDateOfBirthPicker!.Checked = true;
+            _memberDateOfBirthPicker.Value = member.DateOfBirth.Value;
+        }
+        else
+        {
+            _memberDateOfBirthPicker!.Checked = false;
+        }
+
+        // Set office text field
+        _memberOfficeTextBox!.Text = member.Office ?? string.Empty;
 
         // Set combo box selections (will be populated in OnLoad)
-        if (member.OfficeId.HasValue)
-            _memberOfficeComboBox!.SelectedValue = member.OfficeId.Value;
-        else
-            _memberOfficeComboBox!.SelectedIndex = -1;
-
         if (member.MemberTypeId.HasValue)
             _memberTypeComboBox!.SelectedValue = member.MemberTypeId.Value;
         else
             _memberTypeComboBox!.SelectedIndex = -1;
 
-        // Photo
+        // Photo - show thumbnail if available
         _memberPhotoPath = member.PhotoFileName;
         if (!string.IsNullOrEmpty(member.PhotoFileName))
         {
-            _memberPhotoLabel!.Text = Path.GetFileName(member.PhotoFileName);
+            var photoPath = member.PhotoFileName;
+            if (!Path.IsPathRooted(photoPath))
+            {
+                var photosPath = _serviceProvider.GetRequiredService<Data.Context.DatabaseOptions>().GetPhotosPath();
+                photoPath = Path.Combine(photosPath, photoPath);
+            }
+
+            if (File.Exists(photoPath))
+            {
+                try
+                {
+                    _memberPhotoLabel!.Text = string.Empty;
+                    _memberPhotoLabel!.Image = Image.FromFile(photoPath);
+                    _memberPhotoLabel!.ImageAlign = ContentAlignment.MiddleCenter;
+                }
+                catch
+                {
+                    _memberPhotoLabel!.Text = Path.GetFileName(member.PhotoFileName);
+                    _memberPhotoLabel!.Image = null;
+                }
+            }
+            else
+            {
+                _memberPhotoLabel!.Text = Path.GetFileName(member.PhotoFileName);
+                _memberPhotoLabel!.Image = null;
+            }
         }
         else
         {
             _memberPhotoLabel!.Text = Strings.Photo_None;
+            _memberPhotoLabel!.Image = null;
         }
     }
 
@@ -333,8 +475,15 @@ public partial class MainForm
         _memberBusinessRankTextBox!.Clear();
         _memberPersonalIdTextBox!.Clear();
         _memberBusinessIdTextBox!.Clear();
+        _memberPhoneTextBox!.Clear();
+        _memberEmailTextBox!.Clear();
+        _memberNotesTextBox!.Clear();
         _memberPermanentCheckBox!.Checked = false;
-        _memberOfficeComboBox!.SelectedIndex = -1;
+        _memberActiveCheckBox!.Checked = true;
+        _memberBadgeIssuePicker!.Checked = false;
+        _memberBadgeExpiryPicker!.Checked = false;
+        _memberDateOfBirthPicker!.Checked = false;
+        _memberOfficeTextBox!.Text = string.Empty;
         _memberTypeComboBox!.SelectedIndex = -1;
         _memberPhotoPath = null;
         _memberPhotoLabel!.Text = Strings.Photo_None;
@@ -367,8 +516,15 @@ public partial class MainForm
         member.BusinessRank = _memberBusinessRankTextBox!.Text;
         member.PersonalIdNumber = _memberPersonalIdTextBox!.Text;
         member.BusinessIdNumber = _memberBusinessIdTextBox!.Text;
+        member.Phone = _memberPhoneTextBox!.Text;
+        member.Email = _memberEmailTextBox!.Text;
+        member.Notes = _memberNotesTextBox!.Text;
         member.IsPermanentStaff = _memberPermanentCheckBox!.Checked;
-        member.OfficeId = _memberOfficeComboBox!.SelectedValue as int?;
+        member.IsActive = _memberActiveCheckBox!.Checked;
+        member.BadgeIssueDate = _memberBadgeIssuePicker!.Checked ? _memberBadgeIssuePicker.Value : null;
+        member.BadgeExpiryDate = _memberBadgeExpiryPicker!.Checked ? _memberBadgeExpiryPicker.Value : null;
+        member.DateOfBirth = _memberDateOfBirthPicker!.Checked ? _memberDateOfBirthPicker.Value : null;
+        member.Office = string.IsNullOrWhiteSpace(_memberOfficeTextBox!.Text) ? null : _memberOfficeTextBox.Text.Trim();
         member.MemberTypeId = _memberTypeComboBox!.SelectedValue as int?;
         member.PhotoFileName = _memberPhotoPath;
 
@@ -427,12 +583,20 @@ public partial class MainForm
         }
         else
         {
+            // Search across all visible/useful columns
             var filtered = _membersViewModel.Members.Where(m =>
                 m.MemberNumber.ToString().Contains(searchText) ||
                 m.FirstName.ToLowerInvariant().Contains(searchText) ||
                 m.LastName.ToLowerInvariant().Contains(searchText) ||
                 (m.PersonalIdNumber?.ToLowerInvariant().Contains(searchText) ?? false) ||
-                (m.BusinessIdNumber?.ToLowerInvariant().Contains(searchText) ?? false)
+                (m.BusinessIdNumber?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.BusinessRank?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.Phone?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.Email?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.Notes?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.Office?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.MemberType?.DisplayName?.ToLowerInvariant().Contains(searchText) ?? false) ||
+                (m.MemberType?.Code?.ToLowerInvariant().Contains(searchText) ?? false)
             ).ToList();
             _membersBinding = new BindingList<Member>(filtered);
         }
@@ -459,21 +623,59 @@ public partial class MainForm
     {
         _memberPhotoPath = null;
         _memberPhotoLabel!.Text = Strings.Photo_None;
+        _memberPhotoLabel!.Image = null;
+    }
+
+    private void OnMemberPhotoClick(object? sender, EventArgs e)
+    {
+        if (string.IsNullOrEmpty(_memberPhotoPath)) return;
+
+        var photoPath = _memberPhotoPath;
+        if (!Path.IsPathRooted(photoPath))
+        {
+            // Resolve relative path from photos directory
+            var photosPath = _serviceProvider.GetRequiredService<Data.Context.DatabaseOptions>().GetPhotosPath();
+            photoPath = Path.Combine(photosPath, photoPath);
+        }
+
+        if (!File.Exists(photoPath)) return;
+
+        // Open photo in a dialog for better viewing
+        using var dialog = new Form
+        {
+            Text = Strings.Photo_Preview,
+            StartPosition = FormStartPosition.CenterParent,
+            Size = new Size(500, 650),
+            MinimumSize = new Size(300, 400),
+            MaximizeBox = true,
+            MinimizeBox = false,
+            ShowInTaskbar = false
+        };
+
+        var pictureBox = new PictureBox
+        {
+            Dock = DockStyle.Fill,
+            SizeMode = PictureBoxSizeMode.Zoom,
+            Image = Image.FromFile(photoPath)
+        };
+
+        dialog.Controls.Add(pictureBox);
+        dialog.ShowDialog(this);
     }
 
     // ==================== USERS MASTER-DETAIL VIEW ====================
 
     /// <summary>
-    /// Sets up the Users tab with a master-detail layout.
-    /// Top panel: User form for CRUD operations
-    /// Bottom panel: DataGridView with search/filter
+    /// Sets up the Users tab with a fixed form at top, grid at bottom.
+    /// Top panel: User form for CRUD operations (fixed height)
+    /// Bottom panel: DataGridView with search/filter (takes remaining space)
     /// </summary>
     private void SetupUsersMasterDetailView()
     {
         // Clear existing controls
-        usersTab.Controls.Clear();
+        usersPanel.Controls.Clear();
 
-        // Create main layout (vertical split: form top, grid bottom)
+        // Create main layout - fixed form at top, grid takes rest
         var mainLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -481,18 +683,18 @@ public partial class MainForm
             ColumnCount = 1,
             Padding = new Padding(10)
         };
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 200)); // Form height
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Grid fills remaining
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 220)); // Fixed form height - increased for buttons
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));  // Grid takes rest
 
-        // === TOP PANEL: User Form ===
+        // === TOP: User Form (fixed height) ===
         var formPanel = CreateUserFormPanel();
         mainLayout.Controls.Add(formPanel, 0, 0);
 
-        // === BOTTOM PANEL: Grid with Search ===
+        // === BOTTOM: Grid with Search (fills remaining space) ===
         var gridPanel = CreateUserGridPanel();
         mainLayout.Controls.Add(gridPanel, 0, 1);
 
-        usersTab.Controls.Add(mainLayout);
+        usersPanel.Controls.Add(mainLayout);
 
         // Wire up grid selection event
         usersGrid.SelectionChanged += OnUserGridSelectionChanged;
@@ -541,10 +743,10 @@ public partial class MainForm
         // Populate role combo box
         _userRoleComboBox.DataSource = Enum.GetValues(typeof(UserRole));
 
-        // Action buttons
-        _userNewButton = new Button { Text = Strings.Button_New, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
-        _userSaveButton = new Button { Text = Strings.Button_Save, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold) };
-        _userDeleteButton = new Button { Text = Strings.Button_Delete, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
+        // Action buttons - fixed height
+        _userNewButton = new Button { Text = Strings.Button_New, Height = 33, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold), UseVisualStyleBackColor = true };
+        _userSaveButton = new Button { Text = Strings.Button_Save, Height = 33, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold), UseVisualStyleBackColor = true, ForeColor = Color.Blue };
+        _userDeleteButton = new Button { Text = Strings.Button_Delete, Height = 33, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F), UseVisualStyleBackColor = true, ForeColor = Color.Red };
 
         _userNewButton.Click += OnUserNew;
         _userSaveButton.Click += OnUserSave;
@@ -614,13 +816,15 @@ public partial class MainForm
         {
             Dock = DockStyle.Fill,
             RowCount = 1,
-            ColumnCount = 4,
-            Padding = new Padding(5, 0, 5, 0)
+            ColumnCount = 5,
+            Padding = new Padding(5, 0, 5, 0),
+            BackColor = SystemColors.Control
         };
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 80));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 60));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140));
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 140));
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 90));  // Label - increased
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 280)); // Search box
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));  // Spacer
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 170)); // Reset Password - increased
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180)); // Reset Quick Code - increased
 
         var searchLabel = new Label { Text = Strings.Search + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _userSearchBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
@@ -634,10 +838,10 @@ public partial class MainForm
 
         searchPanel.Controls.Add(searchLabel, 0, 0);
         searchPanel.Controls.Add(_userSearchBox, 1, 0);
-        searchPanel.Controls.Add(resetPasswordButton, 2, 0);
-        searchPanel.Controls.Add(resetQuickCodeButton, 3, 0);
+        searchPanel.Controls.Add(resetPasswordButton, 3, 0);
+        searchPanel.Controls.Add(resetQuickCodeButton, 4, 0);
 
-        // Grid
+        // Grid - with AutoSizeColumnsMode.Fill to expand to panel width
         usersGrid.Dock = DockStyle.Fill;
         usersGrid.Font = new Font("Segoe UI", 10F);
         usersGrid.RowTemplate.Height = 30;
@@ -646,6 +850,7 @@ public partial class MainForm
         usersGrid.ReadOnly = true;
         usersGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
         usersGrid.MultiSelect = false;
+        usersGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
         layout.Controls.Add(searchPanel, 0, 0);
         layout.Controls.Add(usersGrid, 0, 1);
@@ -807,17 +1012,35 @@ public partial class MainForm
             { nameof(Member.PersonalIdNumber), Strings.Grid_PersonalIdNumber },
             { nameof(Member.BusinessIdNumber), Strings.Grid_BusinessIdNumber },
             { nameof(Member.BusinessRank), Strings.Grid_BusinessRank },
-            { nameof(Member.OfficeId), Strings.Grid_OfficeId },
+            { nameof(Member.Office), Strings.Grid_Office },
             { nameof(Member.MemberTypeId), Strings.Grid_MemberTypeId },
+            { nameof(Member.MemberType), Strings.Grid_MemberType },
             { nameof(Member.IsPermanentStaff), Strings.Grid_IsPermanent },
-            { nameof(Member.PhotoFileName), Strings.Grid_PhotoPath }
+            { nameof(Member.PhotoFileName), Strings.Grid_PhotoPath },
+            { nameof(Member.Phone), Strings.Grid_Phone },
+            { nameof(Member.Email), Strings.Grid_Email },
+            { nameof(Member.DateOfBirth), Strings.Grid_DateOfBirth },
+            { nameof(Member.BadgeIssueDate), Strings.Grid_BadgeIssueDate },
+            { nameof(Member.BadgeExpiryDate), Strings.Grid_BadgeExpiryDate },
+            { nameof(Member.Notes), Strings.Grid_Notes },
+            { nameof(Member.IsActive), Strings.Grid_IsActive },
+            { nameof(Member.CreatedAtUtc), Strings.Grid_CreatedAt },
+            { nameof(Member.UpdatedAtUtc), Strings.Grid_UpdatedAt }
         };
+
+        // Hide internal columns to save horizontal space
+        var hiddenColumns = new[] { nameof(Member.Id), nameof(Member.MemberTypeId), nameof(Member.PhotoFileName) };
 
         foreach (DataGridViewColumn column in membersGrid.Columns)
         {
             if (columnMappings.TryGetValue(column.DataPropertyName, out var localizedHeader))
             {
                 column.HeaderText = localizedHeader;
+            }
+
+            if (hiddenColumns.Contains(column.DataPropertyName))
+            {
+                column.Visible = false;
             }
         }
     }
@@ -839,14 +1062,26 @@ public partial class MainForm
             { nameof(User.Role), Strings.Grid_Role },
             { nameof(User.IsActive), Strings.Grid_IsActive },
             { nameof(User.IsShared), Strings.Grid_IsSharedLogin },
-            { nameof(User.LastLoginAtUtc), Strings.Grid_LastLogin }
+            { nameof(User.IsSystem), Strings.Grid_IsSystem },
+            { nameof(User.LastLoginAtUtc), Strings.Grid_LastLogin },
+            { nameof(User.CreatedAtUtc), Strings.Grid_CreatedAt }
         };
+
+        // Hide sensitive columns
+        var hiddenColumns = new[] { "PasswordHash", "PasswordSalt", "PasswordIterations",
+            "QuickCodeHash", "QuickCodeSalt", "QuickCodeIterations" };
 
         foreach (DataGridViewColumn column in usersGrid.Columns)
         {
             if (columnMappings.TryGetValue(column.DataPropertyName, out var localizedHeader))
             {
                 column.HeaderText = localizedHeader;
+            }
+
+            // Hide sensitive columns
+            if (hiddenColumns.Contains(column.DataPropertyName))
+            {
+                column.Visible = false;
             }
         }
     }

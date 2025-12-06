@@ -29,6 +29,14 @@ public static class SettingKeys
     public const string OrgBusinessTitle = "OrgBusinessTitle";
     public const string OrgBusinessTel = "OrgBusinessTel";
 
+    // Badge Issuing Office
+    public const string BadgeOfficeName = "BadgeOfficeName";
+    public const string BadgeOfficePhone = "BadgeOfficePhone";
+    public const string BadgeOfficeHeadFullName = "BadgeOfficeHeadFullName";
+    public const string BadgeOfficeHeadJobTitle = "BadgeOfficeHeadJobTitle";
+    public const string BadgeOfficeHeadRank = "BadgeOfficeHeadRank";
+    public const string BadgeOfficeNotes = "BadgeOfficeNotes";
+
     // Automated Backups
     public const string AutoBackupEnabled = "AutoBackupEnabled";
     public const string AutoBackupIntervalHours = "AutoBackupIntervalHours";

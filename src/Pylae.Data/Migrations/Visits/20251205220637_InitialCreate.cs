@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Pylae.Data.Migrations.Visits
 {
     /// <inheritdoc />
-    public partial class Visits_InitialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,29 +48,6 @@ namespace Pylae.Data.Migrations.Visits
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MemberTypes", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Offices",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Code = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
-                    Name = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
-                    Phone = table.Column<string>(type: "TEXT", maxLength: 100, nullable: true),
-                    HeadFullName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    HeadBusinessTitle = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    HeadBusinessRank = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    Notes = table.Column<string>(type: "TEXT", maxLength: 500, nullable: true),
-                    IsActive = table.Column<bool>(type: "INTEGER", nullable: false, defaultValue: true),
-                    DisplayOrder = table.Column<int>(type: "INTEGER", nullable: false, defaultValue: 0),
-                    CreatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    UpdatedAtUtc = table.Column<DateTime>(type: "TEXT", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Offices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,8 +133,7 @@ namespace Pylae.Data.Migrations.Visits
                     FirstName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     LastName = table.Column<string>(type: "TEXT", maxLength: 200, nullable: false),
                     BusinessRank = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
-                    OfficeId = table.Column<int>(type: "INTEGER", nullable: true),
-                    OfficeId1 = table.Column<int>(type: "INTEGER", nullable: true),
+                    Office = table.Column<string>(type: "TEXT", maxLength: 200, nullable: true),
                     IsPermanentStaff = table.Column<bool>(type: "INTEGER", nullable: false),
                     MemberTypeId = table.Column<int>(type: "INTEGER", nullable: true),
                     MemberTypeId1 = table.Column<int>(type: "INTEGER", nullable: true),
@@ -187,17 +163,6 @@ namespace Pylae.Data.Migrations.Visits
                         name: "FK_Members_MemberTypes_MemberTypeId1",
                         column: x => x.MemberTypeId1,
                         principalTable: "MemberTypes",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Members_Offices_OfficeId",
-                        column: x => x.OfficeId,
-                        principalTable: "Offices",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Members_Offices_OfficeId1",
-                        column: x => x.OfficeId1,
-                        principalTable: "Offices",
                         principalColumn: "Id");
                 });
 
@@ -232,24 +197,8 @@ namespace Pylae.Data.Migrations.Visits
                 column: "MemberTypeId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Members_OfficeId",
-                table: "Members",
-                column: "OfficeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Members_OfficeId1",
-                table: "Members",
-                column: "OfficeId1");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_MemberTypes_Code",
                 table: "MemberTypes",
-                column: "Code",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Offices_Code",
-                table: "Offices",
                 column: "Code",
                 unique: true);
 
@@ -295,9 +244,6 @@ namespace Pylae.Data.Migrations.Visits
 
             migrationBuilder.DropTable(
                 name: "MemberTypes");
-
-            migrationBuilder.DropTable(
-                name: "Offices");
         }
     }
 }

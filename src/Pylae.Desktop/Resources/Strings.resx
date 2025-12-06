@@ -33,6 +33,9 @@
   <data name="Login_Button" xml:space="preserve">
     <value>Login</value>
   </data>
+  <data name="Login_Or" xml:space="preserve">
+    <value>— or —</value>
+  </data>
   <data name="Gate_Mode_Entry" xml:space="preserve">
     <value>Entry</value>
   </data>
@@ -72,6 +75,184 @@
   <data name="Settings_Title" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="Settings_SiteIdentity" xml:space="preserve">
+    <value>Site Identity</value>
+  </data>
+  <data name="Settings_SiteCode" xml:space="preserve">
+    <value>Site Code</value>
+  </data>
+  <data name="Settings_SiteDisplayName" xml:space="preserve">
+    <value>Site Display Name</value>
+  </data>
+  <data name="Settings_Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Settings_Organization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="Settings_OrgTitle" xml:space="preserve">
+    <value>Organization Name</value>
+  </data>
+  <data name="Settings_OrgPhone" xml:space="preserve">
+    <value>Organization Phone</value>
+  </data>
+  <data name="Settings_Security" xml:space="preserve">
+    <value>Security</value>
+  </data>
+  <data name="Settings_IdleTimeout" xml:space="preserve">
+    <value>Idle Timeout (minutes)</value>
+  </data>
+  <data name="Settings_Badge" xml:space="preserve">
+    <value>Badge Settings</value>
+  </data>
+  <data name="Settings_BadgeValidity" xml:space="preserve">
+    <value>Validity (months, -1=never)</value>
+  </data>
+  <data name="Settings_BadgeExpiryWarning" xml:space="preserve">
+    <value>Expiry Warning (days)</value>
+  </data>
+  <data name="Settings_BadgeIssuingOffice" xml:space="preserve">
+    <value>Badge Issuing Office</value>
+  </data>
+  <data name="Settings_BadgeOfficeName" xml:space="preserve">
+    <value>Office Name</value>
+  </data>
+  <data name="Settings_BadgeOfficePhone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadFullName" xml:space="preserve">
+    <value>Head Full Name</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadJobTitle" xml:space="preserve">
+    <value>Head Job Title</value>
+  </data>
+  <data name="Settings_BadgeOfficeHeadRank" xml:space="preserve">
+    <value>Head Rank</value>
+  </data>
+  <data name="Settings_BadgeOfficeNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Settings_Logging" xml:space="preserve">
+    <value>Logging</value>
+  </data>
+  <data name="Settings_LogLevel" xml:space="preserve">
+    <value>Log Level</value>
+  </data>
+  <data name="Settings_LogRetention" xml:space="preserve">
+    <value>Log Retention (days)</value>
+  </data>
+  <data name="Settings_Backup" xml:space="preserve">
+    <value>Automated Backup</value>
+  </data>
+  <data name="Settings_AutoBackupEnabled" xml:space="preserve">
+    <value>Enable Auto Backup</value>
+  </data>
+  <data name="Settings_BackupIncludePhotos" xml:space="preserve">
+    <value>Include Photos</value>
+  </data>
+  <data name="Settings_BackupInterval" xml:space="preserve">
+    <value>Interval (hours)</value>
+  </data>
+  <data name="Settings_BackupRetention" xml:space="preserve">
+    <value>Keep Backups</value>
+  </data>
+  <data name="Settings_BackupPath" xml:space="preserve">
+    <value>Backup Path</value>
+  </data>
+  <data name="Settings_DataRetention" xml:space="preserve">
+    <value>Data Retention</value>
+  </data>
+  <data name="Settings_AuditRetention" xml:space="preserve">
+    <value>Audit (years)</value>
+  </data>
+  <data name="Settings_VisitRetention" xml:space="preserve">
+    <value>Visits (years)</value>
+  </data>
+  <data name="Settings_Saved" xml:space="preserve">
+    <value>Settings saved successfully.</value>
+  </data>
+
+  <!-- Network Settings -->
+  <data name="Settings_Network" xml:space="preserve">
+    <value>Network &amp; Sync</value>
+  </data>
+  <data name="Settings_NetworkEnabled" xml:space="preserve">
+    <value>Enable Network Server</value>
+  </data>
+  <data name="Settings_NetworkPort" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="Settings_ApiKey" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="Button_GenerateApiKey" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="Button_RegenerateApiKey" xml:space="preserve">
+    <value>Regenerate</value>
+  </data>
+  <data name="Settings_RemoteSites" xml:space="preserve">
+    <value>Remote Sites</value>
+  </data>
+  <data name="Button_AddSite" xml:space="preserve">
+    <value>Add Site</value>
+  </data>
+  <data name="Button_RemoveSite" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoteSite_Host" xml:space="preserve">
+    <value>Host/IP</value>
+  </data>
+  <data name="RemoteSite_Port" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="RemoteSite_SiteCode" xml:space="preserve">
+    <value>Site Code</value>
+  </data>
+  <data name="RemoteSite_DisplayName" xml:space="preserve">
+    <value>Display Name</value>
+  </data>
+  <data name="RemoteSite_ApiKey" xml:space="preserve">
+    <value>API Key</value>
+  </data>
+  <data name="Sync_From" xml:space="preserve">
+    <value>From</value>
+  </data>
+  <data name="Sync_To" xml:space="preserve">
+    <value>To</value>
+  </data>
+  <data name="Sync_FetchInfo" xml:space="preserve">
+    <value>Fetch Info</value>
+  </data>
+  <data name="Sync_FetchVisits" xml:space="preserve">
+    <value>Fetch Visits</value>
+  </data>
+  <data name="ApiKey_Generated" xml:space="preserve">
+    <value>New API key generated. Make sure to save settings and share with authorized remote sites.</value>
+  </data>
+
+  <!-- Catalogs / Member Types -->
+  <data name="Catalogs_Title" xml:space="preserve">
+    <value>Member Types</value>
+  </data>
+  <data name="Catalogs_Offices" xml:space="preserve">
+    <value>Offices</value>
+  </data>
+  <data name="Catalogs_MemberTypes" xml:space="preserve">
+    <value>Member Types</value>
+  </data>
+  <data name="Button_AddOffice" xml:space="preserve">
+    <value>Add Office</value>
+  </data>
+  <data name="Button_EditOffice" xml:space="preserve">
+    <value>Edit Office</value>
+  </data>
+  <data name="Button_AddMemberType" xml:space="preserve">
+    <value>Add Type</value>
+  </data>
+  <data name="Button_EditMemberType" xml:space="preserve">
+    <value>Edit Type</value>
+  </data>
   <data name="Main_Welcome" xml:space="preserve">
     <value>Welcome</value>
   </data>
@@ -96,6 +277,15 @@
   <data name="Button_BadgePdf" xml:space="preserve">
     <value>Badge PDF</value>
   </data>
+  <data name="Button_BatchBadges" xml:space="preserve">
+    <value>Batch Badges</value>
+  </data>
+  <data name="Button_SelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="Button_DeselectAll" xml:space="preserve">
+    <value>Deselect All</value>
+  </data>
   <data name="Button_RemoteSites" xml:space="preserve">
     <value>Remote Sites</value>
   </data>
@@ -103,7 +293,7 @@
     <value>Filter</value>
   </data>
   <data name="Button_Catalogs" xml:space="preserve">
-    <value>Catalogs</value>
+    <value>Member Types</value>
   </data>
   <data name="Lock_Prompt" xml:space="preserve">
     <value>Session locked. Enter password or quick code.</value>
@@ -327,9 +517,6 @@
   <data name="Badge_PrintFailed" xml:space="preserve">
     <value>Printing failed. Please open the PDF and print manually.</value>
   </data>
-  <data name="Settings_Saved" xml:space="preserve">
-    <value>Settings saved.</value>
-  </data>
   <data name="Members_SelectFirst" xml:space="preserve">
     <value>Select a member first.</value>
   </data>
@@ -366,6 +553,12 @@
   <data name="Badge_PdfSaved" xml:space="preserve">
     <value>Badge PDF saved.</value>
   </data>
+  <data name="Badge_BatchSaved" xml:space="preserve">
+    <value>Batch badges PDF saved ({0} members).</value>
+  </data>
+  <data name="Badge_PdfFailed" xml:space="preserve">
+    <value>Failed to generate badge PDF.</value>
+  </data>
   <data name="Sync_VisitsCountLabel" xml:space="preserve">
     <value>Received {0} visits.</value>
   </data>
@@ -373,7 +566,7 @@
     <value>Recent events</value>
   </data>
   <data name="Sync_MergeSummary" xml:space="preserve">
-    <value>Merge applied. Offices +{0}/{1}, MemberTypes +{2}/{3}, Members +{4}/{5}</value>
+    <value>Merge applied. MemberTypes +{0}/{1}, Members +{2}/{3}</value>
   </data>
   <data name="Sync_InfoDetails" xml:space="preserve">
     <value>Site: {0} ({1})&#x0d;&#x0a;Members: {2}&#x0d;&#x0a;Visits: {3}&#x0d;&#x0a;Last visit: {4}</value>
@@ -382,10 +575,7 @@
     <value>Master database not found.</value>
   </data>
   <data name="Sync_MergeConflicts" xml:space="preserve">
-    <value>Skipped (newer local) - Offices: {0}, MemberTypes: {1}, Members: {2}</value>
-  </data>
-  <data name="Sync_MergeConflictsOffices" xml:space="preserve">
-    <value>Offices skipped: {0}</value>
+    <value>Skipped (newer local) - MemberTypes: {0}, Members: {1}</value>
   </data>
   <data name="Sync_MergeConflictsTypes" xml:space="preserve">
     <value>MemberTypes skipped: {0}</value>
@@ -410,6 +600,9 @@
   </data>
   <data name="Photo_None" xml:space="preserve">
     <value>No photo</value>
+  </data>
+  <data name="Photo_Preview" xml:space="preserve">
+    <value>Photo Preview</value>
   </data>
   <data name="Photo_SelectTitle" xml:space="preserve">
     <value>Select Photo</value>
@@ -448,6 +641,12 @@
   <data name="Sync_MasterOverwritten" xml:space="preserve">
     <value>Master overwritten.</value>
   </data>
+  <data name="Sync_HostRequired" xml:space="preserve">
+    <value>Please enter a host address.</value>
+  </data>
+  <data name="Sync_ConnectionFailed" xml:space="preserve">
+    <value>Connection failed. Check network settings and firewall.</value>
+  </data>
 
   <!-- Member form strings -->
   <data name="Member_Number" xml:space="preserve">
@@ -479,6 +678,27 @@
   </data>
   <data name="Member_ClearPhoto" xml:space="preserve">
     <value>Clear Photo</value>
+  </data>
+  <data name="Member_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Member_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Member_DateOfBirth" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
+  <data name="Member_BadgeIssue" xml:space="preserve">
+    <value>Badge Issue Date</value>
+  </data>
+  <data name="Member_BadgeExpiry" xml:space="preserve">
+    <value>Badge Expiry Date</value>
+  </data>
+  <data name="Member_Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Member_Active" xml:space="preserve">
+    <value>Active</value>
   </data>
   <data name="Member_NumberRequired" xml:space="preserve">
     <value>Member number is required.</value>
@@ -601,6 +821,24 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   <data name="Grid_UpdatedAt" xml:space="preserve">
     <value>Updated</value>
   </data>
+  <data name="Grid_Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Grid_Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Grid_DateOfBirth" xml:space="preserve">
+    <value>Date of Birth</value>
+  </data>
+  <data name="Grid_BadgeIssueDate" xml:space="preserve">
+    <value>Badge Issue</value>
+  </data>
+  <data name="Grid_BadgeExpiryDate" xml:space="preserve">
+    <value>Badge Expiry</value>
+  </data>
+  <data name="Grid_Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
 
   <!-- Grid column headers - Users -->
   <data name="Grid_Username" xml:space="preserve">
@@ -618,6 +856,20 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   <data name="Grid_LastLogin" xml:space="preserve">
     <value>Last Login</value>
   </data>
+  <data name="Grid_IsSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+
+  <!-- Grid column headers - Member Types -->
+  <data name="Grid_DisplayName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Grid_Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Grid_DisplayOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
 
   <!-- Grid column headers - Visits -->
   <data name="Grid_VisitType" xml:space="preserve">
@@ -626,19 +878,19 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   <data name="Grid_Timestamp" xml:space="preserve">
     <value>Time</value>
   </data>
-  <data name="Grid_Notes" xml:space="preserve">
-    <value>Notes</value>
-  </data>
   <data name="Grid_LoggedBy" xml:space="preserve">
     <value>Logged By</value>
   </data>
 
   <!-- Grid column headers - Audit -->
+  <data name="Grid_SiteCode" xml:space="preserve">
+    <value>Site</value>
+  </data>
   <data name="Grid_Action" xml:space="preserve">
     <value>Action</value>
   </data>
   <data name="Grid_EntityType" xml:space="preserve">
-    <value>Entity</value>
+    <value>Affected Entity</value>
   </data>
   <data name="Grid_EntityId" xml:space="preserve">
     <value>ID</value>
@@ -662,6 +914,94 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   </data>
   <data name="Grid_MemberId" xml:space="preserve">
     <value>Member ID</value>
+  </data>
+  <data name="Grid_Method" xml:space="preserve">
+    <value>Log Visit Method</value>
+  </data>
+  <data name="Grid_Workstation" xml:space="preserve">
+    <value>Workstation</value>
+  </data>
+
+  <!-- Menu items -->
+  <data name="Menu_File" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="Menu_MainPage" xml:space="preserve">
+    <value>Main Page (Pylae)</value>
+  </data>
+  <data name="Menu_Visits" xml:space="preserve">
+    <value>Visits</value>
+  </data>
+  <data name="Menu_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Menu_Admin" xml:space="preserve">
+    <value>Admin</value>
+  </data>
+  <data name="Menu_Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="Menu_Users" xml:space="preserve">
+    <value>Users</value>
+  </data>
+  <data name="Menu_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Menu_Audit" xml:space="preserve">
+    <value>Audit</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="Menu_UserGuide" xml:space="preserve">
+    <value>User Guide</value>
+  </data>
+  <data name="Menu_AdminGuide" xml:space="preserve">
+    <value>Admin Guide</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+
+  <!-- Gate view additions (non-duplicate) -->
+  <data name="Gate_Direction" xml:space="preserve">
+    <value>Direction</value>
+  </data>
+  <data name="Gate_Entry" xml:space="preserve">
+    <value>Entry</value>
+  </data>
+  <data name="Gate_Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="Gate_LogVisit" xml:space="preserve">
+    <value>Log Visit</value>
+  </data>
+
+  <!-- Button additions (non-duplicate) -->
+  <data name="Button_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Button_QuickCode" xml:space="preserve">
+    <value>Quick Code</value>
+  </data>
+
+  <!-- Audit placeholders -->
+  <data name="Audit_ActionType" xml:space="preserve">
+    <value>Action type</value>
+  </data>
+  <data name="Audit_TargetType" xml:space="preserve">
+    <value>Target type</value>
+  </data>
+
+  <!-- Help menu dialogs -->
+  <data name="Help_UserGuideNotAvailable" xml:space="preserve">
+    <value>User Guide documentation is not yet available.</value>
+  </data>
+  <data name="Help_AdminGuideNotAvailable" xml:space="preserve">
+    <value>Admin Guide documentation is not yet available.</value>
+  </data>
+  <data name="About_Version" xml:space="preserve">
+    <value>Version</value>
   </data>
 </root>
 

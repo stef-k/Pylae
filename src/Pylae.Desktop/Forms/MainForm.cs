@@ -75,53 +75,38 @@ public partial class MainForm : Form
         _backupService = backupService;
 
         Text = $"{Strings.App_Title} - {Strings.App_Subtitle}";
-        subtitleLabel.Text = Strings.App_Subtitle;
         welcomeLabel.Text = Strings.Main_Welcome;
-        entryRadio.Text = Strings.Gate_Mode_Entry;
-        exitRadio.Text = Strings.Gate_Mode_Exit;
-        memberNumberLabel.Text = Strings.Gate_MemberNumber;
-        notesLabel.Text = Strings.Gate_Notes;
-        logVisitButton.Text = Strings.Gate_LogButton;
-        gateResultLabel.Text = Strings.Gate_LastResult;
-        settingsTab.Text = Strings.Settings_Title;
-        gateTab.Text = Strings.App_Title;
-        badgeButton.Text = Strings.Button_BadgePdf;
-        printBadgeButton.Text = Strings.Button_PrintBadge;
-        usersTab.Text = Strings.Tab_Users;
-        addUserButton.Text = Strings.Button_AddUser;
-        editUserButton.Text = Strings.Button_EditUser;
-        deactivateUserButton.Text = Strings.Button_Deactivate;
-        deleteUserButton.Text = Strings.Button_Delete;
-        resetPasswordButton.Text = Strings.Button_ResetPassword;
-        resetQuickCodeButton.Text = Strings.Button_ResetQuickCode;
-        refreshUsersButton.Text = Strings.Button_Refresh;
-        backupButton.Text = Strings.Button_Backup;
-        restoreButton.Text = Strings.Button_Restore;
-        changePasswordButton.Text = Strings.Button_ChangePassword;
-        changeQuickCodeButton.Text = Strings.Button_ChangeQuickCode;
 
         // Wire up data binding events to localize grid column headers
         visitsGrid.DataBindingComplete += OnVisitsGridDataBindingComplete;
         auditGrid.DataBindingComplete += OnAuditGridDataBindingComplete;
+
+        // Show gate panel by default
+        ShowPanel(gatePanel);
     }
 
     public void SetCurrentUser(User user)
     {
         _mainViewModel.CurrentUser = user;
         _currentUserService.CurrentUser = user;
-        welcomeLabel.Text = $"{Strings.Main_Welcome}, {user.FirstName}";
-        usersTab.Enabled = user.Role == UserRole.Admin;
+        UpdateWelcomeLabel(user.FirstName);
+
+        // Enable/disable admin menu based on role
+        var isAdmin = user.Role == UserRole.Admin;
+        adminMenu.Enabled = isAdmin;
     }
 
     protected override async void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
         await _mainViewModel.InitializeAsync();
-        siteLabel.Text = $"{_mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode}";
+        siteLabel.Text = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
+        UpdateWelcomeLabel(_mainViewModel.CurrentUser?.FirstName);
 
+        // Set up settings form view (replaces grid)
+        SetupSettingsFormView();
         await _settingsViewModel.LoadAsync();
-        _settingsBinding = new BindingList<Setting>(_settingsViewModel.Settings);
-        settingsGrid.DataSource = _settingsBinding;
+        await LoadSettingsToFormAsync();
 
         // Set up master-detail view for Members
         SetupMembersMasterDetailView();
@@ -149,18 +134,17 @@ public partial class MainForm : Form
         SetupUsersMasterDetailView();
 
         await LoadUsersAsync();
+
+        // Refresh date pickers to use app locale after all views are set up
+        RefreshDatePickerFormats();
+
         await TryStartSyncAsync();
     }
 
     private async Task PopulateMemberComboBoxes()
     {
-        // Load catalogs (offices and member types)
+        // Load catalogs (member types)
         await _catalogsViewModel.LoadAsync();
-
-        _memberOfficeComboBox!.DataSource = _catalogsViewModel.Offices.ToList();
-        _memberOfficeComboBox.DisplayMember = "DisplayName";
-        _memberOfficeComboBox.ValueMember = "Id";
-        _memberOfficeComboBox.SelectedIndex = -1;
 
         _memberTypeComboBox!.DataSource = _catalogsViewModel.MemberTypes.ToList();
         _memberTypeComboBox.DisplayMember = "DisplayName";
@@ -212,17 +196,46 @@ public partial class MainForm : Form
         badgeWarningLabel.Visible = !string.IsNullOrWhiteSpace(warningText);
         memberNumberTextBox.Text = string.Empty;
         notesTextBox.Text = string.Empty;
+        memberNumberTextBox.Focus();
     }
 
-    private async void OnSaveSettingsClick(object sender, EventArgs e)
+    private void OnMemberNumberKeyDown(object? sender, KeyEventArgs e)
     {
-        settingsGrid.EndEdit();
-        _settingsViewModel.Settings = _settingsBinding.ToList();
-        await _settingsViewModel.SaveAsync();
-        MessageBox.Show(Strings.Settings_Saved, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        if (e.KeyCode == Keys.Enter)
+        {
+            e.SuppressKeyPress = true;
+            OnLogVisitClick(sender!, e);
+        }
     }
 
-    private async void OnBackupClick(object sender, EventArgs e)
+    private void OnMainFormKeyDown(object? sender, KeyEventArgs e)
+    {
+        // Only handle shortcuts when gate panel is visible
+        if (!gatePanel.Visible) return;
+
+        switch (e.KeyCode)
+        {
+            case Keys.F1:
+                entryRadio.Checked = true;
+                e.Handled = true;
+                break;
+            case Keys.F2:
+                exitRadio.Checked = true;
+                e.Handled = true;
+                break;
+            case Keys.F5:
+                OnLogVisitClick(sender!, e);
+                e.Handled = true;
+                break;
+        }
+    }
+
+    private async void OnSaveSettingsClick(object? sender, EventArgs e)
+    {
+        await SaveSettingsFromFormAsync();
+    }
+
+    private async void OnBackupClick(object? sender, EventArgs e)
     {
         using var dialog = new SaveFileDialog
         {
@@ -253,7 +266,7 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnRestoreClick(object sender, EventArgs e)
+    private async void OnRestoreClick(object? sender, EventArgs e)
     {
         using var dialog = new OpenFileDialog
         {
@@ -300,42 +313,6 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnChangePasswordClick(object sender, EventArgs e)
-    {
-        if (_mainViewModel.CurrentUser is null)
-        {
-            return;
-        }
-
-        var input = Microsoft.VisualBasic.Interaction.InputBox(Strings.Users_ResetPasswordPrompt, Strings.App_Title, string.Empty);
-        if (string.IsNullOrWhiteSpace(input))
-        {
-            return;
-        }
-
-        await _usersViewModel.ChangePasswordAsync(_mainViewModel.CurrentUser.Id, input);
-        MessageBox.Show(Strings.Account_PasswordUpdated, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-    }
-
-    private async void OnChangeQuickCodeClick(object sender, EventArgs e)
-    {
-        if (_mainViewModel.CurrentUser is null)
-        {
-            return;
-        }
-
-        if (_mainViewModel.CurrentUser.Role == UserRole.Admin || _mainViewModel.CurrentUser.IsShared)
-        {
-            MessageBox.Show(Strings.Account_QuickCodeNotAllowed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
-        var input = Microsoft.VisualBasic.Interaction.InputBox(Strings.Users_ResetQuickCodePrompt, Strings.App_Title, string.Empty);
-        var quickCode = string.IsNullOrWhiteSpace(input) ? null : input.Trim();
-        await _usersViewModel.SetQuickCodeAsync(_mainViewModel.CurrentUser.Id, quickCode);
-        MessageBox.Show(Strings.Account_QuickCodeUpdated, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-    }
-
     private async void OnAddMemberClick(object sender, EventArgs e)
     {
         var selected = membersGrid.CurrentRow?.DataBoundItem as Member;
@@ -360,14 +337,27 @@ public partial class MainForm : Form
 
     private async void OnRefreshVisitsClick(object sender, EventArgs e)
     {
-        await _visitsViewModel.LoadAsync(visitsFromPicker.Value, visitsToPicker.Value);
-        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
-        visitsGrid.DataSource = _visitsBinding;
+        // Use filter dates, converting local to UTC for database query
+        await FilterAndRefreshVisits();
     }
 
     private async void OnFilterVisitsClick(object sender, EventArgs e)
     {
-        await _visitsViewModel.LoadAsync(visitsFromPicker.Value, visitsToPicker.Value);
+        await FilterAndRefreshVisits();
+    }
+
+    private async Task FilterAndRefreshVisits()
+    {
+        // Convert local date picker values to UTC for database query
+        // fromUtc: Start of day in local time, converted to UTC
+        var fromLocal = DateTime.SpecifyKind(visitsFromPicker.Value.Date, DateTimeKind.Local);
+        var fromUtc = fromLocal.ToUniversalTime();
+
+        // toUtc: End of day in local time, converted to UTC
+        var toLocal = DateTime.SpecifyKind(visitsToPicker.Value.Date, DateTimeKind.Local).AddDays(1).AddTicks(-1);
+        var toUtc = toLocal.ToUniversalTime();
+
+        await _visitsViewModel.LoadAsync(fromUtc, toUtc);
         _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
         visitsGrid.DataSource = _visitsBinding;
     }
@@ -704,7 +694,46 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnOpenCatalogsClick(object sender, EventArgs e)
+    private async void OnBatchBadgeClick(object? sender, EventArgs e)
+    {
+        // Get selected members from grid
+        var selectedMembers = new List<Member>();
+        foreach (DataGridViewRow row in membersGrid.SelectedRows)
+        {
+            if (row.DataBoundItem is Member member)
+            {
+                selectedMembers.Add(member);
+            }
+        }
+
+        if (selectedMembers.Count == 0)
+        {
+            MessageBox.Show(Strings.Members_SelectFirst, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+            return;
+        }
+
+        var dialog = new SaveFileDialog
+        {
+            Filter = "PDF files (*.pdf)|*.pdf",
+            FileName = $"badges_{DateTime.Now:yyyyMMdd_HHmm}.pdf"
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            try
+            {
+                var pdf = await _badgeRenderer.RenderBatchBadgesAsync(selectedMembers);
+                await File.WriteAllBytesAsync(dialog.FileName, pdf);
+                MessageBox.Show(string.Format(Strings.Badge_BatchSaved, selectedMembers.Count), Strings.App_Title);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"{Strings.Badge_PdfFailed}: {ex.Message}", Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+    }
+
+    private async void OnOpenCatalogsClick(object? sender, EventArgs e)
     {
         var form = _serviceProvider.GetRequiredService<CatalogsForm>();
         form.ShowDialog(this);
@@ -723,7 +752,7 @@ public partial class MainForm : Form
             FirstName = source.FirstName,
             LastName = source.LastName,
             BusinessRank = source.BusinessRank,
-            OfficeId = source.OfficeId,
+            Office = source.Office,
             MemberTypeId = source.MemberTypeId,
             PersonalIdNumber = source.PersonalIdNumber,
             BusinessIdNumber = source.BusinessIdNumber,
@@ -762,11 +791,9 @@ public partial class MainForm : Form
     {
         if (_mainViewModel.CurrentUser?.Role != UserRole.Admin)
         {
-            usersTab.Enabled = false;
             return;
         }
 
-        usersTab.Enabled = true;
         await _usersViewModel.LoadAsync();
         _usersBinding = new BindingList<User>(_usersViewModel.Users);
         usersGrid.DataSource = _usersBinding;
@@ -782,22 +809,43 @@ public partial class MainForm : Form
         // Map property names to localized headers
         var columnMappings = new Dictionary<string, string>
         {
-            { nameof(Visit.Id), Strings.Grid_Id },
+            { nameof(Visit.VisitGuid), Strings.Grid_Id },
             { nameof(Visit.MemberId), Strings.Grid_MemberId },
             { nameof(Visit.MemberNumber), Strings.Grid_MemberNumber },
             { nameof(Visit.MemberFirstName), Strings.Grid_FirstName },
             { nameof(Visit.MemberLastName), Strings.Grid_LastName },
+            { nameof(Visit.MemberBusinessRank), Strings.Grid_BusinessRank },
+            { nameof(Visit.MemberOfficeName), Strings.Grid_Office },
+            { nameof(Visit.MemberIsPermanentStaff), Strings.Grid_IsPermanent },
+            { nameof(Visit.MemberTypeCode), Strings.Grid_MemberTypeId },
+            { nameof(Visit.MemberTypeName), Strings.Grid_MemberType },
+            { nameof(Visit.MemberPersonalIdNumber), Strings.Grid_PersonalIdNumber },
+            { nameof(Visit.MemberBusinessIdNumber), Strings.Grid_BusinessIdNumber },
             { nameof(Visit.Direction), Strings.Grid_VisitType },
+            { nameof(Visit.TimestampUtc), Strings.Grid_Timestamp },
             { nameof(Visit.TimestampLocal), Strings.Grid_Timestamp },
-            { nameof(Visit.Notes), Strings.Grid_Notes },
-            { nameof(Visit.Username), Strings.Grid_LoggedBy }
+            { nameof(Visit.Method), Strings.Grid_Method },
+            { nameof(Visit.SiteCode), Strings.Grid_SiteCode },
+            { nameof(Visit.UserId), Strings.Grid_UserId },
+            { nameof(Visit.Username), Strings.Grid_LoggedBy },
+            { nameof(Visit.UserDisplayName), Strings.Grid_Username },
+            { nameof(Visit.WorkstationId), Strings.Grid_Workstation },
+            { nameof(Visit.Notes), Strings.Grid_Notes }
         };
+
+        // Hide ID columns - not needed for users
+        var hiddenColumns = new[] { "Id", "VisitGuid" };
 
         foreach (DataGridViewColumn column in visitsGrid.Columns)
         {
             if (columnMappings.TryGetValue(column.DataPropertyName, out var localizedHeader))
             {
                 column.HeaderText = localizedHeader;
+            }
+
+            if (hiddenColumns.Contains(column.DataPropertyName))
+            {
+                column.Visible = false;
             }
         }
     }
@@ -813,6 +861,7 @@ public partial class MainForm : Form
         var columnMappings = new Dictionary<string, string>
         {
             { nameof(AuditEntry.Id), Strings.Grid_Id },
+            { nameof(AuditEntry.SiteCode), Strings.Grid_SiteCode },
             { nameof(AuditEntry.ActionType), Strings.Grid_Action },
             { nameof(AuditEntry.TargetType), Strings.Grid_EntityType },
             { nameof(AuditEntry.TargetId), Strings.Grid_EntityId },
@@ -830,4 +879,97 @@ public partial class MainForm : Form
             }
         }
     }
+
+    /// <summary>
+    /// Refresh DateTimePicker controls to use current culture format
+    /// </summary>
+    private void RefreshDatePickerFormats()
+    {
+        // Force DateTimePickers to use selected UI culture's date format
+        var culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
+        var format = culture.DateTimeFormat.ShortDatePattern;
+
+        visitsFromPicker.Format = DateTimePickerFormat.Custom;
+        visitsFromPicker.CustomFormat = format;
+        visitsToPicker.Format = DateTimePickerFormat.Custom;
+        visitsToPicker.CustomFormat = format;
+
+        auditFromPicker.Format = DateTimePickerFormat.Custom;
+        auditFromPicker.CustomFormat = format;
+        auditToPicker.Format = DateTimePickerFormat.Custom;
+        auditToPicker.CustomFormat = format;
+
+        // Also refresh Members date pickers if they exist
+        if (_memberBadgeIssuePicker != null)
+        {
+            _memberBadgeIssuePicker.CustomFormat = format;
+            _memberBadgeExpiryPicker!.CustomFormat = format;
+            _memberDateOfBirthPicker!.CustomFormat = format;
+        }
+    }
+
+    #region Panel Navigation
+
+    private void ShowPanel(Panel panelToShow)
+    {
+        gatePanel.Visible = panelToShow == gatePanel;
+        membersPanel.Visible = panelToShow == membersPanel;
+        usersPanel.Visible = panelToShow == usersPanel;
+        visitsPanel.Visible = panelToShow == visitsPanel;
+        settingsPanel.Visible = panelToShow == settingsPanel;
+        auditPanel.Visible = panelToShow == auditPanel;
+    }
+
+    private void UpdateWelcomeLabel(string? firstName)
+    {
+        var site = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
+        if (string.IsNullOrEmpty(firstName))
+        {
+            welcomeLabel.Text = $"{Strings.Main_Welcome} | {site}";
+        }
+        else
+        {
+            welcomeLabel.Text = $"{Strings.Main_Welcome}, {firstName} | {site}";
+        }
+    }
+
+    #endregion
+
+    #region Menu Event Handlers
+
+    private void OnMenuMainPageClick(object? sender, EventArgs e) => ShowPanel(gatePanel);
+
+    private void OnMenuVisitsClick(object? sender, EventArgs e) => ShowPanel(visitsPanel);
+
+    private void OnMenuExitClick(object? sender, EventArgs e) => Close();
+
+    private void OnMenuBadgesClick(object? sender, EventArgs e) => ShowPanel(membersPanel);
+
+    private void OnMenuUsersClick(object? sender, EventArgs e) => ShowPanel(usersPanel);
+
+    private void OnMenuSettingsClick(object? sender, EventArgs e) => ShowPanel(settingsPanel);
+
+    private void OnMenuAuditClick(object? sender, EventArgs e) => ShowPanel(auditPanel);
+
+    private void OnMenuUserGuideClick(object? sender, EventArgs e)
+    {
+        MessageBox.Show(Strings.Help_UserGuideNotAvailable, Strings.Menu_UserGuide, MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void OnMenuAdminGuideClick(object? sender, EventArgs e)
+    {
+        MessageBox.Show(Strings.Help_AdminGuideNotAvailable, Strings.Menu_AdminGuide, MessageBoxButtons.OK, MessageBoxIcon.Information);
+    }
+
+    private void OnMenuAboutClick(object? sender, EventArgs e)
+    {
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version?.ToString() ?? "1.0.0";
+        MessageBox.Show(
+            $"{Strings.App_Title}\n{Strings.App_Subtitle}\n\n{Strings.About_Version}: {version}\n\n© 2024 Pylae",
+            Strings.Menu_About,
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information);
+    }
+
+    #endregion
 }

@@ -29,7 +29,7 @@ public class ExportService : IExportService
             ws.Cell(row, 1).Value = m.MemberNumber;
             ws.Cell(row, 2).Value = m.FirstName;
             ws.Cell(row, 3).Value = m.LastName;
-            ws.Cell(row, 4).Value = m.Office?.Name;
+            ws.Cell(row, 4).Value = m.Office;
             ws.Cell(row, 5).Value = m.MemberType?.DisplayName;
             ws.Cell(row, 6).Value = m.BadgeExpiryDate?.ToString("yyyy-MM-dd");
             row++;
