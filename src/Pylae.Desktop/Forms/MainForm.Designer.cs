@@ -74,22 +74,11 @@ partial class MainForm
         entryRadio = new RadioButton();
         directionGroupBox = new GroupBox();
 
-        // Members panel controls
+        // Members panel - grid only (configured in MasterDetail)
         membersGrid = new DataGridView();
-        refreshMembersButton = new Button();
-        exportMembersButton = new Button();
-        badgeButton = new Button();
-        printBadgeButton = new Button();
 
-        // Users panel controls
+        // Users panel - grid only (configured in MasterDetail)
         usersGrid = new DataGridView();
-        refreshUsersButton = new Button();
-        addUserButton = new Button();
-        editUserButton = new Button();
-        deactivateUserButton = new Button();
-        deleteUserButton = new Button();
-        resetPasswordButton = new Button();
-        resetQuickCodeButton = new Button();
 
         // Visits panel controls
         visitsGrid = new DataGridView();
@@ -449,11 +438,6 @@ partial class MainForm
         //
         // membersPanel - Badges/Members view
         //
-        membersPanel.Controls.Add(membersGrid);
-        membersPanel.Controls.Add(exportMembersButton);
-        membersPanel.Controls.Add(badgeButton);
-        membersPanel.Controls.Add(printBadgeButton);
-        membersPanel.Controls.Add(refreshMembersButton);
         membersPanel.Dock = DockStyle.Fill;
         membersPanel.Location = new Point(0, 78);
         membersPanel.Name = "membersPanel";
@@ -463,92 +447,8 @@ partial class MainForm
         membersPanel.Visible = false;
 
         //
-        // membersGrid
-        //
-        membersGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        membersGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        membersGrid.Location = new Point(10, 10);
-        membersGrid.Name = "membersGrid";
-        membersGrid.ReadOnly = true;
-        membersGrid.RowTemplate.Height = 25;
-        membersGrid.Size = new Size(1180, 660);
-        membersGrid.TabIndex = 0;
-
-        //
-        // exportMembersButton
-        //
-        exportMembersButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        exportMembersButton.AutoSize = true;
-        exportMembersButton.Font = buttonFont;
-        exportMembersButton.Location = new Point(10, 680);
-        exportMembersButton.MinimumSize = new Size(120, 35);
-        exportMembersButton.Name = "exportMembersButton";
-        exportMembersButton.Padding = new Padding(8, 3, 8, 3);
-        exportMembersButton.Size = new Size(120, 35);
-        exportMembersButton.TabIndex = 1;
-        exportMembersButton.Text = Strings.Button_Export;
-        exportMembersButton.UseVisualStyleBackColor = true;
-        exportMembersButton.Click += OnExportMembersClick;
-
-        //
-        // badgeButton
-        //
-        badgeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        badgeButton.AutoSize = true;
-        badgeButton.Font = buttonFont;
-        badgeButton.Location = new Point(140, 680);
-        badgeButton.MinimumSize = new Size(120, 35);
-        badgeButton.Name = "badgeButton";
-        badgeButton.Padding = new Padding(8, 3, 8, 3);
-        badgeButton.Size = new Size(120, 35);
-        badgeButton.TabIndex = 2;
-        badgeButton.Text = Strings.Button_BadgePdf;
-        badgeButton.UseVisualStyleBackColor = true;
-        badgeButton.Click += OnBadgeClick;
-
-        //
-        // printBadgeButton
-        //
-        printBadgeButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-        printBadgeButton.AutoSize = true;
-        printBadgeButton.Font = buttonFont;
-        printBadgeButton.Location = new Point(270, 680);
-        printBadgeButton.MinimumSize = new Size(120, 35);
-        printBadgeButton.Name = "printBadgeButton";
-        printBadgeButton.Padding = new Padding(8, 3, 8, 3);
-        printBadgeButton.Size = new Size(120, 35);
-        printBadgeButton.TabIndex = 3;
-        printBadgeButton.Text = Strings.Button_PrintBadge;
-        printBadgeButton.UseVisualStyleBackColor = true;
-        printBadgeButton.Click += OnPrintBadgeClick;
-
-        //
-        // refreshMembersButton
-        //
-        refreshMembersButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        refreshMembersButton.AutoSize = true;
-        refreshMembersButton.Font = buttonFont;
-        refreshMembersButton.Location = new Point(1070, 680);
-        refreshMembersButton.MinimumSize = new Size(120, 35);
-        refreshMembersButton.Name = "refreshMembersButton";
-        refreshMembersButton.Padding = new Padding(8, 3, 8, 3);
-        refreshMembersButton.Size = new Size(120, 35);
-        refreshMembersButton.TabIndex = 5;
-        refreshMembersButton.Text = Strings.Button_Refresh;
-        refreshMembersButton.UseVisualStyleBackColor = true;
-        refreshMembersButton.Click += OnRefreshMembersClick;
-
-        //
         // usersPanel - Users management view
         //
-        usersPanel.Controls.Add(usersGrid);
-        usersPanel.Controls.Add(refreshUsersButton);
-        usersPanel.Controls.Add(addUserButton);
-        usersPanel.Controls.Add(editUserButton);
-        usersPanel.Controls.Add(resetPasswordButton);
-        usersPanel.Controls.Add(deactivateUserButton);
-        usersPanel.Controls.Add(deleteUserButton);
-        usersPanel.Controls.Add(resetQuickCodeButton);
         usersPanel.Dock = DockStyle.Fill;
         usersPanel.Location = new Point(0, 78);
         usersPanel.Name = "usersPanel";
@@ -556,131 +456,6 @@ partial class MainForm
         usersPanel.Size = new Size(1200, 722);
         usersPanel.TabIndex = 4;
         usersPanel.Visible = false;
-
-        //
-        // usersGrid
-        //
-        usersGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        usersGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        usersGrid.Location = new Point(10, 10);
-        usersGrid.Name = "usersGrid";
-        usersGrid.ReadOnly = true;
-        usersGrid.RowTemplate.Height = 25;
-        usersGrid.Size = new Size(1040, 700);
-        usersGrid.TabIndex = 0;
-
-        //
-        // refreshUsersButton
-        //
-        refreshUsersButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        refreshUsersButton.AutoSize = true;
-        refreshUsersButton.Font = buttonFont;
-        refreshUsersButton.Location = new Point(1060, 10);
-        refreshUsersButton.MinimumSize = new Size(130, 35);
-        refreshUsersButton.Name = "refreshUsersButton";
-        refreshUsersButton.Padding = new Padding(8, 3, 8, 3);
-        refreshUsersButton.Size = new Size(130, 35);
-        refreshUsersButton.TabIndex = 1;
-        refreshUsersButton.Text = Strings.Button_Refresh;
-        refreshUsersButton.UseVisualStyleBackColor = true;
-        refreshUsersButton.Click += OnRefreshUsersClick;
-
-        //
-        // addUserButton
-        //
-        addUserButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        addUserButton.AutoSize = true;
-        addUserButton.Font = buttonFont;
-        addUserButton.Location = new Point(1060, 55);
-        addUserButton.MinimumSize = new Size(130, 35);
-        addUserButton.Name = "addUserButton";
-        addUserButton.Padding = new Padding(8, 3, 8, 3);
-        addUserButton.Size = new Size(130, 35);
-        addUserButton.TabIndex = 2;
-        addUserButton.Text = Strings.Button_AddUser;
-        addUserButton.UseVisualStyleBackColor = true;
-        addUserButton.Click += OnAddUserClick;
-
-        //
-        // editUserButton
-        //
-        editUserButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        editUserButton.AutoSize = true;
-        editUserButton.Font = buttonFont;
-        editUserButton.Location = new Point(1060, 100);
-        editUserButton.MinimumSize = new Size(130, 35);
-        editUserButton.Name = "editUserButton";
-        editUserButton.Padding = new Padding(8, 3, 8, 3);
-        editUserButton.Size = new Size(130, 35);
-        editUserButton.TabIndex = 3;
-        editUserButton.Text = Strings.Button_Edit;
-        editUserButton.UseVisualStyleBackColor = true;
-        editUserButton.Click += OnEditUserClick;
-
-        //
-        // resetPasswordButton
-        //
-        resetPasswordButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        resetPasswordButton.AutoSize = true;
-        resetPasswordButton.Font = buttonFont;
-        resetPasswordButton.Location = new Point(1060, 145);
-        resetPasswordButton.MinimumSize = new Size(130, 35);
-        resetPasswordButton.Name = "resetPasswordButton";
-        resetPasswordButton.Padding = new Padding(8, 3, 8, 3);
-        resetPasswordButton.Size = new Size(130, 35);
-        resetPasswordButton.TabIndex = 4;
-        resetPasswordButton.Text = Strings.Button_ResetPassword;
-        resetPasswordButton.UseVisualStyleBackColor = true;
-        resetPasswordButton.Click += OnResetPasswordClick;
-
-        //
-        // deactivateUserButton
-        //
-        deactivateUserButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        deactivateUserButton.AutoSize = true;
-        deactivateUserButton.Font = buttonFont;
-        deactivateUserButton.Location = new Point(1060, 190);
-        deactivateUserButton.MinimumSize = new Size(130, 35);
-        deactivateUserButton.Name = "deactivateUserButton";
-        deactivateUserButton.Padding = new Padding(8, 3, 8, 3);
-        deactivateUserButton.Size = new Size(130, 35);
-        deactivateUserButton.TabIndex = 5;
-        deactivateUserButton.Text = Strings.Button_Deactivate;
-        deactivateUserButton.UseVisualStyleBackColor = true;
-        deactivateUserButton.Click += OnDeactivateUserClick;
-
-        //
-        // deleteUserButton
-        //
-        deleteUserButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        deleteUserButton.AutoSize = true;
-        deleteUserButton.Font = buttonFont;
-        deleteUserButton.ForeColor = Color.Red;
-        deleteUserButton.Location = new Point(1060, 235);
-        deleteUserButton.MinimumSize = new Size(130, 35);
-        deleteUserButton.Name = "deleteUserButton";
-        deleteUserButton.Padding = new Padding(8, 3, 8, 3);
-        deleteUserButton.Size = new Size(130, 35);
-        deleteUserButton.TabIndex = 6;
-        deleteUserButton.Text = Strings.Button_Delete;
-        deleteUserButton.UseVisualStyleBackColor = true;
-        deleteUserButton.Click += OnDeleteUserClick;
-
-        //
-        // resetQuickCodeButton
-        //
-        resetQuickCodeButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        resetQuickCodeButton.AutoSize = true;
-        resetQuickCodeButton.Font = buttonFont;
-        resetQuickCodeButton.Location = new Point(1060, 280);
-        resetQuickCodeButton.MinimumSize = new Size(130, 35);
-        resetQuickCodeButton.Name = "resetQuickCodeButton";
-        resetQuickCodeButton.Padding = new Padding(8, 3, 8, 3);
-        resetQuickCodeButton.Size = new Size(130, 35);
-        resetQuickCodeButton.TabIndex = 7;
-        resetQuickCodeButton.Text = Strings.Button_QuickCode;
-        resetQuickCodeButton.UseVisualStyleBackColor = true;
-        resetQuickCodeButton.Click += OnResetQuickCodeClick;
 
         //
         // visitsPanel - Visits view
@@ -1084,22 +859,11 @@ partial class MainForm
     private Label lastResultValueLabel;
     private Label badgeWarningLabel;
 
-    // Members panel controls
+    // Members panel - grid only (configured in MasterDetail)
     private DataGridView membersGrid;
-    private Button refreshMembersButton;
-    private Button exportMembersButton;
-    private Button badgeButton;
-    private Button printBadgeButton;
 
-    // Users panel controls
+    // Users panel - grid only (configured in MasterDetail)
     private DataGridView usersGrid;
-    private Button refreshUsersButton;
-    private Button addUserButton;
-    private Button editUserButton;
-    private Button deactivateUserButton;
-    private Button deleteUserButton;
-    private Button resetPasswordButton;
-    private Button resetQuickCodeButton;
 
     // Visits panel controls
     private DataGridView visitsGrid;

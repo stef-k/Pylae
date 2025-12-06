@@ -257,7 +257,6 @@ internal static class Program
         services.AddTransient<RemoteSitesForm>();
         services.AddTransient<CatalogsForm>();
         services.AddTransient<MemberTypeEditorForm>();
-        services.AddTransient<UserEditorForm>();
         services.AddTransient<LockForm>();
         services.AddSingleton<CurrentUserService>();
 

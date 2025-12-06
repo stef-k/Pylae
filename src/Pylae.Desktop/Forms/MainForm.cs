@@ -313,13 +313,6 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnRefreshMembersClick(object sender, EventArgs e)
-    {
-        await _membersViewModel.LoadAsync();
-        _membersBinding = new BindingList<Member>(_membersViewModel.Members);
-        membersGrid.DataSource = _membersBinding;
-    }
-
     private async void OnRefreshVisitsClick(object sender, EventArgs e)
     {
         // Use filter dates, converting local to UTC for database query
@@ -371,99 +364,6 @@ public partial class MainForm : Form
     {
         var form = _serviceProvider.GetRequiredService<RemoteSitesForm>();
         form.ShowDialog(this);
-    }
-
-    private async void OnRefreshUsersClick(object sender, EventArgs e)
-    {
-        if (!EnsureAdmin())
-        {
-            return;
-        }
-
-        await LoadUsersAsync();
-    }
-
-    private async void OnAddUserClick(object sender, EventArgs e)
-    {
-        if (!EnsureAdmin())
-        {
-            return;
-        }
-
-        var editor = _serviceProvider.GetRequiredService<UserEditorForm>();
-        editor.LoadUser(new User { IsActive = true, Role = UserRole.User });
-        if (editor.ShowDialog(this) == DialogResult.OK)
-        {
-            await LoadUsersAsync();
-        }
-    }
-
-    private async void OnEditUserClick(object sender, EventArgs e)
-    {
-        if (!EnsureAdmin())
-        {
-            return;
-        }
-
-        var user = GetSelectedUser();
-        if (user is null)
-        {
-            MessageBox.Show(Strings.Users_SelectUser, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
-
-        var editor = _serviceProvider.GetRequiredService<UserEditorForm>();
-        editor.LoadUser(CloneUser(user));
-        if (editor.ShowDialog(this) == DialogResult.OK)
-        {
-            await LoadUsersAsync();
-        }
-    }
-
-    private async void OnDeactivateUserClick(object sender, EventArgs e)
-    {
-        if (!EnsureAdmin())
-        {
-            return;
-        }
-
-        var user = GetSelectedUser();
-        if (user is null)
-        {
-            MessageBox.Show(Strings.Users_SelectUser, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
-
-        if (MessageBox.Show(Strings.Users_DeactivateConfirm, Strings.App_Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-        {
-            return;
-        }
-
-        await _usersViewModel.DeactivateAsync(user.Id);
-        await LoadUsersAsync();
-    }
-
-    private async void OnDeleteUserClick(object sender, EventArgs e)
-    {
-        if (!EnsureAdmin())
-        {
-            return;
-        }
-
-        var user = GetSelectedUser();
-        if (user is null)
-        {
-            MessageBox.Show(Strings.Users_SelectUser, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
-
-        if (MessageBox.Show(Strings.Users_DeleteConfirm, Strings.App_Title, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
-        {
-            return;
-        }
-
-        await _usersViewModel.DeleteAsync(user.Id);
-        await LoadUsersAsync();
     }
 
     private async void OnResetPasswordClick(object? sender, EventArgs e)
@@ -631,54 +531,6 @@ public partial class MainForm : Form
         }
     }
 
-    private async void OnPrintBadgeClick(object sender, EventArgs e)
-    {
-        var member = membersGrid.CurrentRow?.DataBoundItem as Member;
-        if (member is null)
-        {
-            MessageBox.Show(Strings.Members_SelectFirst, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-            return;
-        }
-
-        var tempPath = Path.Combine(Path.GetTempPath(), $"badge_{member.MemberNumber}_{Guid.NewGuid():N}.pdf");
-        var pdf = await _badgeRenderer.RenderBadgeAsync(member);
-        await File.WriteAllBytesAsync(tempPath, pdf);
-        using var printDialog = new PrintDialog();
-        printDialog.UseEXDialog = true;
-        MessageBox.Show(Strings.Badge_PrintReady, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
-
-        if (printDialog.ShowDialog(this) == DialogResult.OK)
-        {
-            try
-            {
-                var printer = printDialog.PrinterSettings.PrinterName;
-                var startInfo = new System.Diagnostics.ProcessStartInfo(tempPath)
-                {
-                    UseShellExecute = true,
-                    Verb = "printto",
-                    Arguments = $"\"{printer}\""
-                };
-                System.Diagnostics.Process.Start(startInfo);
-            }
-            catch
-            {
-                MessageBox.Show(Strings.Badge_PrintFailed, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-        else
-        {
-            // if user cancels, offer to open for manual preview
-            try
-            {
-                System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(tempPath) { UseShellExecute = true });
-            }
-            catch
-            {
-                // ignore failure to open
-            }
-        }
-    }
-
     private async void OnBatchBadgeClick(object? sender, EventArgs e)
     {
         // Get selected members from grid
@@ -726,23 +578,6 @@ public partial class MainForm : Form
         await _membersViewModel.LoadAsync();
         _membersBinding = new BindingList<Member>(_membersViewModel.Members);
         membersGrid.DataSource = _membersBinding;
-    }
-
-    private static User CloneUser(User source)
-    {
-        return new User
-        {
-            Id = source.Id,
-            Username = source.Username,
-            FirstName = source.FirstName,
-            LastName = source.LastName,
-            Role = source.Role,
-            IsShared = source.IsShared,
-            IsSystem = source.IsSystem,
-            IsActive = source.IsActive,
-            CreatedAtUtc = source.CreatedAtUtc,
-            LastLoginAtUtc = source.LastLoginAtUtc
-        };
     }
 
     private async Task LoadUsersAsync()
