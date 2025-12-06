@@ -56,11 +56,39 @@ public class MemberService : IMemberService
         return list.Select(ToDomain).ToList();
     }
 
+    public async Task<int> GetNextAvailableMemberNumberAsync(CancellationToken cancellationToken = default)
+    {
+        // Get all member numbers currently in use by active members
+        var usedNumbers = await _dbContext.Members
+            .Where(m => m.IsActive)
+            .Select(m => m.MemberNumber)
+            .OrderBy(n => n)
+            .ToListAsync(cancellationToken);
+
+        // Find the lowest available number starting from 1
+        var nextNumber = 1;
+        foreach (var usedNumber in usedNumbers)
+        {
+            if (usedNumber > nextNumber)
+            {
+                // Found a gap - use this number
+                break;
+            }
+            if (usedNumber == nextNumber)
+            {
+                nextNumber++;
+            }
+        }
+
+        return nextNumber;
+    }
+
     public async Task<Member> CreateAsync(Member member, CancellationToken cancellationToken = default)
     {
-        await EnsureMemberNumberAvailable(member.MemberNumber, member.Id, cancellationToken);
-
         var entity = MapToEntity(member);
+
+        // Always auto-assign the next available member number
+        entity.MemberNumber = await GetNextAvailableMemberNumberAsync(cancellationToken);
         entity.CreatedAtUtc = _clock.UtcNow;
         entity.IsActive = true;
 
@@ -72,15 +100,16 @@ public class MemberService : IMemberService
 
     public async Task<Member> UpdateAsync(Member member, CancellationToken cancellationToken = default)
     {
-        await EnsureMemberNumberAvailable(member.MemberNumber, member.Id, cancellationToken);
-
         var existing = await _dbContext.Members.FirstOrDefaultAsync(m => m.Id == member.Id, cancellationToken);
         if (existing is null)
         {
             throw new InvalidOperationException("Member not found.");
         }
 
+        // Preserve original MemberNumber (immutable after creation)
+        var originalMemberNumber = existing.MemberNumber;
         CopyMember(member, existing);
+        existing.MemberNumber = originalMemberNumber;
         existing.UpdatedAtUtc = _clock.UtcNow;
 
         await _dbContext.SaveChangesAsync(cancellationToken);
@@ -129,17 +158,6 @@ public class MemberService : IMemberService
         member.UpdatedAtUtc = _clock.UtcNow;
         await _dbContext.SaveChangesAsync(cancellationToken);
         return ToDomain(member);
-    }
-
-    private async Task EnsureMemberNumberAvailable(int memberNumber, string currentMemberId, CancellationToken cancellationToken)
-    {
-        var conflict = await _dbContext.Members
-            .AnyAsync(m => m.MemberNumber == memberNumber && m.IsActive && m.Id != currentMemberId, cancellationToken);
-
-        if (conflict)
-        {
-            throw new InvalidOperationException("Member number is already assigned to an active member.");
-        }
     }
 
     private static MemberEntity MapToEntity(Member member)

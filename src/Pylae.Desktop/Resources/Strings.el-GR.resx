@@ -162,6 +162,9 @@
   <data name="Gate_InvalidMemberNumber" xml:space="preserve">
     <value>Εισάγεται ένα έγκυρο αριθμό δελτίου εισόδου.</value>
   </data>
+  <data name="MemberNumber_Auto" xml:space="preserve">
+    <value>(Αυτόματο)</value>
+  </data>
   <data name="Gate_MemberNotFound" xml:space="preserve">
     <value>Το Δελτίο Εισόδου δεν βρέθηκε ή είναι ανενεργό.</value>
   </data>

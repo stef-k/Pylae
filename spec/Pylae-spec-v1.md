@@ -256,7 +256,10 @@ Represents visitors/members who receive badges and can appear in visits.
 - `Id` – `TEXT` (GUID, PK).
 - `MemberNumber` – `INTEGER`, NOT NULL.
   - Reusable numeric badge ID (printed and encoded in QR).
-  - Uniqueness enforced via app logic among active members.
+  - **Auto-assigned** on member creation; not editable by users.
+  - **Recycled**: When a member is deactivated, their number becomes available.
+  - Assignment finds the **lowest unused number** starting from 1.
+  - Uniqueness enforced among active members only.
 - `FirstName` – `TEXT`, NOT NULL.
 - `LastName` – `TEXT`, NOT NULL.
 - `BusinessRank` – `TEXT` (rank/grade/position).

@@ -16,7 +16,7 @@ public partial class MainForm
     private TextBox? _memberSearchBox;
     private Button? _selectAllMembersButton;
     private bool _allMembersSelected;
-    private TextBox? _memberNumberTextBox;
+    private Label? _memberNumberValueLabel;
     private TextBox? _memberFirstNameTextBox;
     private TextBox? _memberLastNameTextBox;
     private TextBox? _memberBusinessRankTextBox;
@@ -135,7 +135,7 @@ public partial class MainForm
         var inputFont = new Font("Segoe UI", 10F);
 
         // Initialize controls
-        _memberNumberTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
+        _memberNumberValueLabel = new Label { Dock = DockStyle.Fill, Font = new Font(inputFont, FontStyle.Bold), TextAlign = ContentAlignment.MiddleLeft, Text = Strings.MemberNumber_Auto };
         _memberFirstNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberLastNameTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
         _memberBusinessRankTextBox = new TextBox { Dock = DockStyle.Fill, Font = inputFont };
@@ -184,9 +184,9 @@ public partial class MainForm
         _memberSaveButton.Click += OnMemberSave;
         _memberDeleteButton.Click += OnMemberDelete;
 
-        // Row 0: Member Number | First Name
+        // Row 0: Member Number (read-only, auto-assigned) | First Name
         formLayout.Controls.Add(new Label { Text = Strings.Member_Number + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 0, 0);
-        formLayout.Controls.Add(_memberNumberTextBox, 1, 0);
+        formLayout.Controls.Add(_memberNumberValueLabel, 1, 0);
         formLayout.Controls.Add(new Label { Text = Strings.Member_FirstName + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = labelFont }, 2, 0);
         formLayout.Controls.Add(_memberFirstNameTextBox, 3, 0);
 
@@ -371,9 +371,9 @@ public partial class MainForm
 
     private void PopulateMemberForm(Member member)
     {
-        if (_memberNumberTextBox == null) return;
+        if (_memberNumberValueLabel == null) return;
 
-        _memberNumberTextBox.Text = member.MemberNumber.ToString();
+        _memberNumberValueLabel.Text = member.MemberNumber > 0 ? member.MemberNumber.ToString() : Strings.MemberNumber_Auto;
         _memberFirstNameTextBox!.Text = member.FirstName;
         _memberLastNameTextBox!.Text = member.LastName;
         _memberBusinessRankTextBox!.Text = member.BusinessRank ?? string.Empty;
@@ -467,9 +467,9 @@ public partial class MainForm
 
     private void ClearMemberForm()
     {
-        if (_memberNumberTextBox == null) return;
+        if (_memberNumberValueLabel == null) return;
 
-        _memberNumberTextBox.Clear();
+        _memberNumberValueLabel.Text = Strings.MemberNumber_Auto;
         _memberFirstNameTextBox!.Clear();
         _memberLastNameTextBox!.Clear();
         _memberBusinessRankTextBox!.Clear();
@@ -492,25 +492,16 @@ public partial class MainForm
     private void OnMemberNew(object? sender, EventArgs e)
     {
         ClearMemberForm();
-        _memberNumberTextBox?.Focus();
+        membersGrid.ClearSelection();
+        _memberFirstNameTextBox?.Focus();
     }
 
     private async void OnMemberSave(object? sender, EventArgs e)
     {
-        if (_memberNumberTextBox == null || string.IsNullOrWhiteSpace(_memberNumberTextBox.Text))
-        {
-            MessageBox.Show(Strings.Member_NumberRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
+        if (_memberFirstNameTextBox == null) return;
 
-        if (!int.TryParse(_memberNumberTextBox.Text, out var memberNumber))
-        {
-            MessageBox.Show(Strings.Members_NumberInvalid, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
+        // MemberNumber is auto-assigned by the service, no need to set it here
         var member = membersGrid.CurrentRow?.DataBoundItem as Member ?? new Member();
-        member.MemberNumber = memberNumber;
         member.FirstName = _memberFirstNameTextBox!.Text;
         member.LastName = _memberLastNameTextBox!.Text;
         member.BusinessRank = _memberBusinessRankTextBox!.Text;

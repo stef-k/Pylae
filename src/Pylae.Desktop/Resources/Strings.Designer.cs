@@ -1780,6 +1780,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Auto).
+        /// </summary>
+        internal static string MemberNumber_Auto {
+            get {
+                return ResourceManager.GetString("MemberNumber_Auto", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Member number must be numeric..
         /// </summary>
         internal static string Members_NumberInvalid {

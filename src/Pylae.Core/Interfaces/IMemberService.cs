@@ -32,11 +32,20 @@ public interface IMemberService
     Task<IReadOnlyCollection<Member>> SearchAsync(string? query, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Gets the next available member number, recycling from inactive members.
+    /// Finds the lowest unused number starting from 1.
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The next available member number.</returns>
+    Task<int> GetNextAvailableMemberNumberAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Creates a new member in the system.
+    /// If MemberNumber is 0 or not set, auto-assigns the next available number.
     /// </summary>
     /// <param name="member">The member to create.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The created member with generated ID.</returns>
+    /// <returns>The created member with generated ID and MemberNumber.</returns>
     /// <exception cref="InvalidOperationException">Thrown if member number is already in use.</exception>
     Task<Member> CreateAsync(Member member, CancellationToken cancellationToken = default);
 

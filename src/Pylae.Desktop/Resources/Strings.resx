@@ -57,6 +57,9 @@
   <data name="Gate_InvalidMemberNumber" xml:space="preserve">
     <value>Enter a valid member number.</value>
   </data>
+  <data name="MemberNumber_Auto" xml:space="preserve">
+    <value>(Auto)</value>
+  </data>
   <data name="Gate_MemberNotFound" xml:space="preserve">
     <value>Member not found or inactive.</value>
   </data>

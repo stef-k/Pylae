@@ -22,7 +22,7 @@ partial class MemberEditorForm
     {
         components = new System.ComponentModel.Container();
         memberNumberLabel = new Label();
-        memberNumberTextBox = new TextBox();
+        memberNumberValue = new Label();
         firstNameLabel = new Label();
         firstNameTextBox = new TextBox();
         lastNameLabel = new Label();
@@ -53,13 +53,15 @@ partial class MemberEditorForm
         memberNumberLabel.Size = new Size(97, 15);
         memberNumberLabel.TabIndex = 0;
         memberNumberLabel.Text = "Member Number";
-        // 
-        // memberNumberTextBox
-        // 
-        memberNumberTextBox.Location = new Point(12, 33);
-        memberNumberTextBox.Name = "memberNumberTextBox";
-        memberNumberTextBox.Size = new Size(120, 23);
-        memberNumberTextBox.TabIndex = 1;
+        //
+        // memberNumberValue
+        //
+        memberNumberValue.AutoSize = true;
+        memberNumberValue.Font = new Font(Font.FontFamily, Font.Size, FontStyle.Bold);
+        memberNumberValue.Location = new Point(12, 33);
+        memberNumberValue.Name = "memberNumberValue";
+        memberNumberValue.Size = new Size(120, 23);
+        memberNumberValue.TabIndex = 1;
         // 
         // firstNameLabel
         // 
@@ -262,7 +264,7 @@ partial class MemberEditorForm
         Controls.Add(lastNameLabel);
         Controls.Add(firstNameTextBox);
         Controls.Add(firstNameLabel);
-        Controls.Add(memberNumberTextBox);
+        Controls.Add(memberNumberValue);
         Controls.Add(memberNumberLabel);
         FormBorderStyle = FormBorderStyle.FixedDialog;
         MaximizeBox = false;
@@ -277,7 +279,7 @@ partial class MemberEditorForm
     #endregion
 
     private Label memberNumberLabel;
-    private TextBox memberNumberTextBox;
+    private Label memberNumberValue;
     private Label firstNameLabel;
     private TextBox firstNameTextBox;
     private Label lastNameLabel;

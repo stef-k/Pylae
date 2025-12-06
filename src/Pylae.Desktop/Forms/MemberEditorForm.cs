@@ -23,7 +23,12 @@ public partial class MemberEditorForm : Form
     public void LoadMember(Member member)
     {
         _member = member;
-        memberNumberTextBox.Text = member.MemberNumber.ToString();
+
+        // MemberNumber is auto-assigned (displayed as label, not editable)
+        memberNumberValue.Text = member.MemberNumber > 0
+            ? member.MemberNumber.ToString()
+            : Strings.MemberNumber_Auto;
+
         firstNameTextBox.Text = member.FirstName;
         lastNameTextBox.Text = member.LastName;
         businessRankTextBox.Text = member.BusinessRank;
@@ -41,13 +46,7 @@ public partial class MemberEditorForm : Form
 
     private async void OnSaveClick(object sender, EventArgs e)
     {
-        if (!int.TryParse(memberNumberTextBox.Text, out var memberNumber))
-        {
-            MessageBox.Show(Strings.Members_NumberInvalid, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return;
-        }
-
-        _member.MemberNumber = memberNumber;
+        // MemberNumber is auto-assigned by the service, no need to set it here
         _member.FirstName = firstNameTextBox.Text.Trim();
         _member.LastName = lastNameTextBox.Text.Trim();
         _member.BusinessRank = businessRankTextBox.Text.Trim();
