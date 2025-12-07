@@ -33,11 +33,11 @@ public partial class MainForm : Form
     private readonly IBackupService _backupService;
     private readonly IAppSettings _appSettings;
 
-    private BindingList<Setting> _settingsBinding = new();
-    private BindingList<Member>? _membersBinding;
-    private BindingList<Visit>? _visitsBinding;
-    private BindingList<AuditEntry>? _auditBinding;
-    private BindingList<User>? _usersBinding;
+    private SortableBindingList<Setting> _settingsBinding = new();
+    private SortableBindingList<Member>? _membersBinding;
+    private SortableBindingList<Visit>? _visitsBinding;
+    private SortableBindingList<AuditEntry>? _auditBinding;
+    private SortableBindingList<User>? _usersBinding;
     private VisitDirection? _visitsDirectionFilter;
     private string? _visitsSearchText;
 
@@ -85,7 +85,7 @@ public partial class MainForm : Form
         _appSettings = appSettings;
 
         Text = $"{Strings.App_Title} - {Strings.App_Subtitle}";
-        welcomeLabel.Text = Strings.Main_Welcome;
+        menuUserInfoLabel.Text = Strings.Main_Welcome;
 
         // Wire up data binding events to localize grid column headers
         visitsGrid.DataBindingComplete += OnVisitsGridDataBindingComplete;
@@ -327,7 +327,7 @@ public partial class MainForm : Form
         if (_visitsBinding != null)
         {
             await _visitsViewModel.LoadAsync(visitsFromPicker.Value, visitsToPicker.Value);
-            _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+            _visitsBinding = new SortableBindingList<Visit>(_visitsViewModel.Visits);
             visitsGrid.DataSource = _visitsBinding;
         }
     }
@@ -661,7 +661,7 @@ public partial class MainForm : Form
         // Sort by timestamp descending (newest first)
         var resultList = filteredVisits.OrderByDescending(v => v.TimestampLocal).ToList();
 
-        _visitsBinding = new BindingList<Visit>(resultList);
+        _visitsBinding = new SortableBindingList<Visit>(resultList);
         visitsGrid.DataSource = _visitsBinding;
         UpdateStatus($"{Strings.Status_VisitsLoaded}: {resultList.Count}");
     }
@@ -682,7 +682,7 @@ public partial class MainForm : Form
         var input = Microsoft.VisualBasic.Interaction.InputBox(Strings.Visits_UpdateNotesPrompt, Strings.Visits_UpdateNotesTitle, visit.Notes ?? string.Empty);
         await _visitsViewModel.UpdateNotesAsync(visit.Id, string.IsNullOrWhiteSpace(input) ? null : input, _mainViewModel.CurrentUser.Id);
         await _visitsViewModel.LoadAsync(visitsFromPicker.Value, visitsToPicker.Value);
-        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+        _visitsBinding = new SortableBindingList<Visit>(_visitsViewModel.Visits);
         visitsGrid.DataSource = _visitsBinding;
     }
 
@@ -761,7 +761,7 @@ public partial class MainForm : Form
     private async void OnRefreshAuditClick(object sender, EventArgs e)
     {
         await _auditLogViewModel.LoadAsync(auditFromPicker.Value, auditToPicker.Value, auditActionText.Text, auditTargetText.Text);
-        _auditBinding = new BindingList<AuditEntry>(_auditLogViewModel.Entries);
+        _auditBinding = new SortableBindingList<AuditEntry>(_auditLogViewModel.Entries);
         auditGrid.DataSource = _auditBinding;
     }
 
@@ -905,7 +905,7 @@ public partial class MainForm : Form
         await form.ShowDialogAsync(this);
         await _catalogsViewModel.LoadAsync();
         await _membersViewModel.LoadAsync();
-        _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+        _membersBinding = new SortableBindingList<Member>(_membersViewModel.Members.ToList());
         membersGrid.DataSource = _membersBinding;
     }
 
@@ -917,7 +917,7 @@ public partial class MainForm : Form
         }
 
         await _usersViewModel.LoadAsync();
-        _usersBinding = new BindingList<User>(_usersViewModel.Users);
+        _usersBinding = new SortableBindingList<User>(_usersViewModel.Users.ToList());
         usersGrid.DataSource = _usersBinding;
     }
 
@@ -1095,7 +1095,7 @@ public partial class MainForm : Form
         var catalogsTask = _catalogsViewModel.LoadAsync();
         await Task.WhenAll(membersTask, catalogsTask);
 
-        _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+        _membersBinding = new SortableBindingList<Member>(_membersViewModel.Members.ToList());
         membersGrid.DataSource = _membersBinding;
 
         // Populate combo boxes
@@ -1116,7 +1116,7 @@ public partial class MainForm : Form
     {
         _visitsLoaded = true;
         await _visitsViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow);
-        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+        _visitsBinding = new SortableBindingList<Visit>(_visitsViewModel.Visits);
         visitsGrid.DataSource = _visitsBinding;
     }
 
@@ -1124,7 +1124,7 @@ public partial class MainForm : Form
     {
         _auditLoaded = true;
         await _auditLogViewModel.LoadAsync(DateTime.UtcNow.AddDays(-7), DateTime.UtcNow, null, null);
-        _auditBinding = new BindingList<AuditEntry>(_auditLogViewModel.Entries);
+        _auditBinding = new SortableBindingList<AuditEntry>(_auditLogViewModel.Entries);
         auditGrid.DataSource = _auditBinding;
     }
 
@@ -1146,11 +1146,11 @@ public partial class MainForm : Form
         var site = _mainViewModel.SiteDisplayName ?? _mainViewModel.SiteCode ?? "";
         if (string.IsNullOrEmpty(lastName))
         {
-            welcomeLabel.Text = site;
+            menuUserInfoLabel.Text = site;
         }
         else
         {
-            welcomeLabel.Text = $"{lastName} | {site}";
+            menuUserInfoLabel.Text = $"{lastName} | {site}";
         }
     }
 

@@ -321,11 +321,11 @@ public partial class MainForm
             BackColor = SystemColors.Control
         };
         searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70));  // Label
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 180)); // Search box
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Export
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Badge PDF
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Select All
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 17));   // Batch Badges
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));  // Search box (takes remaining space)
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); // Export
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130)); // Badge PDF
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); // Select All
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Batch Badges
 
         var searchLabel = new Label { Text = Strings.Search + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
         _memberSearchBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
@@ -626,7 +626,7 @@ public partial class MainForm
         {
             await _membersViewModel.SaveAsync(member);
             await _membersViewModel.LoadAsync();
-            _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+            _membersBinding = new SortableBindingList<Member>(_membersViewModel.Members);
             membersGrid.DataSource = _membersBinding;
 
             UpdateStatus(Strings.Status_MemberSaved);
@@ -654,7 +654,7 @@ public partial class MainForm
             var memberService = _serviceProvider.GetRequiredService<Core.Interfaces.IMemberService>();
             await memberService.DeleteAsync(member.Id);
             await _membersViewModel.LoadAsync();
-            _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+            _membersBinding = new SortableBindingList<Member>(_membersViewModel.Members);
             membersGrid.DataSource = _membersBinding;
             ClearMemberForm();
 
@@ -673,7 +673,7 @@ public partial class MainForm
         var searchText = _memberSearchBox.Text.ToLowerInvariant();
         if (string.IsNullOrWhiteSpace(searchText))
         {
-            _membersBinding = new BindingList<Member>(_membersViewModel.Members);
+            _membersBinding = new SortableBindingList<Member>(_membersViewModel.Members);
         }
         else
         {
@@ -692,7 +692,7 @@ public partial class MainForm
                 (m.MemberType?.DisplayName?.ToLowerInvariant().Contains(searchText) ?? false) ||
                 (m.MemberType?.Code?.ToLowerInvariant().Contains(searchText) ?? false)
             ).ToList();
-            _membersBinding = new BindingList<Member>(filtered);
+            _membersBinding = new SortableBindingList<Member>(filtered);
         }
 
         membersGrid.DataSource = _membersBinding;
@@ -1199,7 +1199,7 @@ public partial class MainForm
         var searchText = _userSearchBox.Text.ToLowerInvariant();
         if (string.IsNullOrWhiteSpace(searchText))
         {
-            _usersBinding = new BindingList<User>(_usersViewModel.Users);
+            _usersBinding = new SortableBindingList<User>(_usersViewModel.Users);
         }
         else
         {
@@ -1208,7 +1208,7 @@ public partial class MainForm
                 u.FirstName.ToLowerInvariant().Contains(searchText) ||
                 u.LastName.ToLowerInvariant().Contains(searchText)
             ).ToList();
-            _usersBinding = new BindingList<User>(filtered);
+            _usersBinding = new SortableBindingList<User>(filtered);
         }
 
         usersGrid.DataSource = _usersBinding;

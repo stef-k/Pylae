@@ -110,12 +110,14 @@ public partial class MainForm
         };
 
         // 3-column layout: 6 columns total (Label, Field) x 3
+        // Calculate total width for scroll support: 150*3 + (205)*3 + padding = ~1080
         var mainLayout = new TableLayoutPanel
         {
-            Dock = DockStyle.Top,
             AutoSize = true,
+            AutoSizeMode = AutoSizeMode.GrowAndShrink,
             ColumnCount = 6,
-            Padding = new Padding(3, 0, 3, 0)
+            Padding = new Padding(3, 0, 3, 0),
+            MinimumSize = new Size(1070, 0) // Ensure minimum width for horizontal scroll
         };
         mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Label 1 - increased for Greek
         mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, fieldWidth + 5)); // Field 1

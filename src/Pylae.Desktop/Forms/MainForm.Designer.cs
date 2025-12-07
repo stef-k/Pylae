@@ -32,6 +32,7 @@ partial class MainForm
 
         // Menu strip
         mainMenuStrip = new MenuStrip();
+        menuUserInfoLabel = new ToolStripLabel();
         fileMenu = new ToolStripMenuItem();
         fileMainMenuItem = new ToolStripMenuItem();
         fileVisitsMenuItem = new ToolStripMenuItem();
@@ -153,11 +154,19 @@ partial class MainForm
         // mainMenuStrip
         //
         mainMenuStrip.Font = buttonFont;
-        mainMenuStrip.Items.AddRange(new ToolStripItem[] { fileMenu, adminMenu, helpMenu });
+        mainMenuStrip.Items.AddRange(new ToolStripItem[] { fileMenu, adminMenu, helpMenu, menuUserInfoLabel });
         mainMenuStrip.Location = new Point(0, 0);
         mainMenuStrip.Name = "mainMenuStrip";
         mainMenuStrip.Size = new Size(1200, 28);
         mainMenuStrip.TabIndex = 0;
+
+        //
+        // menuUserInfoLabel - displays user and site info on the right
+        //
+        menuUserInfoLabel.Name = "menuUserInfoLabel";
+        menuUserInfoLabel.Text = "";
+        menuUserInfoLabel.ForeColor = Color.DimGray;
+        menuUserInfoLabel.Alignment = ToolStripItemAlignment.Right;
 
         //
         // fileMenu
@@ -283,16 +292,14 @@ partial class MainForm
         helpAboutMenuItem.Click += OnMenuAboutClick;
 
         //
-        // headerPanel - single row with site info on right
+        // headerPanel - hidden (info now in menu strip)
         //
-        headerPanel.Controls.Add(welcomeLabel);
-        headerPanel.Controls.Add(siteLabel);
         headerPanel.Dock = DockStyle.Top;
         headerPanel.Location = new Point(0, 28);
         headerPanel.Name = "headerPanel";
-        headerPanel.Padding = new Padding(12, 4, 16, 4);
-        headerPanel.Size = new Size(1200, 28);
+        headerPanel.Size = new Size(1200, 0);
         headerPanel.TabIndex = 1;
+        headerPanel.Visible = false;
 
         //
         // subtitleLabel - hidden (kept for compatibility)
@@ -346,8 +353,8 @@ partial class MainForm
         // gateLayoutPanel - two columns: left (inputs), right (result)
         //
         gateLayoutPanel.ColumnCount = 2;
-        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
-        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 30F));
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 70F));
         gateLayoutPanel.RowCount = 1;
         gateLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         gateLayoutPanel.Dock = DockStyle.Fill;
@@ -391,6 +398,7 @@ partial class MainForm
         gateRightPanel.Name = "gateRightPanel";
         gateRightPanel.Padding = new Padding(10);
         gateRightPanel.BorderStyle = BorderStyle.FixedSingle;
+        gateRightPanel.AutoScroll = true;
 
         //
         // directionGroupBox
@@ -548,7 +556,7 @@ partial class MainForm
         // lastMemberRankLabel - Rank
         //
         lastMemberRankLabel.AutoSize = true;
-        lastMemberRankLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberRankLabel.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberRankLabel.Location = new Point(265, 110);
         lastMemberRankLabel.Name = "lastMemberRankLabel";
         lastMemberRankLabel.MaximumSize = new Size(450, 0);
@@ -556,7 +564,7 @@ partial class MainForm
         lastMemberRankLabel.TabIndex = 5;
 
         //
-        // lastMemberNameLabel - First Last name
+        // lastMemberNameLabel - First Last name (keep bold)
         //
         lastMemberNameLabel.AutoSize = true;
         lastMemberNameLabel.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point);
@@ -570,7 +578,7 @@ partial class MainForm
         // lastMemberStatusLabel - Status: PERMANENT or TEMPORARY
         //
         lastMemberStatusLabel.AutoSize = true;
-        lastMemberStatusLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberStatusLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberStatusLabel.Location = new Point(265, 180);
         lastMemberStatusLabel.Name = "lastMemberStatusLabel";
         lastMemberStatusLabel.MaximumSize = new Size(450, 0);
@@ -581,7 +589,7 @@ partial class MainForm
         // lastMemberActiveLabel - Badge Status: Active/Inactive
         //
         lastMemberActiveLabel.AutoSize = true;
-        lastMemberActiveLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberActiveLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberActiveLabel.Location = new Point(265, 210);
         lastMemberActiveLabel.Name = "lastMemberActiveLabel";
         lastMemberActiveLabel.MaximumSize = new Size(450, 0);
@@ -592,7 +600,7 @@ partial class MainForm
         // lastMemberTypeLabel - Badge Type: ...
         //
         lastMemberTypeLabel.AutoSize = true;
-        lastMemberTypeLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberTypeLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberTypeLabel.Location = new Point(265, 240);
         lastMemberTypeLabel.Name = "lastMemberTypeLabel";
         lastMemberTypeLabel.MaximumSize = new Size(450, 0);
@@ -603,7 +611,7 @@ partial class MainForm
         // lastMemberPersonalIdLabel - Identification Number
         //
         lastMemberPersonalIdLabel.AutoSize = true;
-        lastMemberPersonalIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberPersonalIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberPersonalIdLabel.Location = new Point(265, 270);
         lastMemberPersonalIdLabel.Name = "lastMemberPersonalIdLabel";
         lastMemberPersonalIdLabel.MaximumSize = new Size(450, 0);
@@ -614,7 +622,7 @@ partial class MainForm
         // lastMemberOrgIdLabel - Organization Identification
         //
         lastMemberOrgIdLabel.AutoSize = true;
-        lastMemberOrgIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberOrgIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberOrgIdLabel.Location = new Point(265, 300);
         lastMemberOrgIdLabel.Name = "lastMemberOrgIdLabel";
         lastMemberOrgIdLabel.MaximumSize = new Size(450, 0);
@@ -625,7 +633,7 @@ partial class MainForm
         // lastMemberIssueDateLabel - Issue Date
         //
         lastMemberIssueDateLabel.AutoSize = true;
-        lastMemberIssueDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberIssueDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberIssueDateLabel.Location = new Point(265, 330);
         lastMemberIssueDateLabel.Name = "lastMemberIssueDateLabel";
         lastMemberIssueDateLabel.MaximumSize = new Size(450, 0);
@@ -636,7 +644,7 @@ partial class MainForm
         // lastMemberExpiryDateLabel - Expiry Date
         //
         lastMemberExpiryDateLabel.AutoSize = true;
-        lastMemberExpiryDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberExpiryDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
         lastMemberExpiryDateLabel.Location = new Point(265, 360);
         lastMemberExpiryDateLabel.Name = "lastMemberExpiryDateLabel";
         lastMemberExpiryDateLabel.MaximumSize = new Size(450, 0);
@@ -1127,6 +1135,7 @@ partial class MainForm
 
     // Menu
     private MenuStrip mainMenuStrip;
+    private ToolStripLabel menuUserInfoLabel;
     private ToolStripMenuItem fileMenu;
     private ToolStripMenuItem fileMainMenuItem;
     private ToolStripMenuItem fileVisitsMenuItem;
