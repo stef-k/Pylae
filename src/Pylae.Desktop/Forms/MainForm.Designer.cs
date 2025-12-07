@@ -115,6 +115,7 @@ partial class MainForm
         visitsAllFilterButton = new Button();
         // remoteSitesButton removed - now in Administrator menu
         exportVisitsButton = new Button();
+        visitsSearchTextBox = new TextBox();
 
         // Settings panel controls
         settingsGrid = new DataGridView();
@@ -345,8 +346,8 @@ partial class MainForm
         // gateLayoutPanel - two columns: left (inputs), right (result)
         //
         gateLayoutPanel.ColumnCount = 2;
-        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
-        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 35F));
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 65F));
         gateLayoutPanel.RowCount = 1;
         gateLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
         gateLayoutPanel.Dock = DockStyle.Fill;
@@ -537,7 +538,7 @@ partial class MainForm
         lastMemberPhotoBox.BorderStyle = BorderStyle.FixedSingle;
         lastMemberPhotoBox.Location = new Point(10, 110);
         lastMemberPhotoBox.Name = "lastMemberPhotoBox";
-        lastMemberPhotoBox.Size = new Size(200, 240);
+        lastMemberPhotoBox.Size = new Size(240, 300);
         lastMemberPhotoBox.SizeMode = PictureBoxSizeMode.Zoom;
         lastMemberPhotoBox.TabIndex = 4;
         lastMemberPhotoBox.TabStop = false;
@@ -547,111 +548,111 @@ partial class MainForm
         // lastMemberRankLabel - Rank
         //
         lastMemberRankLabel.AutoSize = true;
-        lastMemberRankLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberRankLabel.Location = new Point(220, 110);
+        lastMemberRankLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberRankLabel.Location = new Point(265, 110);
         lastMemberRankLabel.Name = "lastMemberRankLabel";
-        lastMemberRankLabel.MaximumSize = new Size(350, 0);
-        lastMemberRankLabel.Size = new Size(0, 20);
+        lastMemberRankLabel.MaximumSize = new Size(450, 0);
+        lastMemberRankLabel.Size = new Size(0, 21);
         lastMemberRankLabel.TabIndex = 5;
 
         //
         // lastMemberNameLabel - First Last name
         //
         lastMemberNameLabel.AutoSize = true;
-        lastMemberNameLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point);
-        lastMemberNameLabel.Location = new Point(220, 135);
+        lastMemberNameLabel.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberNameLabel.Location = new Point(265, 140);
         lastMemberNameLabel.Name = "lastMemberNameLabel";
-        lastMemberNameLabel.MaximumSize = new Size(350, 0);
-        lastMemberNameLabel.Size = new Size(0, 25);
+        lastMemberNameLabel.MaximumSize = new Size(450, 0);
+        lastMemberNameLabel.Size = new Size(0, 30);
         lastMemberNameLabel.TabIndex = 6;
 
         //
         // lastMemberStatusLabel - Status: PERMANENT or TEMPORARY
         //
         lastMemberStatusLabel.AutoSize = true;
-        lastMemberStatusLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberStatusLabel.Location = new Point(220, 165);
+        lastMemberStatusLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberStatusLabel.Location = new Point(265, 180);
         lastMemberStatusLabel.Name = "lastMemberStatusLabel";
-        lastMemberStatusLabel.MaximumSize = new Size(350, 0);
-        lastMemberStatusLabel.Size = new Size(0, 19);
+        lastMemberStatusLabel.MaximumSize = new Size(450, 0);
+        lastMemberStatusLabel.Size = new Size(0, 20);
         lastMemberStatusLabel.TabIndex = 7;
 
         //
         // lastMemberActiveLabel - Badge Status: Active/Inactive
         //
         lastMemberActiveLabel.AutoSize = true;
-        lastMemberActiveLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberActiveLabel.Location = new Point(220, 190);
+        lastMemberActiveLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberActiveLabel.Location = new Point(265, 210);
         lastMemberActiveLabel.Name = "lastMemberActiveLabel";
-        lastMemberActiveLabel.MaximumSize = new Size(350, 0);
-        lastMemberActiveLabel.Size = new Size(0, 19);
+        lastMemberActiveLabel.MaximumSize = new Size(450, 0);
+        lastMemberActiveLabel.Size = new Size(0, 20);
         lastMemberActiveLabel.TabIndex = 8;
 
         //
         // lastMemberTypeLabel - Badge Type: ...
         //
         lastMemberTypeLabel.AutoSize = true;
-        lastMemberTypeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberTypeLabel.Location = new Point(220, 215);
+        lastMemberTypeLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberTypeLabel.Location = new Point(265, 240);
         lastMemberTypeLabel.Name = "lastMemberTypeLabel";
-        lastMemberTypeLabel.MaximumSize = new Size(350, 0);
-        lastMemberTypeLabel.Size = new Size(0, 19);
+        lastMemberTypeLabel.MaximumSize = new Size(450, 0);
+        lastMemberTypeLabel.Size = new Size(0, 20);
         lastMemberTypeLabel.TabIndex = 9;
 
         //
         // lastMemberPersonalIdLabel - Identification Number
         //
         lastMemberPersonalIdLabel.AutoSize = true;
-        lastMemberPersonalIdLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberPersonalIdLabel.Location = new Point(220, 240);
+        lastMemberPersonalIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberPersonalIdLabel.Location = new Point(265, 270);
         lastMemberPersonalIdLabel.Name = "lastMemberPersonalIdLabel";
-        lastMemberPersonalIdLabel.MaximumSize = new Size(350, 0);
-        lastMemberPersonalIdLabel.Size = new Size(0, 19);
+        lastMemberPersonalIdLabel.MaximumSize = new Size(450, 0);
+        lastMemberPersonalIdLabel.Size = new Size(0, 20);
         lastMemberPersonalIdLabel.TabIndex = 10;
 
         //
         // lastMemberOrgIdLabel - Organization Identification
         //
         lastMemberOrgIdLabel.AutoSize = true;
-        lastMemberOrgIdLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberOrgIdLabel.Location = new Point(220, 265);
+        lastMemberOrgIdLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberOrgIdLabel.Location = new Point(265, 300);
         lastMemberOrgIdLabel.Name = "lastMemberOrgIdLabel";
-        lastMemberOrgIdLabel.MaximumSize = new Size(350, 0);
-        lastMemberOrgIdLabel.Size = new Size(0, 19);
+        lastMemberOrgIdLabel.MaximumSize = new Size(450, 0);
+        lastMemberOrgIdLabel.Size = new Size(0, 20);
         lastMemberOrgIdLabel.TabIndex = 11;
 
         //
         // lastMemberIssueDateLabel - Issue Date
         //
         lastMemberIssueDateLabel.AutoSize = true;
-        lastMemberIssueDateLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberIssueDateLabel.Location = new Point(220, 290);
+        lastMemberIssueDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberIssueDateLabel.Location = new Point(265, 330);
         lastMemberIssueDateLabel.Name = "lastMemberIssueDateLabel";
-        lastMemberIssueDateLabel.MaximumSize = new Size(350, 0);
-        lastMemberIssueDateLabel.Size = new Size(0, 19);
+        lastMemberIssueDateLabel.MaximumSize = new Size(450, 0);
+        lastMemberIssueDateLabel.Size = new Size(0, 20);
         lastMemberIssueDateLabel.TabIndex = 12;
 
         //
         // lastMemberExpiryDateLabel - Expiry Date
         //
         lastMemberExpiryDateLabel.AutoSize = true;
-        lastMemberExpiryDateLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
-        lastMemberExpiryDateLabel.Location = new Point(220, 315);
+        lastMemberExpiryDateLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberExpiryDateLabel.Location = new Point(265, 360);
         lastMemberExpiryDateLabel.Name = "lastMemberExpiryDateLabel";
-        lastMemberExpiryDateLabel.MaximumSize = new Size(350, 0);
-        lastMemberExpiryDateLabel.Size = new Size(0, 19);
+        lastMemberExpiryDateLabel.MaximumSize = new Size(450, 0);
+        lastMemberExpiryDateLabel.Size = new Size(0, 20);
         lastMemberExpiryDateLabel.TabIndex = 13;
 
         //
         // badgeWarningLabel
         //
         badgeWarningLabel.AutoSize = true;
-        badgeWarningLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
+        badgeWarningLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
         badgeWarningLabel.ForeColor = Color.DarkGoldenrod;
-        badgeWarningLabel.Location = new Point(220, 340);
+        badgeWarningLabel.Location = new Point(265, 390);
         badgeWarningLabel.Name = "badgeWarningLabel";
-        badgeWarningLabel.MaximumSize = new Size(350, 0);
-        badgeWarningLabel.Size = new Size(0, 20);
+        badgeWarningLabel.MaximumSize = new Size(450, 0);
+        badgeWarningLabel.Size = new Size(0, 21);
         badgeWarningLabel.TabIndex = 14;
 
         //
@@ -663,15 +664,16 @@ partial class MainForm
         recentLogsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         recentLogsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         recentLogsGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-        recentLogsGrid.Location = new Point(10, 370);
+        recentLogsGrid.Location = new Point(10, 420);
         recentLogsGrid.Name = "recentLogsGrid";
         recentLogsGrid.ReadOnly = true;
         recentLogsGrid.RowHeadersVisible = false;
         recentLogsGrid.RowTemplate.Height = 25;
         recentLogsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-        recentLogsGrid.Size = new Size(560, 180);
+        recentLogsGrid.Size = new Size(700, 180);
         recentLogsGrid.TabIndex = 15;
         recentLogsGrid.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+        recentLogsGrid.ScrollBars = ScrollBars.Both;
 
         //
         // membersPanel - Badges/Members view
@@ -704,6 +706,7 @@ partial class MainForm
         visitsPanel.Controls.Add(visitsEntryFilterButton);
         visitsPanel.Controls.Add(visitsExitFilterButton);
         visitsPanel.Controls.Add(visitsAllFilterButton);
+        visitsPanel.Controls.Add(visitsSearchTextBox);
         // remoteSitesButton removed - now in Administrator menu
         visitsPanel.Controls.Add(exportVisitsButton);
         visitsPanel.Controls.Add(refreshVisitsButton);
@@ -800,11 +803,22 @@ partial class MainForm
         // remoteSitesButton removed - now accessible from Administrator menu
 
         //
+        // visitsSearchTextBox
+        //
+        visitsSearchTextBox.Font = inputFont;
+        visitsSearchTextBox.Location = new Point(650, 10);
+        visitsSearchTextBox.Name = "visitsSearchTextBox";
+        visitsSearchTextBox.PlaceholderText = Strings.Visits_SearchPlaceholder;
+        visitsSearchTextBox.Size = new Size(250, 27);
+        visitsSearchTextBox.TabIndex = 6;
+        visitsSearchTextBox.TextChanged += OnVisitsSearchTextChanged;
+
+        //
         // exportVisitsButton
         //
         exportVisitsButton.AutoSize = true;
         exportVisitsButton.Font = buttonFont;
-        exportVisitsButton.Location = new Point(780, 8);
+        exportVisitsButton.Location = new Point(910, 8);
         exportVisitsButton.MinimumSize = new Size(100, 32);
         exportVisitsButton.Name = "exportVisitsButton";
         exportVisitsButton.Padding = new Padding(6, 3, 6, 3);
@@ -859,6 +873,7 @@ partial class MainForm
         settingsPanel.Size = new Size(1200, 722);
         settingsPanel.TabIndex = 6;
         settingsPanel.Visible = false;
+        settingsPanel.AutoScroll = true;
 
         //
         // settingsGrid
@@ -1189,6 +1204,7 @@ partial class MainForm
     private Button visitsEntryFilterButton;
     private Button visitsExitFilterButton;
     private Button visitsAllFilterButton;
+    private TextBox visitsSearchTextBox;
     // remoteSitesButton removed - now in Administrator menu
     private Button exportVisitsButton;
 

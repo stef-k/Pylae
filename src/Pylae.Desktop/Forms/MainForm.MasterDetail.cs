@@ -1262,6 +1262,9 @@ public partial class MainForm
             {
                 column.Visible = false;
             }
+
+            // Enable sorting on all columns
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
     }
 
@@ -1303,6 +1306,9 @@ public partial class MainForm
             {
                 column.Visible = false;
             }
+
+            // Enable sorting on all columns
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
     }
 

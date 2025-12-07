@@ -3250,6 +3250,15 @@ namespace Pylae.Desktop.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search name, rank, office, badge....
+        /// </summary>
+        internal static string Visits_SearchPlaceholder {
+            get {
+                return ResourceManager.GetString("Visits_SearchPlaceholder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update notes:.
         /// </summary>
         internal static string Visits_UpdateNotesPrompt {

@@ -39,6 +39,7 @@ public partial class MainForm : Form
     private BindingList<AuditEntry>? _auditBinding;
     private BindingList<User>? _usersBinding;
     private VisitDirection? _visitsDirectionFilter;
+    private string? _visitsSearchText;
 
     // Lazy loading flags for tabs
     private bool _membersLoaded;
@@ -343,36 +344,55 @@ public partial class MainForm : Form
             .Take(6)
             .Select(v => new
             {
+                DateTime = v.TimestampLocal,
                 Rank = v.MemberBusinessRank ?? string.Empty,
                 FirstName = v.MemberFirstName,
                 LastName = v.MemberLastName,
                 Id = v.MemberPersonalIdNumber ?? string.Empty,
-                OrgId = v.MemberBusinessIdNumber ?? string.Empty,
-                Time = v.TimestampUtc.ToLocalTime().ToString("HH:mm:ss"),
                 Direction = v.Direction == VisitDirection.Entry ? Strings.Gate_Entry : Strings.Gate_Exit
             })
             .ToList();
 
         recentLogsGrid.DataSource = recentLogs;
 
-        // Set column headers
+        // Set column headers and enable sorting
         if (recentLogsGrid.Columns.Count > 0)
         {
+            if (recentLogsGrid.Columns["DateTime"] is { } dateTimeCol)
+            {
+                dateTimeCol.HeaderText = Strings.Grid_Timestamp;
+                dateTimeCol.DefaultCellStyle.Format = "g"; // Short date + short time
+                dateTimeCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             if (recentLogsGrid.Columns["Rank"] is { } rankCol)
+            {
                 rankCol.HeaderText = Strings.Member_BusinessRank;
+                rankCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             if (recentLogsGrid.Columns["FirstName"] is { } firstNameCol)
+            {
                 firstNameCol.HeaderText = Strings.Member_FirstName;
+                firstNameCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             if (recentLogsGrid.Columns["LastName"] is { } lastNameCol)
+            {
                 lastNameCol.HeaderText = Strings.Member_LastName;
+                lastNameCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             if (recentLogsGrid.Columns["Id"] is { } idCol)
+            {
                 idCol.HeaderText = Strings.Member_IdentificationNumber;
-            if (recentLogsGrid.Columns["OrgId"] is { } orgIdCol)
-                orgIdCol.HeaderText = Strings.Member_OrganizationId;
-            if (recentLogsGrid.Columns["Time"] is { } timeCol)
-                timeCol.HeaderText = Strings.Grid_Timestamp;
+                idCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
             if (recentLogsGrid.Columns["Direction"] is { } dirCol)
+            {
                 dirCol.HeaderText = Strings.Gate_Direction;
+                dirCol.SortMode = DataGridViewColumnSortMode.Automatic;
+            }
         }
+
+        // Default sort by DateTime descending (newest first)
+        recentLogsGrid.Sort(recentLogsGrid.Columns["DateTime"]!, System.ComponentModel.ListSortDirection.Descending);
     }
 
     private async void OnRecentLogsGridSelectionChanged(object? sender, EventArgs e)
@@ -596,6 +616,12 @@ public partial class MainForm : Form
         await FilterAndRefreshVisits();
     }
 
+    private async void OnVisitsSearchTextChanged(object? sender, EventArgs e)
+    {
+        _visitsSearchText = visitsSearchTextBox.Text.Trim();
+        await FilterAndRefreshVisits();
+    }
+
     private async Task FilterAndRefreshVisits()
     {
         // Convert local date picker values to UTC for database query
@@ -610,13 +636,34 @@ public partial class MainForm : Form
         await _visitsViewModel.LoadAsync(fromUtc, toUtc);
 
         // Apply direction filter if set
-        var filteredVisits = _visitsDirectionFilter.HasValue
-            ? _visitsViewModel.Visits.Where(v => v.Direction == _visitsDirectionFilter.Value).ToList()
+        IEnumerable<Visit> filteredVisits = _visitsDirectionFilter.HasValue
+            ? _visitsViewModel.Visits.Where(v => v.Direction == _visitsDirectionFilter.Value)
             : _visitsViewModel.Visits;
 
-        _visitsBinding = new BindingList<Visit>(filteredVisits);
+        // Apply search filter if text is provided
+        if (!string.IsNullOrWhiteSpace(_visitsSearchText))
+        {
+            var searchLower = _visitsSearchText.ToLowerInvariant();
+            filteredVisits = filteredVisits.Where(v =>
+                (v.MemberFirstName?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberLastName?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberBusinessRank?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberOfficeName?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberTypeName?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberPersonalIdNumber?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.MemberBusinessIdNumber?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                v.MemberNumber.ToString().Contains(searchLower) ||
+                (v.SiteCode?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.Username?.ToLowerInvariant().Contains(searchLower) ?? false) ||
+                (v.UserDisplayName?.ToLowerInvariant().Contains(searchLower) ?? false));
+        }
+
+        // Sort by timestamp descending (newest first)
+        var resultList = filteredVisits.OrderByDescending(v => v.TimestampLocal).ToList();
+
+        _visitsBinding = new BindingList<Visit>(resultList);
         visitsGrid.DataSource = _visitsBinding;
-        UpdateStatus($"{Strings.Status_VisitsLoaded}: {filteredVisits.Count}");
+        UpdateStatus($"{Strings.Status_VisitsLoaded}: {resultList.Count}");
     }
 
     private async void visitsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -908,8 +955,8 @@ public partial class MainForm : Form
             { nameof(Visit.Notes), Strings.Grid_Notes }
         };
 
-        // Hide columns not needed for users
-        var hiddenColumns = new[] { "Id", "VisitGuid", "MemberId", "UserId", "Username", "TimestampUtc" };
+        // Hide columns not needed for users (includes MemberTypeCode which is the badge type ID)
+        var hiddenColumns = new[] { "Id", "VisitGuid", "MemberId", "UserId", "Username", "TimestampUtc", "MemberTypeCode" };
 
         foreach (DataGridViewColumn column in visitsGrid.Columns)
         {

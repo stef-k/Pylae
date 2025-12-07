@@ -670,6 +670,9 @@
   <data name="Visits_UpdateNotesTitle" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <data name="Visits_SearchPlaceholder" xml:space="preserve">
+    <value>Search name, rank, office, badge...</value>
+  </data>
   <data name="Backup_ReasonMissingDb" xml:space="preserve">
     <value>Missing master or visits database after restore.</value>
   </data>

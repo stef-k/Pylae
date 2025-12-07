@@ -391,13 +391,13 @@
     <value>Ανανέωση</value>
   </data>
   <data name="Button_Export" xml:space="preserve">
-    <value>Εξαγωγή</value>
+    <value>Εξαγωγή σε Excel</value>
   </data>
   <data name="Button_BadgePdf" xml:space="preserve">
     <value>PDF Δελτίου Εισόδου</value>
   </data>
   <data name="Button_BatchBadges" xml:space="preserve">
-    <value>Δελτία Εισόδου</value>
+    <value>Εξαγωγή σε PDF Επιλεγμένων</value>
   </data>
   <data name="Button_SelectAll" xml:space="preserve">
     <value>Επιλογή Όλων</value>
@@ -541,7 +541,7 @@
     <value>Ο γρήγορος κωδικός πρέπει να είναι 4-6 ψηφία (μόνο 0-9)</value>
   </data>
   <data name="Users_DeleteConfirm" xml:space="preserve">
-    <value>διαγραφή του χρήστη;</value>
+    <value>Διαγραφή του χρήστη;</value>
   </data>
   <data name="Users_DeactivateConfirm" xml:space="preserve">
     <value>Απενεργοποίηση του χρήστη;</value>
@@ -790,7 +790,7 @@
     <value>Η βάση δεδομένων αντικαταστάθηκε</value>
   </data>
   <data name="Sync_HostRequired" xml:space="preserve">
-    <value>Παρακαλώ εισάγεται τη διεύθυνση IP της εγκατάστασης</value>
+    <value>Παρακαλώ εισάγετe τη διεύθυνση IP της εγκατάστασης</value>
   </data>
   <data name="Sync_ConnectionFailed" xml:space="preserve">
     <value>Αποτυχία σύνδεσης. Ελέγξτε τις ρυθμίσεις δικτύου, τα δικαιώματα σας και το τείχος προστασίας.</value>
@@ -1182,8 +1182,6 @@
   <data name="Status_DataFiltered" xml:space="preserve">
     <value>Τα δεδομένα φιλτραρίστηκαν</value>
   </data>
-
-  <!-- Common strings -->
   <data name="Common_Yes" xml:space="preserve">
     <value>Ναι</value>
   </data>
@@ -1195,5 +1193,8 @@
   </data>
   <data name="Sync_NoSitesConfigured" xml:space="preserve">
     <value>Δεν υπάρχουν διαμορφωμένες απομακρυσμένες εγκαταστάσεις. Προσθέστε εγκαταστάσεις στις Ρυθμίσεις.</value>
+  </data>
+  <data name="Visits_SearchPlaceholder" xml:space="preserve">
+    <value>Αναζήτηση ονόματος, βαθμού, γραφείου, κάρτας...</value>
   </data>
 </root>
