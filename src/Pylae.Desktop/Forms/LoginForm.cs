@@ -68,6 +68,7 @@ public partial class LoginForm : Form
         if (!string.IsNullOrEmpty(quickCodeTextBox.Text))
         {
             _suppressClear = true;
+            // Quick code can work alone or with username
             usernameTextBox.Clear();
             passwordTextBox.Clear();
             _suppressClear = false;

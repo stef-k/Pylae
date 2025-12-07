@@ -35,6 +35,7 @@ partial class MainForm
         fileMenu = new ToolStripMenuItem();
         fileMainMenuItem = new ToolStripMenuItem();
         fileVisitsMenuItem = new ToolStripMenuItem();
+        fileLogoutMenuItem = new ToolStripMenuItem();
         fileSeparator = new ToolStripSeparator();
         fileExitMenuItem = new ToolStripMenuItem();
         adminMenu = new ToolStripMenuItem();
@@ -42,6 +43,7 @@ partial class MainForm
         adminUsersMenuItem = new ToolStripMenuItem();
         adminSettingsMenuItem = new ToolStripMenuItem();
         adminAuditMenuItem = new ToolStripMenuItem();
+        adminRemoteSitesMenuItem = new ToolStripMenuItem();
         helpMenu = new ToolStripMenuItem();
         helpUserGuideMenuItem = new ToolStripMenuItem();
         helpAdminGuideMenuItem = new ToolStripMenuItem();
@@ -78,6 +80,23 @@ partial class MainForm
         exitRadio = new RadioButton();
         entryRadio = new RadioButton();
         directionGroupBox = new GroupBox();
+        // Gate panel - member result display
+        gateLayoutPanel = new TableLayoutPanel();
+        gateLeftPanel = new Panel();
+        gateRightPanel = new Panel();
+        lastMemberPhotoBox = new PictureBox();
+        lastMemberRankLabel = new Label();
+        lastMemberNameLabel = new Label();
+        lastMemberStatusLabel = new Label();
+        lastMemberActiveLabel = new Label();
+        lastMemberTypeLabel = new Label();
+        lastMemberPersonalIdLabel = new Label();
+        lastMemberOrgIdLabel = new Label();
+        lastMemberIssueDateLabel = new Label();
+        lastMemberExpiryDateLabel = new Label();
+        lastLogTimeLabel = new Label();
+        lastLogDirectionLabel = new Label();
+        recentLogsGrid = new DataGridView();
 
         // Members panel - grid only (configured in MasterDetail)
         membersGrid = new DataGridView();
@@ -91,7 +110,10 @@ partial class MainForm
         visitsFromPicker = new DateTimePicker();
         visitsToPicker = new DateTimePicker();
         visitsFilterButton = new Button();
-        remoteSitesButton = new Button();
+        visitsEntryFilterButton = new Button();
+        visitsExitFilterButton = new Button();
+        visitsAllFilterButton = new Button();
+        // remoteSitesButton removed - now in Administrator menu
         exportVisitsButton = new Button();
 
         // Settings panel controls
@@ -139,7 +161,7 @@ partial class MainForm
         //
         // fileMenu
         //
-        fileMenu.DropDownItems.AddRange(new ToolStripItem[] { fileMainMenuItem, fileVisitsMenuItem, fileSeparator, fileExitMenuItem });
+        fileMenu.DropDownItems.AddRange(new ToolStripItem[] { fileMainMenuItem, fileVisitsMenuItem, fileSeparator, fileLogoutMenuItem, fileExitMenuItem });
         fileMenu.Name = "fileMenu";
         fileMenu.Text = Strings.Menu_File;
 
@@ -165,6 +187,13 @@ partial class MainForm
         fileSeparator.Name = "fileSeparator";
 
         //
+        // fileLogoutMenuItem
+        //
+        fileLogoutMenuItem.Name = "fileLogoutMenuItem";
+        fileLogoutMenuItem.Text = Strings.Menu_Logout;
+        fileLogoutMenuItem.Click += OnMenuLogoutClick;
+
+        //
         // fileExitMenuItem
         //
         fileExitMenuItem.Name = "fileExitMenuItem";
@@ -175,7 +204,7 @@ partial class MainForm
         //
         // adminMenu
         //
-        adminMenu.DropDownItems.AddRange(new ToolStripItem[] { adminBadgesMenuItem, adminUsersMenuItem, adminSettingsMenuItem, adminAuditMenuItem });
+        adminMenu.DropDownItems.AddRange(new ToolStripItem[] { adminBadgesMenuItem, adminUsersMenuItem, adminSettingsMenuItem, adminAuditMenuItem, adminRemoteSitesMenuItem });
         adminMenu.Name = "adminMenu";
         adminMenu.Text = Strings.Menu_Admin;
 
@@ -210,6 +239,14 @@ partial class MainForm
         adminAuditMenuItem.ShortcutKeys = Keys.F6;
         adminAuditMenuItem.Text = Strings.Menu_Audit;
         adminAuditMenuItem.Click += OnMenuAuditClick;
+
+        //
+        // adminRemoteSitesMenuItem
+        //
+        adminRemoteSitesMenuItem.Name = "adminRemoteSitesMenuItem";
+        adminRemoteSitesMenuItem.ShortcutKeys = Keys.F7;
+        adminRemoteSitesMenuItem.Text = Strings.Menu_RemoteSites;
+        adminRemoteSitesMenuItem.Click += OnMenuRemoteSitesClick;
 
         //
         // helpMenu
@@ -293,24 +330,66 @@ partial class MainForm
         siteLabel.Visible = false;
 
         //
-        // gatePanel - Main check-in/check-out view
+        // gatePanel - Main check-in/check-out view (two-column layout)
         //
-        gatePanel.Controls.Add(directionGroupBox);
-        gatePanel.Controls.Add(memberNumberLabel);
-        gatePanel.Controls.Add(memberNumberTextBox);
-        gatePanel.Controls.Add(notesLabel);
-        gatePanel.Controls.Add(notesTextBox);
-        gatePanel.Controls.Add(logVisitButton);
-        gatePanel.Controls.Add(gateResultLabel);
-        gatePanel.Controls.Add(lastResultValueLabel);
-        gatePanel.Controls.Add(badgeWarningLabel);
+        gatePanel.Controls.Add(gateLayoutPanel);
         gatePanel.Dock = DockStyle.Fill;
         gatePanel.Location = new Point(0, 78);
         gatePanel.Name = "gatePanel";
-        gatePanel.Padding = new Padding(20);
+        gatePanel.Padding = new Padding(10);
         gatePanel.Size = new Size(1200, 722);
         gatePanel.TabIndex = 2;
         gatePanel.Visible = true;
+
+        //
+        // gateLayoutPanel - two columns: left (inputs), right (result)
+        //
+        gateLayoutPanel.ColumnCount = 2;
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 45F));
+        gateLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 55F));
+        gateLayoutPanel.RowCount = 1;
+        gateLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+        gateLayoutPanel.Dock = DockStyle.Fill;
+        gateLayoutPanel.Name = "gateLayoutPanel";
+        gateLayoutPanel.Controls.Add(gateLeftPanel, 0, 0);
+        gateLayoutPanel.Controls.Add(gateRightPanel, 1, 0);
+
+        //
+        // gateLeftPanel - input controls
+        //
+        gateLeftPanel.Controls.Add(directionGroupBox);
+        gateLeftPanel.Controls.Add(memberNumberLabel);
+        gateLeftPanel.Controls.Add(memberNumberTextBox);
+        gateLeftPanel.Controls.Add(notesLabel);
+        gateLeftPanel.Controls.Add(notesTextBox);
+        gateLeftPanel.Controls.Add(logVisitButton);
+        gateLeftPanel.Dock = DockStyle.Fill;
+        gateLeftPanel.Name = "gateLeftPanel";
+        gateLeftPanel.Padding = new Padding(10);
+
+        //
+        // gateRightPanel - last result display with member details
+        //
+        gateRightPanel.Controls.Add(gateResultLabel);
+        gateRightPanel.Controls.Add(lastResultValueLabel);
+        gateRightPanel.Controls.Add(lastLogDirectionLabel);
+        gateRightPanel.Controls.Add(lastLogTimeLabel);
+        gateRightPanel.Controls.Add(lastMemberPhotoBox);
+        gateRightPanel.Controls.Add(lastMemberRankLabel);
+        gateRightPanel.Controls.Add(lastMemberNameLabel);
+        gateRightPanel.Controls.Add(lastMemberStatusLabel);
+        gateRightPanel.Controls.Add(lastMemberActiveLabel);
+        gateRightPanel.Controls.Add(lastMemberTypeLabel);
+        gateRightPanel.Controls.Add(lastMemberPersonalIdLabel);
+        gateRightPanel.Controls.Add(lastMemberOrgIdLabel);
+        gateRightPanel.Controls.Add(lastMemberIssueDateLabel);
+        gateRightPanel.Controls.Add(lastMemberExpiryDateLabel);
+        gateRightPanel.Controls.Add(badgeWarningLabel);
+        gateRightPanel.Controls.Add(recentLogsGrid);
+        gateRightPanel.Dock = DockStyle.Fill;
+        gateRightPanel.Name = "gateRightPanel";
+        gateRightPanel.Padding = new Padding(10);
+        gateRightPanel.BorderStyle = BorderStyle.FixedSingle;
 
         //
         // directionGroupBox
@@ -318,7 +397,7 @@ partial class MainForm
         directionGroupBox.Controls.Add(entryRadio);
         directionGroupBox.Controls.Add(exitRadio);
         directionGroupBox.Font = labelFont;
-        directionGroupBox.Location = new Point(20, 20);
+        directionGroupBox.Location = new Point(10, 10);
         directionGroupBox.Name = "directionGroupBox";
         directionGroupBox.Padding = new Padding(10);
         directionGroupBox.Size = new Size(300, 70);
@@ -357,7 +436,7 @@ partial class MainForm
         //
         memberNumberLabel.AutoSize = true;
         memberNumberLabel.Font = labelFont;
-        memberNumberLabel.Location = new Point(20, 110);
+        memberNumberLabel.Location = new Point(10, 100);
         memberNumberLabel.Name = "memberNumberLabel";
         memberNumberLabel.Size = new Size(120, 20);
         memberNumberLabel.TabIndex = 1;
@@ -367,7 +446,7 @@ partial class MainForm
         // memberNumberTextBox
         //
         memberNumberTextBox.Font = inputFont;
-        memberNumberTextBox.Location = new Point(20, 135);
+        memberNumberTextBox.Location = new Point(10, 125);
         memberNumberTextBox.Name = "memberNumberTextBox";
         memberNumberTextBox.Size = new Size(300, 27);
         memberNumberTextBox.TabIndex = 2;
@@ -378,7 +457,7 @@ partial class MainForm
         //
         notesLabel.AutoSize = true;
         notesLabel.Font = labelFont;
-        notesLabel.Location = new Point(20, 180);
+        notesLabel.Location = new Point(10, 170);
         notesLabel.Name = "notesLabel";
         notesLabel.Size = new Size(50, 20);
         notesLabel.TabIndex = 3;
@@ -388,10 +467,10 @@ partial class MainForm
         // notesTextBox
         //
         notesTextBox.Font = inputFont;
-        notesTextBox.Location = new Point(20, 205);
+        notesTextBox.Location = new Point(10, 195);
         notesTextBox.Multiline = true;
         notesTextBox.Name = "notesTextBox";
-        notesTextBox.Size = new Size(400, 80);
+        notesTextBox.Size = new Size(350, 80);
         notesTextBox.TabIndex = 4;
 
         //
@@ -399,7 +478,7 @@ partial class MainForm
         //
         logVisitButton.AutoSize = true;
         logVisitButton.Font = buttonFont;
-        logVisitButton.Location = new Point(20, 305);
+        logVisitButton.Location = new Point(10, 295);
         logVisitButton.MinimumSize = new Size(150, 40);
         logVisitButton.Name = "logVisitButton";
         logVisitButton.Padding = new Padding(10, 5, 10, 5);
@@ -410,36 +489,189 @@ partial class MainForm
         logVisitButton.Click += OnLogVisitClick;
 
         //
-        // gateResultLabel
+        // gateResultLabel - "Last Result" heading
         //
         gateResultLabel.AutoSize = true;
-        gateResultLabel.Font = labelFont;
-        gateResultLabel.Location = new Point(20, 365);
+        gateResultLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point);
+        gateResultLabel.Location = new Point(10, 10);
         gateResultLabel.Name = "gateResultLabel";
-        gateResultLabel.Size = new Size(80, 20);
-        gateResultLabel.TabIndex = 6;
+        gateResultLabel.Size = new Size(120, 25);
+        gateResultLabel.TabIndex = 0;
         gateResultLabel.Text = Strings.Gate_LastResult;
 
         //
-        // lastResultValueLabel
+        // lastResultValueLabel - result text (entry/exit success)
         //
         lastResultValueLabel.AutoSize = true;
-        lastResultValueLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
-        lastResultValueLabel.Location = new Point(120, 365);
+        lastResultValueLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold, GraphicsUnit.Point);
+        lastResultValueLabel.Location = new Point(10, 40);
         lastResultValueLabel.Name = "lastResultValueLabel";
-        lastResultValueLabel.Size = new Size(0, 20);
-        lastResultValueLabel.TabIndex = 7;
+        lastResultValueLabel.MaximumSize = new Size(600, 0);
+        lastResultValueLabel.Size = new Size(0, 21);
+        lastResultValueLabel.TabIndex = 1;
+
+        //
+        // lastLogDirectionLabel - ENTRY or EXIT
+        //
+        lastLogDirectionLabel.AutoSize = true;
+        lastLogDirectionLabel.Font = new Font("Segoe UI", 16F, FontStyle.Bold, GraphicsUnit.Point);
+        lastLogDirectionLabel.Location = new Point(10, 70);
+        lastLogDirectionLabel.Name = "lastLogDirectionLabel";
+        lastLogDirectionLabel.Size = new Size(0, 30);
+        lastLogDirectionLabel.TabIndex = 2;
+        lastLogDirectionLabel.ForeColor = Color.DarkBlue;
+
+        //
+        // lastLogTimeLabel - logged time
+        //
+        lastLogTimeLabel.AutoSize = true;
+        lastLogTimeLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+        lastLogTimeLabel.Location = new Point(150, 75);
+        lastLogTimeLabel.Name = "lastLogTimeLabel";
+        lastLogTimeLabel.Size = new Size(0, 20);
+        lastLogTimeLabel.TabIndex = 3;
+
+        //
+        // lastMemberPhotoBox - member photo (larger size)
+        //
+        lastMemberPhotoBox.BorderStyle = BorderStyle.FixedSingle;
+        lastMemberPhotoBox.Location = new Point(10, 110);
+        lastMemberPhotoBox.Name = "lastMemberPhotoBox";
+        lastMemberPhotoBox.Size = new Size(200, 240);
+        lastMemberPhotoBox.SizeMode = PictureBoxSizeMode.Zoom;
+        lastMemberPhotoBox.TabIndex = 4;
+        lastMemberPhotoBox.TabStop = false;
+        lastMemberPhotoBox.BackColor = SystemColors.Control;
+
+        //
+        // lastMemberRankLabel - Rank
+        //
+        lastMemberRankLabel.AutoSize = true;
+        lastMemberRankLabel.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberRankLabel.Location = new Point(220, 110);
+        lastMemberRankLabel.Name = "lastMemberRankLabel";
+        lastMemberRankLabel.MaximumSize = new Size(350, 0);
+        lastMemberRankLabel.Size = new Size(0, 20);
+        lastMemberRankLabel.TabIndex = 5;
+
+        //
+        // lastMemberNameLabel - First Last name
+        //
+        lastMemberNameLabel.AutoSize = true;
+        lastMemberNameLabel.Font = new Font("Segoe UI", 14F, FontStyle.Bold, GraphicsUnit.Point);
+        lastMemberNameLabel.Location = new Point(220, 135);
+        lastMemberNameLabel.Name = "lastMemberNameLabel";
+        lastMemberNameLabel.MaximumSize = new Size(350, 0);
+        lastMemberNameLabel.Size = new Size(0, 25);
+        lastMemberNameLabel.TabIndex = 6;
+
+        //
+        // lastMemberStatusLabel - Status: PERMANENT or TEMPORARY
+        //
+        lastMemberStatusLabel.AutoSize = true;
+        lastMemberStatusLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberStatusLabel.Location = new Point(220, 165);
+        lastMemberStatusLabel.Name = "lastMemberStatusLabel";
+        lastMemberStatusLabel.MaximumSize = new Size(350, 0);
+        lastMemberStatusLabel.Size = new Size(0, 19);
+        lastMemberStatusLabel.TabIndex = 7;
+
+        //
+        // lastMemberActiveLabel - Badge Status: Active/Inactive
+        //
+        lastMemberActiveLabel.AutoSize = true;
+        lastMemberActiveLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberActiveLabel.Location = new Point(220, 190);
+        lastMemberActiveLabel.Name = "lastMemberActiveLabel";
+        lastMemberActiveLabel.MaximumSize = new Size(350, 0);
+        lastMemberActiveLabel.Size = new Size(0, 19);
+        lastMemberActiveLabel.TabIndex = 8;
+
+        //
+        // lastMemberTypeLabel - Badge Type: ...
+        //
+        lastMemberTypeLabel.AutoSize = true;
+        lastMemberTypeLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberTypeLabel.Location = new Point(220, 215);
+        lastMemberTypeLabel.Name = "lastMemberTypeLabel";
+        lastMemberTypeLabel.MaximumSize = new Size(350, 0);
+        lastMemberTypeLabel.Size = new Size(0, 19);
+        lastMemberTypeLabel.TabIndex = 9;
+
+        //
+        // lastMemberPersonalIdLabel - Identification Number
+        //
+        lastMemberPersonalIdLabel.AutoSize = true;
+        lastMemberPersonalIdLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberPersonalIdLabel.Location = new Point(220, 240);
+        lastMemberPersonalIdLabel.Name = "lastMemberPersonalIdLabel";
+        lastMemberPersonalIdLabel.MaximumSize = new Size(350, 0);
+        lastMemberPersonalIdLabel.Size = new Size(0, 19);
+        lastMemberPersonalIdLabel.TabIndex = 10;
+
+        //
+        // lastMemberOrgIdLabel - Organization Identification
+        //
+        lastMemberOrgIdLabel.AutoSize = true;
+        lastMemberOrgIdLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberOrgIdLabel.Location = new Point(220, 265);
+        lastMemberOrgIdLabel.Name = "lastMemberOrgIdLabel";
+        lastMemberOrgIdLabel.MaximumSize = new Size(350, 0);
+        lastMemberOrgIdLabel.Size = new Size(0, 19);
+        lastMemberOrgIdLabel.TabIndex = 11;
+
+        //
+        // lastMemberIssueDateLabel - Issue Date
+        //
+        lastMemberIssueDateLabel.AutoSize = true;
+        lastMemberIssueDateLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberIssueDateLabel.Location = new Point(220, 290);
+        lastMemberIssueDateLabel.Name = "lastMemberIssueDateLabel";
+        lastMemberIssueDateLabel.MaximumSize = new Size(350, 0);
+        lastMemberIssueDateLabel.Size = new Size(0, 19);
+        lastMemberIssueDateLabel.TabIndex = 12;
+
+        //
+        // lastMemberExpiryDateLabel - Expiry Date
+        //
+        lastMemberExpiryDateLabel.AutoSize = true;
+        lastMemberExpiryDateLabel.Font = new Font("Segoe UI", 10F, FontStyle.Regular, GraphicsUnit.Point);
+        lastMemberExpiryDateLabel.Location = new Point(220, 315);
+        lastMemberExpiryDateLabel.Name = "lastMemberExpiryDateLabel";
+        lastMemberExpiryDateLabel.MaximumSize = new Size(350, 0);
+        lastMemberExpiryDateLabel.Size = new Size(0, 19);
+        lastMemberExpiryDateLabel.TabIndex = 13;
 
         //
         // badgeWarningLabel
         //
         badgeWarningLabel.AutoSize = true;
-        badgeWarningLabel.Font = labelFont;
+        badgeWarningLabel.Font = new Font("Segoe UI", 11F, FontStyle.Bold, GraphicsUnit.Point);
         badgeWarningLabel.ForeColor = Color.DarkGoldenrod;
-        badgeWarningLabel.Location = new Point(20, 400);
+        badgeWarningLabel.Location = new Point(220, 340);
         badgeWarningLabel.Name = "badgeWarningLabel";
+        badgeWarningLabel.MaximumSize = new Size(350, 0);
         badgeWarningLabel.Size = new Size(0, 20);
-        badgeWarningLabel.TabIndex = 8;
+        badgeWarningLabel.TabIndex = 14;
+
+        //
+        // recentLogsGrid - last 6 logs
+        //
+        recentLogsGrid.AllowUserToAddRows = false;
+        recentLogsGrid.AllowUserToDeleteRows = false;
+        recentLogsGrid.AllowUserToResizeRows = false;
+        recentLogsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        recentLogsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        recentLogsGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+        recentLogsGrid.Location = new Point(10, 370);
+        recentLogsGrid.Name = "recentLogsGrid";
+        recentLogsGrid.ReadOnly = true;
+        recentLogsGrid.RowHeadersVisible = false;
+        recentLogsGrid.RowTemplate.Height = 25;
+        recentLogsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+        recentLogsGrid.Size = new Size(560, 180);
+        recentLogsGrid.TabIndex = 15;
+        recentLogsGrid.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
 
         //
         // membersPanel - Badges/Members view
@@ -469,7 +701,10 @@ partial class MainForm
         visitsPanel.Controls.Add(visitsFromPicker);
         visitsPanel.Controls.Add(visitsToPicker);
         visitsPanel.Controls.Add(visitsFilterButton);
-        visitsPanel.Controls.Add(remoteSitesButton);
+        visitsPanel.Controls.Add(visitsEntryFilterButton);
+        visitsPanel.Controls.Add(visitsExitFilterButton);
+        visitsPanel.Controls.Add(visitsAllFilterButton);
+        // remoteSitesButton removed - now in Administrator menu
         visitsPanel.Controls.Add(exportVisitsButton);
         visitsPanel.Controls.Add(refreshVisitsButton);
         visitsPanel.Controls.Add(visitsGrid);
@@ -507,41 +742,74 @@ partial class MainForm
         visitsFilterButton.AutoSize = true;
         visitsFilterButton.Font = buttonFont;
         visitsFilterButton.Location = new Point(330, 8);
-        visitsFilterButton.MinimumSize = new Size(100, 32);
+        visitsFilterButton.MinimumSize = new Size(80, 32);
         visitsFilterButton.Name = "visitsFilterButton";
-        visitsFilterButton.Padding = new Padding(8, 3, 8, 3);
-        visitsFilterButton.Size = new Size(100, 32);
+        visitsFilterButton.Padding = new Padding(6, 3, 6, 3);
+        visitsFilterButton.Size = new Size(80, 32);
         visitsFilterButton.TabIndex = 2;
         visitsFilterButton.Text = Strings.Button_Filter;
         visitsFilterButton.UseVisualStyleBackColor = true;
         visitsFilterButton.Click += OnFilterVisitsClick;
 
         //
-        // remoteSitesButton
+        // visitsEntryFilterButton
         //
-        remoteSitesButton.AutoSize = true;
-        remoteSitesButton.Font = buttonFont;
-        remoteSitesButton.Location = new Point(440, 8);
-        remoteSitesButton.MinimumSize = new Size(120, 32);
-        remoteSitesButton.Name = "remoteSitesButton";
-        remoteSitesButton.Padding = new Padding(8, 3, 8, 3);
-        remoteSitesButton.Size = new Size(120, 32);
-        remoteSitesButton.TabIndex = 3;
-        remoteSitesButton.Text = Strings.Button_RemoteSites;
-        remoteSitesButton.UseVisualStyleBackColor = true;
-        remoteSitesButton.Click += OnRemoteSitesClick;
+        visitsEntryFilterButton.AutoSize = true;
+        visitsEntryFilterButton.Font = buttonFont;
+        visitsEntryFilterButton.Location = new Point(420, 8);
+        visitsEntryFilterButton.MinimumSize = new Size(70, 32);
+        visitsEntryFilterButton.Name = "visitsEntryFilterButton";
+        visitsEntryFilterButton.Padding = new Padding(6, 3, 6, 3);
+        visitsEntryFilterButton.Size = new Size(70, 32);
+        visitsEntryFilterButton.TabIndex = 3;
+        visitsEntryFilterButton.Text = Strings.Gate_Entry;
+        visitsEntryFilterButton.UseVisualStyleBackColor = true;
+        visitsEntryFilterButton.Click += OnFilterVisitsEntryClick;
+
+        //
+        // visitsExitFilterButton
+        //
+        visitsExitFilterButton.AutoSize = true;
+        visitsExitFilterButton.Font = buttonFont;
+        visitsExitFilterButton.Location = new Point(500, 8);
+        visitsExitFilterButton.MinimumSize = new Size(70, 32);
+        visitsExitFilterButton.Name = "visitsExitFilterButton";
+        visitsExitFilterButton.Padding = new Padding(6, 3, 6, 3);
+        visitsExitFilterButton.Size = new Size(70, 32);
+        visitsExitFilterButton.TabIndex = 4;
+        visitsExitFilterButton.Text = Strings.Gate_Exit;
+        visitsExitFilterButton.UseVisualStyleBackColor = true;
+        visitsExitFilterButton.Click += OnFilterVisitsExitClick;
+
+        //
+        // visitsAllFilterButton
+        //
+        visitsAllFilterButton.AutoSize = true;
+        visitsAllFilterButton.Font = buttonFont;
+        visitsAllFilterButton.Location = new Point(580, 8);
+        visitsAllFilterButton.MinimumSize = new Size(60, 32);
+        visitsAllFilterButton.Name = "visitsAllFilterButton";
+        visitsAllFilterButton.Padding = new Padding(6, 3, 6, 3);
+        visitsAllFilterButton.Size = new Size(60, 32);
+        visitsAllFilterButton.TabIndex = 5;
+        visitsAllFilterButton.Text = Strings.Button_All;
+        visitsAllFilterButton.UseVisualStyleBackColor = true;
+        visitsAllFilterButton.Click += OnFilterVisitsAllClick;
+
+        //
+        // remoteSitesButton removed - now accessible from Administrator menu
 
         //
         // exportVisitsButton
         //
         exportVisitsButton.AutoSize = true;
         exportVisitsButton.Font = buttonFont;
-        exportVisitsButton.Location = new Point(570, 8);
+        exportVisitsButton.Location = new Point(780, 8);
         exportVisitsButton.MinimumSize = new Size(100, 32);
         exportVisitsButton.Name = "exportVisitsButton";
-        exportVisitsButton.Padding = new Padding(8, 3, 8, 3);
+        exportVisitsButton.Padding = new Padding(6, 3, 6, 3);
         exportVisitsButton.Size = new Size(100, 32);
-        exportVisitsButton.TabIndex = 4;
+        exportVisitsButton.TabIndex = 7;
         exportVisitsButton.Text = Strings.Button_Export;
         exportVisitsButton.UseVisualStyleBackColor = true;
         exportVisitsButton.Click += OnExportVisitsClick;
@@ -557,7 +825,7 @@ partial class MainForm
         refreshVisitsButton.Name = "refreshVisitsButton";
         refreshVisitsButton.Padding = new Padding(8, 3, 8, 3);
         refreshVisitsButton.Size = new Size(100, 32);
-        refreshVisitsButton.TabIndex = 5;
+        refreshVisitsButton.TabIndex = 8;
         refreshVisitsButton.Text = Strings.Button_Refresh;
         refreshVisitsButton.UseVisualStyleBackColor = true;
         refreshVisitsButton.Click += OnRefreshVisitsClick;
@@ -566,13 +834,14 @@ partial class MainForm
         // visitsGrid
         //
         visitsGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        visitsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         visitsGrid.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         visitsGrid.Location = new Point(10, 50);
         visitsGrid.Name = "visitsGrid";
         visitsGrid.ReadOnly = true;
         visitsGrid.RowTemplate.Height = 25;
         visitsGrid.Size = new Size(1180, 660);
-        visitsGrid.TabIndex = 6;
+        visitsGrid.TabIndex = 9;
         visitsGrid.CellDoubleClick += visitsGrid_CellDoubleClick;
 
         //
@@ -847,12 +1116,14 @@ partial class MainForm
     private ToolStripMenuItem fileMainMenuItem;
     private ToolStripMenuItem fileVisitsMenuItem;
     private ToolStripSeparator fileSeparator;
+    private ToolStripMenuItem fileLogoutMenuItem;
     private ToolStripMenuItem fileExitMenuItem;
     private ToolStripMenuItem adminMenu;
     private ToolStripMenuItem adminBadgesMenuItem;
     private ToolStripMenuItem adminUsersMenuItem;
     private ToolStripMenuItem adminSettingsMenuItem;
     private ToolStripMenuItem adminAuditMenuItem;
+    private ToolStripMenuItem adminRemoteSitesMenuItem;
     private ToolStripMenuItem helpMenu;
     private ToolStripMenuItem helpUserGuideMenuItem;
     private ToolStripMenuItem helpAdminGuideMenuItem;
@@ -885,6 +1156,23 @@ partial class MainForm
     private Label gateResultLabel;
     private Label lastResultValueLabel;
     private Label badgeWarningLabel;
+    // Gate panel - member result display
+    private TableLayoutPanel gateLayoutPanel;
+    private Panel gateLeftPanel;
+    private Panel gateRightPanel;
+    private PictureBox lastMemberPhotoBox;
+    private Label lastMemberRankLabel;
+    private Label lastMemberNameLabel;
+    private Label lastMemberStatusLabel;
+    private Label lastMemberActiveLabel;
+    private Label lastMemberTypeLabel;
+    private Label lastMemberPersonalIdLabel;
+    private Label lastMemberOrgIdLabel;
+    private Label lastMemberIssueDateLabel;
+    private Label lastMemberExpiryDateLabel;
+    private Label lastLogTimeLabel;
+    private Label lastLogDirectionLabel;
+    private DataGridView recentLogsGrid;
 
     // Members panel - grid only (configured in MasterDetail)
     private DataGridView membersGrid;
@@ -898,7 +1186,10 @@ partial class MainForm
     private DateTimePicker visitsFromPicker;
     private DateTimePicker visitsToPicker;
     private Button visitsFilterButton;
-    private Button remoteSitesButton;
+    private Button visitsEntryFilterButton;
+    private Button visitsExitFilterButton;
+    private Button visitsAllFilterButton;
+    // remoteSitesButton removed - now in Administrator menu
     private Button exportVisitsButton;
 
     // Settings panel controls

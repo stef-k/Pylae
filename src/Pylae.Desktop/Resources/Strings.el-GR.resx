@@ -157,7 +157,19 @@
     <value>Καταγραφή επίσκεψης</value>
   </data>
   <data name="Gate_LastResult" xml:space="preserve">
-    <value>Τελευταίο αποτέλεσμα</value>
+    <value>Τελευταίο Αποτέλεσμα</value>
+  </data>
+  <data name="Gate_Logged" xml:space="preserve">
+    <value>Καταγραφή</value>
+  </data>
+  <data name="Member_Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Member_BadgeStatus" xml:space="preserve">
+    <value>Κατάσταση Δελτίου</value>
+  </data>
+  <data name="Member_BadgeType" xml:space="preserve">
+    <value>Τύπος Δελτίου</value>
   </data>
   <data name="Gate_InvalidMemberNumber" xml:space="preserve">
     <value>Εισάγεται ένα έγκυρο αριθμό δελτίου εισόδου.</value>
@@ -185,6 +197,9 @@
   </data>
   <data name="Settings_SiteIdentity" xml:space="preserve">
     <value>Ταυτότητα Εγκατάστασης</value>
+  </data>
+  <data name="Settings_PortableModeActive" xml:space="preserve">
+    <value>Φορητή λειτουργία ενεργή - όλα τα δεδομένα αποθηκεύονται στον φάκελο της εφαρμογής</value>
   </data>
   <data name="Settings_SiteCode" xml:space="preserve">
     <value>Ονομασία Εγκατάστασης</value>
@@ -396,6 +411,9 @@
   <data name="Button_Filter" xml:space="preserve">
     <value>Φίλτρο</value>
   </data>
+  <data name="Button_All" xml:space="preserve">
+    <value>Όλα</value>
+  </data>
   <data name="Button_Catalogs" xml:space="preserve">
     <value>Τύποι Δελτίων</value>
   </data>
@@ -471,6 +489,12 @@
   <data name="FirstRun_RequiredFields" xml:space="preserve">
     <value>Απαιτούνται τα: Όνομα Εγκατάστασης, Εμφανιζόμενο Όνομα Εγκατάστασης, Κωδικός Διαχειριστή και Κωδικός Αποκρυπτογράφησης Βάσης Δεδομένων.</value>
   </data>
+  <data name="FirstRun_PortableMode" xml:space="preserve">
+    <value>Φορητή λειτουργία</value>
+  </data>
+  <data name="FirstRun_PortableModeHint" xml:space="preserve">
+    <value>Αποθήκευση δεδομένων στον φάκελο της εφαρμογής (για περιβάλλοντα με περιορισμούς).</value>
+  </data>
   <data name="Button_Save" xml:space="preserve">
     <value>Αποθήκευση</value>
   </data>
@@ -521,6 +545,9 @@
   </data>
   <data name="Users_DeactivateConfirm" xml:space="preserve">
     <value>Απενεργοποίηση του χρήστη;</value>
+  </data>
+  <data name="Users_QuickCode" xml:space="preserve">
+    <value>Κωδικός Γρήγορης Σύνδεσης</value>
   </data>
   <data name="Users_QuickCodeNotAllowed" xml:space="preserve">
     <value>Ο Γρήγορος Κωδικός Σύνδεσης δεν είναι διαθέσιμος στους λογαριασμούς διαχειριστών</value>
@@ -705,6 +732,18 @@
   <data name="Users_PasswordRequired" xml:space="preserve">
     <value>Ο κωδικός απαιτείται για νέους χρήστες</value>
   </data>
+  <data name="Users_ConfirmPassword" xml:space="preserve">
+    <value>Επιβεβαίωση Κωδικού</value>
+  </data>
+  <data name="Users_ConfirmQuickCode" xml:space="preserve">
+    <value>Επιβεβαίωση Γρήγορου Κωδικού</value>
+  </data>
+  <data name="Users_PasswordMismatch" xml:space="preserve">
+    <value>Οι κωδικοί δεν ταιριάζουν</value>
+  </data>
+  <data name="Users_QuickCodeMismatch" xml:space="preserve">
+    <value>Οι γρήγοροι κωδικοί δεν ταιριάζουν</value>
+  </data>
   <data name="Photo_None" xml:space="preserve">
     <value>Δεν υπάρχει φωτογραφεία</value>
   </data>
@@ -783,6 +822,21 @@
   <data name="Member_PermanentStaff" xml:space="preserve">
     <value>Μόνιμος</value>
   </data>
+  <data name="Member_TemporaryStaff" xml:space="preserve">
+    <value>Προσωρινός</value>
+  </data>
+  <data name="Member_Active" xml:space="preserve">
+    <value>Ενεργός</value>
+  </data>
+  <data name="Member_Inactive" xml:space="preserve">
+    <value>Ανενεργός</value>
+  </data>
+  <data name="Member_IdentificationNumber" xml:space="preserve">
+    <value>Αριθμός Ταυτότητας</value>
+  </data>
+  <data name="Member_OrganizationId" xml:space="preserve">
+    <value>Αριθμός Μητρώου Οργανισμού</value>
+  </data>
   <data name="Member_ClearPhoto" xml:space="preserve">
     <value>Καθαρισμός Φωτογραφίας</value>
   </data>
@@ -803,9 +857,6 @@
   </data>
   <data name="Member_Notes" xml:space="preserve">
     <value>Σημειώσεις</value>
-  </data>
-  <data name="Member_Active" xml:space="preserve">
-    <value>Ενεργό</value>
   </data>
   <data name="Member_NumberRequired" xml:space="preserve">
     <value>Ο αριθμός Δελτίου Εισόδου είναι υποχρεωτικός</value>
@@ -1017,6 +1068,9 @@
   <data name="Menu_Visits" xml:space="preserve">
     <value>Επισκέψεις</value>
   </data>
+  <data name="Menu_Logout" xml:space="preserve">
+    <value>Αποσύνδεση</value>
+  </data>
   <data name="Menu_Exit" xml:space="preserve">
     <value>Έξοδος</value>
   </data>
@@ -1034,6 +1088,9 @@
   </data>
   <data name="Menu_Audit" xml:space="preserve">
     <value>Έλεγχος</value>
+  </data>
+  <data name="Menu_RemoteSites" xml:space="preserve">
+    <value>Απομακρυσμένες Εγκαταστάσεις</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
     <value>Βοήθεια</value>
@@ -1055,6 +1112,12 @@
   </data>
   <data name="Gate_Exit" xml:space="preserve">
     <value>Έξοδος</value>
+  </data>
+  <data name="Visit_MethodScan" xml:space="preserve">
+    <value>Σάρωση</value>
+  </data>
+  <data name="Visit_MethodManual" xml:space="preserve">
+    <value>Χειροκίνητα</value>
   </data>
   <data name="Gate_LogVisit" xml:space="preserve">
     <value>Καταγραφή</value>
@@ -1080,6 +1143,45 @@
   <data name="About_Version" xml:space="preserve">
     <value>Έκδοση</value>
   </data>
+  <data name="Status_Ready" xml:space="preserve">
+    <value>Έτοιμο</value>
+  </data>
+  <data name="Status_MemberSaved" xml:space="preserve">
+    <value>Το Δελτίο αποθηκεύτηκε με επιτυχία</value>
+  </data>
+  <data name="Status_MemberDeleted" xml:space="preserve">
+    <value>Το Δελτίο διαγράφηκε με επιτυχία</value>
+  </data>
+  <data name="Status_UserSaved" xml:space="preserve">
+    <value>Ο χρήστης αποθηκεύτηκε με επιτυχία</value>
+  </data>
+  <data name="Status_UserDeleted" xml:space="preserve">
+    <value>Ο χρήστης διαγράφηκε με επιτυχία</value>
+  </data>
+  <data name="Status_VisitLogged" xml:space="preserve">
+    <value>Η επίσκεψη καταγράφηκε με επιτυχία</value>
+  </data>
+  <data name="Status_VisitsLoaded" xml:space="preserve">
+    <value>Οι επισκέψεις φορτώθηκαν</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Φόρτωση...</value>
+  </data>
+  <data name="Status_BackupCreated" xml:space="preserve">
+    <value>Το αντίγραφο ασφαλείας δημιουργήθηκε με επιτυχία</value>
+  </data>
+  <data name="Status_BackupRestored" xml:space="preserve">
+    <value>Το αντίγραφο ασφαλείας αποκαταστάθηκε με επιτυχία</value>
+  </data>
+  <data name="Status_SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία</value>
+  </data>
+  <data name="Status_ExportComplete" xml:space="preserve">
+    <value>Η εξαγωγή ολοκληρώθηκε</value>
+  </data>
+  <data name="Status_DataFiltered" xml:space="preserve">
+    <value>Τα δεδομένα φιλτραρίστηκαν</value>
+  </data>
 
   <!-- Common strings -->
   <data name="Common_Yes" xml:space="preserve">
@@ -1087,5 +1189,11 @@
   </data>
   <data name="Common_No" xml:space="preserve">
     <value>Όχι</value>
+  </data>
+  <data name="Sync_SelectSite" xml:space="preserve">
+    <value>Επιλογή Απομακρυσμένης Εγκατάστασης</value>
+  </data>
+  <data name="Sync_NoSitesConfigured" xml:space="preserve">
+    <value>Δεν υπάρχουν διαμορφωμένες απομακρυσμένες εγκαταστάσεις. Προσθέστε εγκαταστάσεις στις Ρυθμίσεις.</value>
   </data>
 </root>

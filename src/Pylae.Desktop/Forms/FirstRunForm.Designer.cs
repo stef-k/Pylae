@@ -35,6 +35,8 @@ partial class FirstRunForm
         encryptionHint = new Label();
         languageLabel = new Label();
         languageCombo = new ComboBox();
+        portableModeCheckbox = new CheckBox();
+        portableModeHint = new Label();
         saveButton = new Button();
         cancelButton = new Button();
         SuspendLayout();
@@ -155,39 +157,61 @@ partial class FirstRunForm
         languageLabel.Text = "Language";
         // 
         // languageCombo
-        // 
+        //
         languageCombo.Location = new Point(12, 310);
         languageCombo.Name = "languageCombo";
         languageCombo.Size = new Size(180, 23);
         languageCombo.TabIndex = 13;
-        // 
+        //
+        // portableModeCheckbox
+        //
+        portableModeCheckbox.AutoSize = true;
+        portableModeCheckbox.Location = new Point(12, 345);
+        portableModeCheckbox.Name = "portableModeCheckbox";
+        portableModeCheckbox.Size = new Size(100, 19);
+        portableModeCheckbox.TabIndex = 14;
+        portableModeCheckbox.Text = "Portable mode";
+        portableModeCheckbox.UseVisualStyleBackColor = true;
+        //
+        // portableModeHint
+        //
+        portableModeHint.AutoSize = true;
+        portableModeHint.ForeColor = SystemColors.GrayText;
+        portableModeHint.Location = new Point(12, 367);
+        portableModeHint.Name = "portableModeHint";
+        portableModeHint.Size = new Size(300, 15);
+        portableModeHint.TabIndex = 15;
+        portableModeHint.Text = "Store all data inside app folder (for restricted environments).";
+        //
         // saveButton
-        // 
-        saveButton.Location = new Point(179, 349);
+        //
+        saveButton.Location = new Point(179, 400);
         saveButton.Name = "saveButton";
         saveButton.Size = new Size(75, 23);
-        saveButton.TabIndex = 14;
+        saveButton.TabIndex = 16;
         saveButton.Text = "Save";
         saveButton.UseVisualStyleBackColor = true;
         saveButton.Click += OnSaveClick;
-        // 
+        //
         // cancelButton
-        // 
-        cancelButton.Location = new Point(260, 349);
+        //
+        cancelButton.Location = new Point(260, 400);
         cancelButton.Name = "cancelButton";
         cancelButton.Size = new Size(75, 23);
-        cancelButton.TabIndex = 15;
+        cancelButton.TabIndex = 17;
         cancelButton.Text = "Cancel";
         cancelButton.UseVisualStyleBackColor = true;
         cancelButton.Click += OnCancelClick;
         // 
         // FirstRunForm
-        // 
+        //
         AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(347, 384);
+        ClientSize = new Size(347, 435);
         Controls.Add(cancelButton);
         Controls.Add(saveButton);
+        Controls.Add(portableModeHint);
+        Controls.Add(portableModeCheckbox);
         Controls.Add(languageCombo);
         Controls.Add(languageLabel);
         Controls.Add(encryptionHint);
@@ -228,6 +252,8 @@ partial class FirstRunForm
     private Label encryptionHint;
     private Label languageLabel;
     private ComboBox languageCombo;
+    private CheckBox portableModeCheckbox;
+    private Label portableModeHint;
     private Button saveButton;
     private Button cancelButton;
 }

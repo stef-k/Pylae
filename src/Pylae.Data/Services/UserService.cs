@@ -47,10 +47,30 @@ public class UserService : IUserService
 
     public async Task<AuthenticationResult> AuthenticateWithQuickCodeAsync(string username, string quickCode, CancellationToken cancellationToken = default)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.IsActive, cancellationToken);
-        if (user is null)
+        Entities.Master.User? user;
+
+        if (!string.IsNullOrWhiteSpace(username))
         {
-            return new AuthenticationResult(false, null, "Invalid credentials.");
+            // Username provided - look up specific user
+            user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username && u.IsActive, cancellationToken);
+            if (user is null)
+            {
+                return new AuthenticationResult(false, null, "Invalid credentials.");
+            }
+        }
+        else
+        {
+            // No username - search all active non-admin users with quick codes
+            var candidates = await _dbContext.Users
+                .Where(u => u.IsActive && u.Role != UserRole.Admin && u.QuickCodeHash != null)
+                .ToListAsync(cancellationToken);
+
+            user = candidates.FirstOrDefault(u => VerifyQuickCode(u, quickCode));
+            if (user is null)
+            {
+                _logger?.LogWarning("Failed quick code login - no matching user found");
+                return new AuthenticationResult(false, null, "Invalid credentials.");
+            }
         }
 
         if (user.Role == UserRole.Admin)
@@ -60,7 +80,7 @@ public class UserService : IUserService
 
         if (!HasQuickCode(user) || !VerifyQuickCode(user, quickCode))
         {
-            _logger?.LogWarning("Failed quick code login for user {Username}", username);
+            _logger?.LogWarning("Failed quick code login for user {Username}", user.Username);
             return new AuthenticationResult(false, null, "Invalid credentials.");
         }
 

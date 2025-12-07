@@ -11,6 +11,7 @@ public partial class FirstRunForm : Form
     public string AdminPassword => adminPasswordText.Text;
     public string PrimaryLanguage => languageCombo.Text.Trim();
     public string EncryptionPassword => encryptionPasswordText.Text;
+    public bool PortableMode => portableModeCheckbox.Checked;
 
     public FirstRunForm()
     {
@@ -27,6 +28,8 @@ public partial class FirstRunForm : Form
         encryptionPasswordLabel.Text = Strings.FirstRun_EncryptionPassword;
         encryptionHint.Text = Strings.FirstRun_EncryptionHint;
         languageLabel.Text = Strings.FirstRun_Language;
+        portableModeCheckbox.Text = Strings.FirstRun_PortableMode;
+        portableModeHint.Text = Strings.FirstRun_PortableModeHint;
         saveButton.Text = Strings.FirstRun_Save;
         cancelButton.Text = Strings.FirstRun_Cancel;
     }

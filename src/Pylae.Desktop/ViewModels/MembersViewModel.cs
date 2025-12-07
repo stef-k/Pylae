@@ -39,4 +39,9 @@ public partial class MembersViewModel : ObservableObject
 
         return await _memberService.UpdateAsync(member, cancellationToken);
     }
+
+    public async Task<Member?> GetByIdAsync(string memberId, CancellationToken cancellationToken = default)
+    {
+        return await _memberService.GetByIdAsync(memberId, cancellationToken);
+    }
 }

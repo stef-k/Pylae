@@ -12,6 +12,7 @@ namespace Pylae.Desktop.Services;
 public class VisitCleanupService : IDisposable
 {
     private readonly PylaeVisitsDbContext _dbContext;
+    private readonly IAppSettings _appSettings;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<VisitCleanupService>? _logger;
     private System.Threading.Timer? _timer;
@@ -19,10 +20,12 @@ public class VisitCleanupService : IDisposable
 
     public VisitCleanupService(
         PylaeVisitsDbContext dbContext,
+        IAppSettings appSettings,
         ISettingsService settingsService,
         ILogger<VisitCleanupService>? logger = null)
     {
         _dbContext = dbContext;
+        _appSettings = appSettings;
         _settingsService = settingsService;
         _logger = logger;
     }
@@ -30,20 +33,18 @@ public class VisitCleanupService : IDisposable
     /// <summary>
     /// Starts the visit cleanup service.
     /// </summary>
-    public async Task StartAsync()
+    public Task StartAsync()
     {
-        var settings = await _settingsService.GetAllAsync();
+        var years = _appSettings.GetInt(SettingKeys.VisitRetentionYears, 0);
 
-        if (!settings.TryGetValue(SettingKeys.VisitRetentionYears, out var yearsStr) ||
-            !int.TryParse(yearsStr, out var years) ||
-            years <= 0)
+        if (years <= 0)
         {
-            _logger?.LogInformation("Visit retention is disabled (retention years: {Years})", yearsStr ?? "0");
-            return;
+            _logger?.LogInformation("Visit retention is disabled (retention years: {Years})", years);
+            return Task.CompletedTask;
         }
 
         // Check if cleanup is overdue (catch-up logic)
-        var initialDelay = await GetInitialDelayAsync(settings);
+        var initialDelay = GetInitialDelay();
 
         // Run cleanup once per week (visits table can be large)
         _timer = new System.Threading.Timer(
@@ -53,15 +54,16 @@ public class VisitCleanupService : IDisposable
             7 * 24 * 60 * 60 * 1000); // Then every 7 days
 
         _logger?.LogInformation("Visit cleanup service started (retention: {Years} years, runs weekly, initial delay: {Delay})", years, initialDelay);
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Calculates initial delay, executing immediately if cleanup is overdue.
     /// </summary>
-    private async Task<TimeSpan> GetInitialDelayAsync(IDictionary<string, string> settings)
+    private TimeSpan GetInitialDelay()
     {
-        if (settings.TryGetValue(SettingKeys.LastVisitCleanupTime, out var lastCleanupStr) &&
-            DateTime.TryParse(lastCleanupStr, out var lastCleanup))
+        var lastCleanupStr = _appSettings.GetValue(SettingKeys.LastVisitCleanupTime);
+        if (!string.IsNullOrEmpty(lastCleanupStr) && DateTime.TryParse(lastCleanupStr, out var lastCleanup))
         {
             var nextCleanupDue = lastCleanup.AddDays(7);
             if (DateTime.UtcNow >= nextCleanupDue)

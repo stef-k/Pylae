@@ -24,7 +24,6 @@ public partial class MainForm : Form
     private readonly AuditLogViewModel _auditLogViewModel;
     private readonly SyncServer _syncServer;
     private readonly SyncServerOptions _syncOptions;
-    private readonly ISettingsService _settingsService;
     private readonly IExportService _exportService;
     private readonly IBadgeRenderer _badgeRenderer;
     private readonly IServiceProvider _serviceProvider;
@@ -32,12 +31,14 @@ public partial class MainForm : Form
     private readonly UsersViewModel _usersViewModel;
     private readonly CurrentUserService _currentUserService;
     private readonly IBackupService _backupService;
+    private readonly IAppSettings _appSettings;
 
     private BindingList<Setting> _settingsBinding = new();
     private BindingList<Member>? _membersBinding;
     private BindingList<Visit>? _visitsBinding;
     private BindingList<AuditEntry>? _auditBinding;
     private BindingList<User>? _usersBinding;
+    private VisitDirection? _visitsDirectionFilter;
 
     // Lazy loading flags for tabs
     private bool _membersLoaded;
@@ -55,14 +56,14 @@ public partial class MainForm : Form
         AuditLogViewModel auditLogViewModel,
         SyncServer syncServer,
         SyncServerOptions syncOptions,
-        ISettingsService settingsService,
         IExportService exportService,
         IBadgeRenderer badgeRenderer,
         IServiceProvider serviceProvider,
         CatalogsViewModel catalogsViewModel,
         UsersViewModel usersViewModel,
         CurrentUserService currentUserService,
-        IBackupService backupService)
+        IBackupService backupService,
+        IAppSettings appSettings)
     {
         InitializeComponent();
         _mainViewModel = mainViewModel;
@@ -73,7 +74,6 @@ public partial class MainForm : Form
         _auditLogViewModel = auditLogViewModel;
         _syncServer = syncServer;
         _syncOptions = syncOptions;
-        _settingsService = settingsService;
         _exportService = exportService;
         _badgeRenderer = badgeRenderer;
         _serviceProvider = serviceProvider;
@@ -81,13 +81,18 @@ public partial class MainForm : Form
         _usersViewModel = usersViewModel;
         _currentUserService = currentUserService;
         _backupService = backupService;
+        _appSettings = appSettings;
 
         Text = $"{Strings.App_Title} - {Strings.App_Subtitle}";
         welcomeLabel.Text = Strings.Main_Welcome;
 
         // Wire up data binding events to localize grid column headers
         visitsGrid.DataBindingComplete += OnVisitsGridDataBindingComplete;
+        visitsGrid.CellFormatting += OnVisitsGridCellFormatting;
         auditGrid.DataBindingComplete += OnAuditGridDataBindingComplete;
+
+        // Wire up recent logs grid selection
+        recentLogsGrid.SelectionChanged += OnRecentLogsGridSelectionChanged;
 
         // Show gate panel by default
         ShowPanel(gatePanel);
@@ -139,6 +144,9 @@ public partial class MainForm : Form
         // Refresh date pickers again after culture is loaded
         RefreshDatePickerFormats();
 
+        // Load recent visits for the gate panel
+        _ = RefreshRecentLogsAsync();
+
         // Start sync server in background
         _ = TryStartSyncAsync();
     }
@@ -156,16 +164,9 @@ public partial class MainForm : Form
 
     private async Task TryStartSyncAsync()
     {
-        var settings = await _settingsService.GetAllAsync();
-        var networkEnabled = settings.TryGetValue(Core.Constants.SettingKeys.NetworkEnabled, out var enabledValue) && enabledValue == "1";
-        var apiKey = settings.TryGetValue(Core.Constants.SettingKeys.NetworkApiKey, out var keyValue) ? keyValue : string.Empty;
-        var port = settings.TryGetValue(Core.Constants.SettingKeys.NetworkPort, out var portValue) && int.TryParse(portValue, out var parsedPort)
-            ? parsedPort
-            : _syncOptions.Port;
-
-        _syncOptions.NetworkEnabled = networkEnabled;
-        _syncOptions.ApiKey = apiKey;
-        _syncOptions.Port = port;
+        _syncOptions.NetworkEnabled = _appSettings.GetBool(Core.Constants.SettingKeys.NetworkEnabled);
+        _syncOptions.ApiKey = _appSettings.GetValue(Core.Constants.SettingKeys.NetworkApiKey);
+        _syncOptions.Port = _appSettings.GetInt(Core.Constants.SettingKeys.NetworkPort, _syncOptions.Port);
         _syncOptions.SiteCode = _mainViewModel.SiteCode;
         _syncOptions.SiteDisplayName = _mainViewModel.SiteDisplayName;
 
@@ -186,7 +187,93 @@ public partial class MainForm : Form
 
         await _gateViewModel.LogVisitAsync(_mainViewModel.CurrentUser, _mainViewModel.SiteCode, Environment.MachineName);
 
+        // Update status bar
+        if (_gateViewModel.LastLoggedMember != null)
+        {
+            UpdateStatus(Strings.Status_VisitLogged);
+        }
+
+        // Update result text
         lastResultValueLabel.Text = _gateViewModel.LastResult ?? string.Empty;
+
+        // Update direction and time display
+        if (_gateViewModel.LastLoggedDirection.HasValue && _gateViewModel.LastLoggedTime.HasValue)
+        {
+            var isEntry = _gateViewModel.LastLoggedDirection == VisitDirection.Entry;
+            var directionText = isEntry ? Strings.Gate_Entry : Strings.Gate_Exit;
+            lastLogDirectionLabel.Text = directionText;
+            lastLogDirectionLabel.ForeColor = isEntry ? Color.DarkGreen : Color.DarkRed;
+            lastLogTimeLabel.Text = $"{Strings.Gate_Logged}: {_gateViewModel.LastLoggedTime.Value.ToLocalTime():HH:mm:ss}";
+        }
+        else
+        {
+            lastLogDirectionLabel.Text = string.Empty;
+            lastLogTimeLabel.Text = string.Empty;
+        }
+
+        // Update member details display
+        var member = _gateViewModel.LastLoggedMember;
+        if (member != null)
+        {
+            // Rank on its own row
+            lastMemberRankLabel.Text = member.BusinessRank ?? string.Empty;
+
+            // First Last name
+            lastMemberNameLabel.Text = $"{member.FirstName} {member.LastName}";
+
+            // Status: PERMANENT or TEMPORARY (with label)
+            var statusValue = member.IsPermanentStaff ? Strings.Member_PermanentStaff : Strings.Member_TemporaryStaff;
+            lastMemberStatusLabel.Text = $"{Strings.Member_Status}: {statusValue}";
+
+            // Badge Status: Active/Inactive (with label)
+            var activeValue = member.IsActive ? Strings.Member_Active : Strings.Member_Inactive;
+            lastMemberActiveLabel.Text = $"{Strings.Member_BadgeStatus}: {activeValue}";
+
+            // Badge Type (with label)
+            var typeValue = member.MemberType?.DisplayName ?? string.Empty;
+            lastMemberTypeLabel.Text = !string.IsNullOrWhiteSpace(typeValue)
+                ? $"{Strings.Member_BadgeType}: {typeValue}"
+                : string.Empty;
+
+            // Identification Number
+            lastMemberPersonalIdLabel.Text = !string.IsNullOrWhiteSpace(member.PersonalIdNumber)
+                ? $"{Strings.Member_IdentificationNumber}: {member.PersonalIdNumber}"
+                : string.Empty;
+
+            // Organization Identification
+            lastMemberOrgIdLabel.Text = !string.IsNullOrWhiteSpace(member.BusinessIdNumber)
+                ? $"{Strings.Member_OrganizationId}: {member.BusinessIdNumber}"
+                : string.Empty;
+
+            // Issue Date
+            lastMemberIssueDateLabel.Text = member.BadgeIssueDate.HasValue
+                ? $"{Strings.Member_BadgeIssue}: {member.BadgeIssueDate:d}"
+                : string.Empty;
+
+            // Expiry Date
+            lastMemberExpiryDateLabel.Text = member.BadgeExpiryDate.HasValue
+                ? $"{Strings.Member_BadgeExpiry}: {member.BadgeExpiryDate:d}"
+                : string.Empty;
+
+            // Photo
+            LoadMemberPhoto(member);
+        }
+        else
+        {
+            // Clear member display on error
+            lastMemberRankLabel.Text = string.Empty;
+            lastMemberNameLabel.Text = string.Empty;
+            lastMemberStatusLabel.Text = string.Empty;
+            lastMemberActiveLabel.Text = string.Empty;
+            lastMemberTypeLabel.Text = string.Empty;
+            lastMemberPersonalIdLabel.Text = string.Empty;
+            lastMemberOrgIdLabel.Text = string.Empty;
+            lastMemberIssueDateLabel.Text = string.Empty;
+            lastMemberExpiryDateLabel.Text = string.Empty;
+            lastMemberPhotoBox.Image = null;
+        }
+
+        // Badge warning
         var badgeStatus = _gateViewModel.LastBadgeStatus;
         var warningText = _gateViewModel.BadgeWarning ?? string.Empty;
         badgeWarningLabel.Text = warningText;
@@ -196,9 +283,173 @@ public partial class MainForm : Form
                 ? Color.DarkOrange
                 : SystemColors.ControlText;
         badgeWarningLabel.Visible = !string.IsNullOrWhiteSpace(warningText);
+
+        // Refresh visits data for the visits panel
+        await RefreshVisitsAsync();
+
+        // Refresh recent logs grid
+        await RefreshRecentLogsAsync();
+
         memberNumberTextBox.Text = string.Empty;
         notesTextBox.Text = string.Empty;
         memberNumberTextBox.Focus();
+    }
+
+    private void LoadMemberPhoto(Member member)
+    {
+        lastMemberPhotoBox.Image = null;
+        if (string.IsNullOrEmpty(member.PhotoFileName)) return;
+
+        var photoPath = member.PhotoFileName;
+        if (!Path.IsPathRooted(photoPath))
+        {
+            var photosPath = _serviceProvider.GetRequiredService<Data.Context.DatabaseOptions>().GetPhotosPath();
+            photoPath = Path.Combine(photosPath, photoPath);
+        }
+
+        if (File.Exists(photoPath))
+        {
+            try
+            {
+                lastMemberPhotoBox.Image = Image.FromFile(photoPath);
+            }
+            catch
+            {
+                lastMemberPhotoBox.Image = null;
+            }
+        }
+    }
+
+    private async Task RefreshVisitsAsync()
+    {
+        // Refresh visits data if binding exists
+        if (_visitsBinding != null)
+        {
+            await _visitsViewModel.LoadAsync(visitsFromPicker.Value, visitsToPicker.Value);
+            _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+            visitsGrid.DataSource = _visitsBinding;
+        }
+    }
+
+    private async Task RefreshRecentLogsAsync()
+    {
+        // Load last 6 visits for the recent logs grid
+        var todayStart = DateTime.UtcNow.Date;
+        var todayEnd = todayStart.AddDays(1);
+        await _visitsViewModel.LoadAsync(todayStart, todayEnd);
+
+        var recentLogs = _visitsViewModel.Visits
+            .OrderByDescending(v => v.TimestampUtc)
+            .Take(6)
+            .Select(v => new
+            {
+                Rank = v.MemberBusinessRank ?? string.Empty,
+                FirstName = v.MemberFirstName,
+                LastName = v.MemberLastName,
+                Id = v.MemberPersonalIdNumber ?? string.Empty,
+                OrgId = v.MemberBusinessIdNumber ?? string.Empty,
+                Time = v.TimestampUtc.ToLocalTime().ToString("HH:mm:ss"),
+                Direction = v.Direction == VisitDirection.Entry ? Strings.Gate_Entry : Strings.Gate_Exit
+            })
+            .ToList();
+
+        recentLogsGrid.DataSource = recentLogs;
+
+        // Set column headers
+        if (recentLogsGrid.Columns.Count > 0)
+        {
+            if (recentLogsGrid.Columns["Rank"] is { } rankCol)
+                rankCol.HeaderText = Strings.Member_BusinessRank;
+            if (recentLogsGrid.Columns["FirstName"] is { } firstNameCol)
+                firstNameCol.HeaderText = Strings.Member_FirstName;
+            if (recentLogsGrid.Columns["LastName"] is { } lastNameCol)
+                lastNameCol.HeaderText = Strings.Member_LastName;
+            if (recentLogsGrid.Columns["Id"] is { } idCol)
+                idCol.HeaderText = Strings.Member_IdentificationNumber;
+            if (recentLogsGrid.Columns["OrgId"] is { } orgIdCol)
+                orgIdCol.HeaderText = Strings.Member_OrganizationId;
+            if (recentLogsGrid.Columns["Time"] is { } timeCol)
+                timeCol.HeaderText = Strings.Grid_Timestamp;
+            if (recentLogsGrid.Columns["Direction"] is { } dirCol)
+                dirCol.HeaderText = Strings.Gate_Direction;
+        }
+    }
+
+    private async void OnRecentLogsGridSelectionChanged(object? sender, EventArgs e)
+    {
+        if (recentLogsGrid.SelectedRows.Count == 0) return;
+
+        // Get the selected visit from the underlying data
+        var selectedIndex = recentLogsGrid.SelectedRows[0].Index;
+        var recentVisits = _visitsViewModel.Visits
+            .OrderByDescending(v => v.TimestampUtc)
+            .Take(6)
+            .ToList();
+
+        if (selectedIndex < 0 || selectedIndex >= recentVisits.Count) return;
+
+        var visit = recentVisits[selectedIndex];
+
+        // Update the display using visit data (member data is embedded in visit)
+        lastMemberRankLabel.Text = visit.MemberBusinessRank ?? string.Empty;
+        lastMemberNameLabel.Text = $"{visit.MemberFirstName} {visit.MemberLastName}";
+
+        var statusValue = visit.MemberIsPermanentStaff ? Strings.Member_PermanentStaff : Strings.Member_TemporaryStaff;
+        lastMemberStatusLabel.Text = $"{Strings.Member_Status}: {statusValue}";
+
+        // Badge status not available in visit, show type instead
+        lastMemberActiveLabel.Text = string.Empty;
+
+        var typeValue = visit.MemberTypeName ?? string.Empty;
+        lastMemberTypeLabel.Text = !string.IsNullOrWhiteSpace(typeValue)
+            ? $"{Strings.Member_BadgeType}: {typeValue}"
+            : string.Empty;
+
+        lastMemberPersonalIdLabel.Text = !string.IsNullOrWhiteSpace(visit.MemberPersonalIdNumber)
+            ? $"{Strings.Member_IdentificationNumber}: {visit.MemberPersonalIdNumber}"
+            : string.Empty;
+
+        lastMemberOrgIdLabel.Text = !string.IsNullOrWhiteSpace(visit.MemberBusinessIdNumber)
+            ? $"{Strings.Member_OrganizationId}: {visit.MemberBusinessIdNumber}"
+            : string.Empty;
+
+        // Issue/expiry dates not available in visit
+        lastMemberIssueDateLabel.Text = string.Empty;
+        lastMemberExpiryDateLabel.Text = string.Empty;
+
+        // Update direction and time from the visit
+        var isEntry = visit.Direction == VisitDirection.Entry;
+        lastLogDirectionLabel.Text = isEntry ? Strings.Gate_Entry : Strings.Gate_Exit;
+        lastLogDirectionLabel.ForeColor = isEntry ? Color.DarkGreen : Color.DarkRed;
+        lastLogTimeLabel.Text = $"{Strings.Gate_Logged}: {visit.TimestampLocal:HH:mm:ss}";
+
+        // Load member photo from database (not embedded in visit)
+        await LoadMemberPhotoAsync(visit.MemberId);
+    }
+
+    private async Task LoadMemberPhotoAsync(string memberId)
+    {
+        try
+        {
+            var member = await _membersViewModel.GetByIdAsync(memberId);
+            if (member?.PhotoFileName != null)
+            {
+                var photosPath = _serviceProvider.GetRequiredService<Data.Context.DatabaseOptions>().GetPhotosPath();
+                var photoPath = Path.Combine(photosPath, member.PhotoFileName);
+                if (File.Exists(photoPath))
+                {
+                    using var fs = new FileStream(photoPath, FileMode.Open, FileAccess.Read);
+                    lastMemberPhotoBox.Image = Image.FromStream(fs);
+                    return;
+                }
+            }
+        }
+        catch
+        {
+            // Ignore photo loading errors
+        }
+
+        lastMemberPhotoBox.Image = null;
     }
 
     private void OnMemberNumberKeyDown(object? sender, KeyEventArgs e)
@@ -255,6 +506,7 @@ public partial class MainForm : Form
             Cursor.Current = Cursors.WaitCursor;
             var bytes = await _backupService.CreateBackupAsync(includePhotos: true);
             await File.WriteAllBytesAsync(dialog.FileName, bytes);
+            UpdateStatus(Strings.Status_BackupCreated);
             MessageBox.Show(Strings.Backup_Saved, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         catch
@@ -298,6 +550,7 @@ public partial class MainForm : Form
                 return;
             }
 
+            UpdateStatus(Strings.Status_BackupRestored);
             MessageBox.Show(Strings.Backup_Restored, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
             if (MessageBox.Show(Strings.Backup_RestartPrompt, Strings.App_Title, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
@@ -325,6 +578,24 @@ public partial class MainForm : Form
         await FilterAndRefreshVisits();
     }
 
+    private async void OnFilterVisitsEntryClick(object sender, EventArgs e)
+    {
+        _visitsDirectionFilter = VisitDirection.Entry;
+        await FilterAndRefreshVisits();
+    }
+
+    private async void OnFilterVisitsExitClick(object sender, EventArgs e)
+    {
+        _visitsDirectionFilter = VisitDirection.Exit;
+        await FilterAndRefreshVisits();
+    }
+
+    private async void OnFilterVisitsAllClick(object sender, EventArgs e)
+    {
+        _visitsDirectionFilter = null;
+        await FilterAndRefreshVisits();
+    }
+
     private async Task FilterAndRefreshVisits()
     {
         // Convert local date picker values to UTC for database query
@@ -337,8 +608,15 @@ public partial class MainForm : Form
         var toUtc = toLocal.ToUniversalTime();
 
         await _visitsViewModel.LoadAsync(fromUtc, toUtc);
-        _visitsBinding = new BindingList<Visit>(_visitsViewModel.Visits);
+
+        // Apply direction filter if set
+        var filteredVisits = _visitsDirectionFilter.HasValue
+            ? _visitsViewModel.Visits.Where(v => v.Direction == _visitsDirectionFilter.Value).ToList()
+            : _visitsViewModel.Visits;
+
+        _visitsBinding = new BindingList<Visit>(filteredVisits);
         visitsGrid.DataSource = _visitsBinding;
+        UpdateStatus($"{Strings.Status_VisitsLoaded}: {filteredVisits.Count}");
     }
 
     private async void visitsGrid_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -361,7 +639,7 @@ public partial class MainForm : Form
         visitsGrid.DataSource = _visitsBinding;
     }
 
-    private async void OnRemoteSitesClick(object sender, EventArgs e)
+    private async void OnMenuRemoteSitesClick(object? sender, EventArgs e)
     {
         var form = _serviceProvider.GetRequiredService<RemoteSitesForm>();
         await form.ShowDialogAsync(this);
@@ -482,6 +760,7 @@ public partial class MainForm : Form
                 ? await _exportService.ExportMembersJsonAsync(_membersBinding)
                 : await _exportService.ExportMembersAsync(_membersBinding);
             await File.WriteAllBytesAsync(dialog.FileName, bytes);
+            UpdateStatus(Strings.Status_ExportComplete);
             MessageBox.Show(Strings.Export_MembersSaved, Strings.App_Title);
         }
     }
@@ -505,6 +784,7 @@ public partial class MainForm : Form
                 ? await _exportService.ExportVisitsJsonAsync(_visitsBinding)
                 : await _exportService.ExportVisitsAsync(_visitsBinding);
             await File.WriteAllBytesAsync(dialog.FileName, bytes);
+            UpdateStatus(Strings.Status_ExportComplete);
             MessageBox.Show(Strings.Export_VisitsSaved, Strings.App_Title);
         }
     }
@@ -628,8 +908,8 @@ public partial class MainForm : Form
             { nameof(Visit.Notes), Strings.Grid_Notes }
         };
 
-        // Hide ID columns - not needed for users
-        var hiddenColumns = new[] { "Id", "VisitGuid" };
+        // Hide columns not needed for users
+        var hiddenColumns = new[] { "Id", "VisitGuid", "MemberId", "UserId", "Username", "TimestampUtc" };
 
         foreach (DataGridViewColumn column in visitsGrid.Columns)
         {
@@ -642,6 +922,25 @@ public partial class MainForm : Form
             {
                 column.Visible = false;
             }
+
+            // Enable sorting on all columns
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
+        }
+    }
+
+    private void OnVisitsGridCellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+        var columnName = visitsGrid.Columns[e.ColumnIndex].DataPropertyName;
+
+        if (columnName == nameof(Visit.Direction) && e.Value is VisitDirection direction)
+        {
+            e.Value = direction == VisitDirection.Entry ? Strings.Gate_Entry : Strings.Gate_Exit;
+            e.FormattingApplied = true;
+        }
+        else if (columnName == nameof(Visit.Method) && e.Value is VisitMethod method)
+        {
+            e.Value = method == VisitMethod.Scan ? Strings.Visit_MethodScan : Strings.Visit_MethodManual;
+            e.FormattingApplied = true;
         }
     }
 
@@ -672,6 +971,9 @@ public partial class MainForm : Form
             {
                 column.HeaderText = localizedHeader;
             }
+
+            // Enable sorting on all columns
+            column.SortMode = DataGridViewColumnSortMode.Automatic;
         }
     }
 
@@ -812,6 +1114,48 @@ public partial class MainForm : Form
     private void OnMenuMainPageClick(object? sender, EventArgs e) => ShowPanel(gatePanel);
 
     private void OnMenuVisitsClick(object? sender, EventArgs e) => ShowPanel(visitsPanel);
+
+    private void OnMenuLogoutClick(object? sender, EventArgs e)
+    {
+        // Clear current user
+        _mainViewModel.CurrentUser = null;
+        _currentUserService.CurrentUser = null;
+
+        // Hide main form and show login as dialog
+        Hide();
+
+        using var loginForm = _serviceProvider.GetRequiredService<LoginForm>();
+        loginForm.DialogMode = true; // Prevents creating new MainForm instance
+
+        if (loginForm.ShowDialog() == DialogResult.OK && _currentUserService.CurrentUser != null)
+        {
+            // User logged in successfully - update and show main form
+            SetCurrentUser(_currentUserService.CurrentUser);
+            ResetFormState();
+            Show();
+        }
+        else
+        {
+            // User cancelled login - close application
+            Close();
+        }
+    }
+
+    private void ResetFormState()
+    {
+        // Reset lazy loading flags so data reloads for new user
+        _membersLoaded = false;
+        _visitsLoaded = false;
+        _auditLoaded = false;
+        _usersLoaded = false;
+        _settingsLoaded = false;
+
+        // Return to gate panel
+        ShowPanel(gatePanel);
+
+        // Refresh recent logs for gate view
+        _ = RefreshRecentLogsAsync();
+    }
 
     private void OnMenuExitClick(object? sender, EventArgs e) => Close();
 

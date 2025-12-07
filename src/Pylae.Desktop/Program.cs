@@ -21,6 +21,8 @@ namespace Pylae.Desktop;
 
 internal static class Program
 {
+    private const string PortableModeMarkerFile = "portable.mode";
+
     [STAThread]
     private static void Main()
     {
@@ -33,7 +35,8 @@ internal static class Program
         splash.Refresh();
 
         var configuration = BuildConfiguration();
-        var databaseOptions = BuildDatabaseOptions(configuration, promptForPassword: false);
+        var isPortableMode = IsPortableMode();
+        var databaseOptions = BuildDatabaseOptions(configuration, promptForPassword: false, isPortableMode);
 
         // Check if database exists for the configured site code
         var isFirstRun = !File.Exists(databaseOptions.GetMasterDbPath());
@@ -85,6 +88,16 @@ internal static class Program
 
             adminPassword = form.AdminPassword;
             primaryLanguage = form.PrimaryLanguage;
+
+            // Handle portable mode selection
+            if (form.PortableMode && !isPortableMode)
+            {
+                EnablePortableMode();
+                isPortableMode = true;
+                // Rebuild database options with portable mode path
+                databaseOptions = BuildDatabaseOptions(configuration, promptForPassword: false, isPortableMode: true);
+            }
+
             databaseOptions.SiteCode = form.SiteCode;
             databaseOptions.SiteDisplayName = form.SiteDisplayName;
             databaseOptions.EncryptionPassword = string.IsNullOrWhiteSpace(form.EncryptionPassword)
@@ -158,6 +171,7 @@ internal static class Program
             }
 
             ApplyCulture(scope.ServiceProvider);
+            InitializeAppSettings(scope.ServiceProvider);
             StartHealthMonitor(scope.ServiceProvider);
             StartScheduledBackups(scope.ServiceProvider);
             StartAuditLogCleanup(scope.ServiceProvider);
@@ -221,7 +235,7 @@ internal static class Program
             .Build();
     }
 
-    private static DatabaseOptions BuildDatabaseOptions(IConfiguration configuration, bool promptForPassword = true)
+    private static DatabaseOptions BuildDatabaseOptions(IConfiguration configuration, bool promptForPassword = true, bool isPortableMode = false)
     {
         var siteCode = configuration["Site:Code"] ?? DefaultSettings.All[SettingKeys.SiteCode];
         var displayName = configuration["Site:DisplayName"] ?? DefaultSettings.All[SettingKeys.SiteDisplayName];
@@ -239,15 +253,40 @@ internal static class Program
             encryptionPassword = PromptForPassword();
         }
 
+        // Determine root path: portable mode uses app directory, otherwise use config or ProgramData
+        string resolvedRootPath;
+        if (isPortableMode)
+        {
+            resolvedRootPath = Path.Combine(AppContext.BaseDirectory, "PylaeData");
+        }
+        else if (!string.IsNullOrWhiteSpace(rootPath))
+        {
+            resolvedRootPath = Environment.ExpandEnvironmentVariables(rootPath);
+        }
+        else
+        {
+            resolvedRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Pylae");
+        }
+
         return new DatabaseOptions
         {
             SiteCode = siteCode,
             SiteDisplayName = displayName,
-            RootPath = string.IsNullOrWhiteSpace(rootPath)
-                ? Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "Pylae")
-                : Environment.ExpandEnvironmentVariables(rootPath),
+            RootPath = resolvedRootPath,
             EncryptionPassword = encryptionPassword ?? string.Empty
         };
+    }
+
+    private static bool IsPortableMode()
+    {
+        var markerPath = Path.Combine(AppContext.BaseDirectory, PortableModeMarkerFile);
+        return File.Exists(markerPath);
+    }
+
+    private static void EnablePortableMode()
+    {
+        var markerPath = Path.Combine(AppContext.BaseDirectory, PortableModeMarkerFile);
+        File.WriteAllText(markerPath, $"Pylae Portable Mode{Environment.NewLine}Created: {DateTime.UtcNow:O}");
     }
 
     private static ServiceCollection ConfigureServices(IConfiguration configuration, DatabaseOptions databaseOptions)
@@ -270,6 +309,7 @@ internal static class Program
         services.AddTransient<MemberTypeEditorForm>();
         services.AddTransient<LockForm>();
         services.AddSingleton<CurrentUserService>();
+        services.AddSingleton<IAppSettings, AppSettingsService>();
 
         services.AddTransient<LoginViewModel>();
         services.AddTransient<MainViewModel>();
@@ -353,6 +393,12 @@ internal static class Program
         return dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(textBox.Text)
             ? textBox.Text
             : throw new InvalidOperationException("Database password is required.");
+    }
+
+    private static void InitializeAppSettings(IServiceProvider provider)
+    {
+        var appSettings = provider.GetRequiredService<IAppSettings>();
+        appSettings.RefreshAsync().GetAwaiter().GetResult();
     }
 
     private static void StartHealthMonitor(IServiceProvider provider)

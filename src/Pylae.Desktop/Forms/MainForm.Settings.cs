@@ -50,6 +50,10 @@ public partial class MainForm
     private DataGridView? _remoteSitesGrid;
     private Button? _addRemoteSiteButton;
     private Button? _removeRemoteSiteButton;
+    private Label? _networkSectionHeader;
+    private Label? _remoteSitesSectionHeader;
+    private FlowLayoutPanel? _networkRow;
+    private FlowLayoutPanel? _remoteSitesButtonPanel;
 
     /// <summary>
     /// Sets up the Settings panel with a 3-column form layout for compact display.
@@ -111,7 +115,7 @@ public partial class MainForm
             Dock = DockStyle.Top,
             AutoSize = true,
             ColumnCount = 6,
-            Padding = new Padding(3)
+            Padding = new Padding(3, 0, 3, 0)
         };
         mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Label 1 - increased for Greek
         mainLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, fieldWidth + 5)); // Field 1
@@ -135,6 +139,23 @@ public partial class MainForm
         _languageComboBox.Items.AddRange(new[] { "el-GR", "en-US" });
         AddFormField3Col(mainLayout, Strings.Settings_Language, _languageComboBox, labelFont, row, 4);
         row++;
+
+        // Show portable mode indicator if enabled
+        if (IsPortableMode())
+        {
+            var portableIndicator = new Label
+            {
+                Text = "⚡ " + Strings.Settings_PortableModeActive,
+                AutoSize = true,
+                Font = new Font("Segoe UI", 9F, FontStyle.Italic),
+                ForeColor = Color.DarkGreen,
+                Padding = new Padding(0, 2, 0, 2)
+            };
+            mainLayout.Controls.Add(portableIndicator, 0, row);
+            mainLayout.SetColumnSpan(portableIndicator, 6);
+            row++;
+            mainLayout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        }
 
         // === Organization Section ===
         AddSectionHeader3Col(mainLayout, Strings.Settings_Organization, headerFont, ref row);
@@ -206,7 +227,7 @@ public partial class MainForm
         _backupIncludePhotosCheckBox = new CheckBox { Text = Strings.Settings_BackupIncludePhotos, AutoSize = true, Font = inputFont, Margin = new Padding(15, 0, 0, 0) };
         _backupIntervalNumeric = new NumericUpDown { Width = 60, Font = inputFont, Minimum = 1, Maximum = 168, Value = 24 };
         _backupRetentionNumeric = new NumericUpDown { Width = 50, Font = inputFont, Minimum = 1, Maximum = 100, Value = 7 };
-        _backupPathTextBox = new TextBox { Width = 200, Font = inputFont };
+        _backupPathTextBox = new TextBox { Width = 300, Font = inputFont };
         _browseBackupPathButton = new Button { Text = "...", Font = inputFont, Width = 28, Height = 23 };
         _browseBackupPathButton.Click += OnBrowseBackupPathClick;
 
@@ -219,6 +240,13 @@ public partial class MainForm
         backupRow.Controls.Add(new Label { Text = Strings.Settings_BackupPath + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
         backupRow.Controls.Add(_backupPathTextBox);
         backupRow.Controls.Add(_browseBackupPathButton);
+
+        // In portable mode, make backup path read-only to guarantee all data stays in app folder
+        if (IsPortableMode())
+        {
+            _backupPathTextBox.ReadOnly = true;
+            _browseBackupPathButton.Enabled = false;
+        }
 
         mainLayout.Controls.Add(backupRow, 0, row);
         mainLayout.SetColumnSpan(backupRow, 6);
@@ -236,10 +264,11 @@ public partial class MainForm
         row++;
 
         // === Network Settings Section - all in one row ===
-        AddSectionHeader3Col(mainLayout, Strings.Settings_Network, headerFont, ref row);
+        _networkSectionHeader = AddSectionHeader3ColWithRef(mainLayout, Strings.Settings_Network, headerFont, ref row);
 
         // Row with all network settings including API key
-        var networkRow = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
+        _networkRow = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
+        var networkRow = _networkRow;
         _networkEnabledCheckBox = new CheckBox { Text = Strings.Settings_NetworkEnabled, AutoSize = true, Font = inputFont };
         _networkPortNumeric = new NumericUpDown { Width = 70, Font = inputFont, Minimum = 1024, Maximum = 65535, Value = 8080 };
         _apiKeyTextBox = new TextBox { Width = 340, Font = inputFont, ReadOnly = true };
@@ -259,7 +288,7 @@ public partial class MainForm
         mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
 
         // Remote Sites Section Header
-        AddSectionHeader3Col(mainLayout, Strings.Settings_RemoteSites, headerFont, ref row);
+        _remoteSitesSectionHeader = AddSectionHeader3ColWithRef(mainLayout, Strings.Settings_RemoteSites, headerFont, ref row);
 
         // Remote Sites Grid
         _remoteSitesGrid = new DataGridView
@@ -268,7 +297,7 @@ public partial class MainForm
             AllowUserToAddRows = true,
             AllowUserToDeleteRows = true,
             AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill,
-            Height = 150
+            Height = 120
         };
         _remoteSitesGrid.Columns.Add("SiteCode", Strings.RemoteSite_SiteCode);
         _remoteSitesGrid.Columns.Add("DisplayName", Strings.RemoteSite_DisplayName);
@@ -278,18 +307,18 @@ public partial class MainForm
         mainLayout.Controls.Add(_remoteSitesGrid, 0, row);
         mainLayout.SetColumnSpan(_remoteSitesGrid, 6);
         row++;
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 220));
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 170));
 
         // Remote Sites Buttons
-        var remoteSitesButtonPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight };
+        _remoteSitesButtonPanel = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight };
         _addRemoteSiteButton = new Button { Text = Strings.Button_AddSite, Font = inputFont, AutoSize = true };
         _removeRemoteSiteButton = new Button { Text = Strings.Button_RemoveSite, Font = inputFont, AutoSize = true, ForeColor = Color.Red };
         _addRemoteSiteButton.Click += OnAddRemoteSiteClick;
         _removeRemoteSiteButton.Click += OnRemoveRemoteSiteClick;
-        remoteSitesButtonPanel.Controls.Add(_addRemoteSiteButton);
-        remoteSitesButtonPanel.Controls.Add(_removeRemoteSiteButton);
-        mainLayout.Controls.Add(remoteSitesButtonPanel, 0, row);
-        mainLayout.SetColumnSpan(remoteSitesButtonPanel, 6);
+        _remoteSitesButtonPanel.Controls.Add(_addRemoteSiteButton);
+        _remoteSitesButtonPanel.Controls.Add(_removeRemoteSiteButton);
+        mainLayout.Controls.Add(_remoteSitesButtonPanel, 0, row);
+        mainLayout.SetColumnSpan(_remoteSitesButtonPanel, 6);
         row++;
         mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40));
 
@@ -320,8 +349,19 @@ public partial class MainForm
         }
     }
 
+    private static bool IsPortableMode()
+    {
+        var portableMarkerPath = Path.Combine(AppContext.BaseDirectory, "portable.mode");
+        return File.Exists(portableMarkerPath);
+    }
+
     private static string GetDefaultBackupPath()
     {
+        if (IsPortableMode())
+        {
+            return Path.Combine(AppContext.BaseDirectory, "PylaeData", "Backups");
+        }
+
         var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
         return Path.Combine(documents, "Pylae", "Backups");
     }
@@ -377,6 +417,11 @@ public partial class MainForm
 
     private void AddSectionHeader3Col(TableLayoutPanel layout, string text, Font font, ref int row)
     {
+        AddSectionHeader3ColWithRef(layout, text, font, ref row);
+    }
+
+    private Label AddSectionHeader3ColWithRef(TableLayoutPanel layout, string text, Font font, ref int row)
+    {
         var header = new Label
         {
             Text = text,
@@ -390,6 +435,7 @@ public partial class MainForm
         layout.SetColumnSpan(header, 6);
         row++;
         layout.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        return header;
     }
 
     private void AddFormField3Col(TableLayoutPanel layout, string labelText, Control control, Font font, int row, int col)
@@ -499,11 +545,18 @@ public partial class MainForm
 
     private void SetNetworkSectionVisibility(bool visible)
     {
+        // Hide entire network section including headers for non-admin users
+        _networkSectionHeader!.Visible = visible;
+        _networkRow!.Visible = visible;
         _networkEnabledCheckBox!.Visible = visible;
         _networkPortNumeric!.Visible = visible;
         _apiKeyTextBox!.Visible = visible;
         _generateApiKeyButton!.Visible = visible;
+
+        // Remote sites section
+        _remoteSitesSectionHeader!.Visible = visible;
         _remoteSitesGrid!.Visible = visible;
+        _remoteSitesButtonPanel!.Visible = visible;
         _addRemoteSiteButton!.Visible = visible;
         _removeRemoteSiteButton!.Visible = visible;
     }
@@ -611,6 +664,6 @@ public partial class MainForm
             }
         }
 
-        MessageBox.Show(Strings.Settings_Saved, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Information);
+        UpdateStatus(Strings.Status_SettingsSaved);
     }
 }

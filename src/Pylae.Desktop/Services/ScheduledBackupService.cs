@@ -10,6 +10,7 @@ namespace Pylae.Desktop.Services;
 public class ScheduledBackupService : IDisposable
 {
     private readonly IBackupService _backupService;
+    private readonly IAppSettings _appSettings;
     private readonly ISettingsService _settingsService;
     private readonly ILogger<ScheduledBackupService>? _logger;
     private System.Threading.Timer? _timer;
@@ -17,10 +18,12 @@ public class ScheduledBackupService : IDisposable
 
     public ScheduledBackupService(
         IBackupService backupService,
+        IAppSettings appSettings,
         ISettingsService settingsService,
         ILogger<ScheduledBackupService>? logger = null)
     {
         _backupService = backupService;
+        _appSettings = appSettings;
         _settingsService = settingsService;
         _logger = logger;
     }
@@ -28,36 +31,22 @@ public class ScheduledBackupService : IDisposable
     /// <summary>
     /// Starts the scheduled backup service.
     /// </summary>
-    public async Task StartAsync()
+    public Task StartAsync()
     {
-        var settings = await _settingsService.GetAllAsync();
-
-        if (!settings.TryGetValue(SettingKeys.AutoBackupEnabled, out var enabledStr) ||
-            !bool.TryParse(enabledStr, out var enabled) ||
-            !enabled)
+        if (!_appSettings.GetBool(SettingKeys.AutoBackupEnabled))
         {
             _logger?.LogInformation("Automated backups are disabled");
-            return;
+            return Task.CompletedTask;
         }
 
-        var intervalHours = 24; // Default: daily
-        if (settings.TryGetValue(SettingKeys.AutoBackupIntervalHours, out var intervalStr) &&
-            int.TryParse(intervalStr, out var parsed) &&
-            parsed > 0)
-        {
-            intervalHours = parsed;
-        }
+        var intervalHours = _appSettings.GetInt(SettingKeys.AutoBackupIntervalHours, 24);
+        if (intervalHours <= 0) intervalHours = 24;
 
-        var retentionCount = 7; // Default: keep last 7 backups
-        if (settings.TryGetValue(SettingKeys.AutoBackupRetentionCount, out var retentionStr) &&
-            int.TryParse(retentionStr, out var retentionParsed) &&
-            retentionParsed > 0)
-        {
-            retentionCount = retentionParsed;
-        }
+        var retentionCount = _appSettings.GetInt(SettingKeys.AutoBackupRetentionCount, 7);
+        if (retentionCount <= 0) retentionCount = 7;
 
         // Check if backup is overdue (catch-up logic)
-        var initialDelay = await GetInitialDelayAsync(settings, intervalHours);
+        var initialDelay = GetInitialDelay(intervalHours);
 
         var intervalMs = intervalHours * 60 * 60 * 1000;
         _timer = new System.Threading.Timer(
@@ -68,15 +57,16 @@ public class ScheduledBackupService : IDisposable
 
         _logger?.LogInformation("Scheduled backup service started (interval: {Hours} hours, retention: {Count}, initial delay: {Delay})",
             intervalHours, retentionCount, initialDelay);
+        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Calculates initial delay, executing immediately if backup is overdue.
     /// </summary>
-    private async Task<TimeSpan> GetInitialDelayAsync(IDictionary<string, string> settings, int intervalHours)
+    private TimeSpan GetInitialDelay(int intervalHours)
     {
-        if (settings.TryGetValue(SettingKeys.LastBackupTime, out var lastBackupStr) &&
-            DateTime.TryParse(lastBackupStr, out var lastBackup))
+        var lastBackupStr = _appSettings.GetValue(SettingKeys.LastBackupTime);
+        if (!string.IsNullOrEmpty(lastBackupStr) && DateTime.TryParse(lastBackupStr, out var lastBackup))
         {
             var nextBackupDue = lastBackup.AddHours(intervalHours);
             if (DateTime.UtcNow >= nextBackupDue)
@@ -114,14 +104,8 @@ public class ScheduledBackupService : IDisposable
 
         try
         {
-            var settings = await _settingsService.GetAllAsync();
-            var retentionCount = 7;
-            if (settings.TryGetValue(SettingKeys.AutoBackupRetentionCount, out var retentionStr) &&
-                int.TryParse(retentionStr, out var parsed) &&
-                parsed > 0)
-            {
-                retentionCount = parsed;
-            }
+            var retentionCount = _appSettings.GetInt(SettingKeys.AutoBackupRetentionCount, 7);
+            if (retentionCount <= 0) retentionCount = 7;
 
             await PerformBackupAsync(retentionCount, isShutdownBackup: true);
         }
@@ -138,19 +122,15 @@ public class ScheduledBackupService : IDisposable
             var backupType = isShutdownBackup ? "shutdown" : "automated";
             _logger?.LogInformation("Starting {BackupType} backup", backupType);
 
-            var settings = await _settingsService.GetAllAsync();
-            var backupPath = settings.TryGetValue(SettingKeys.AutoBackupPath, out var path) && !string.IsNullOrWhiteSpace(path)
-                ? path
-                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pylae", "Backups");
+            var backupPath = _appSettings.GetValue(SettingKeys.AutoBackupPath);
+            if (string.IsNullOrWhiteSpace(backupPath))
+            {
+                backupPath = GetDefaultBackupPath();
+            }
 
             Directory.CreateDirectory(backupPath);
 
-            var includePhotos = true;
-            if (settings.TryGetValue(SettingKeys.AutoBackupIncludePhotos, out var photosStr) &&
-                bool.TryParse(photosStr, out var photosParsed))
-            {
-                includePhotos = photosParsed;
-            }
+            var includePhotos = _appSettings.GetBool(SettingKeys.AutoBackupIncludePhotos, true);
 
             var timestamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
             var prefix = isShutdownBackup ? "pylae_shutdown_backup" : "pylae_auto_backup";
@@ -207,6 +187,18 @@ public class ScheduledBackupService : IDisposable
         {
             _logger?.LogWarning(ex, "Failed to clean old backups");
         }
+    }
+
+    private static string GetDefaultBackupPath()
+    {
+        // Check for portable mode marker file
+        var portableMarkerPath = Path.Combine(AppContext.BaseDirectory, "portable.mode");
+        if (File.Exists(portableMarkerPath))
+        {
+            return Path.Combine(AppContext.BaseDirectory, "PylaeData", "Backups");
+        }
+
+        return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Pylae", "Backups");
     }
 
     public void Dispose()

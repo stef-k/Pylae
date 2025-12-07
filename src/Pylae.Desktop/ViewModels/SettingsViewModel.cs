@@ -8,13 +8,15 @@ namespace Pylae.Desktop.ViewModels;
 public partial class SettingsViewModel : ObservableObject
 {
     private readonly ISettingsService _settingsService;
+    private readonly IAppSettings _appSettings;
 
     [ObservableProperty]
     private List<Setting> _settings = new();
 
-    public SettingsViewModel(ISettingsService settingsService)
+    public SettingsViewModel(ISettingsService settingsService, IAppSettings appSettings)
     {
         _settingsService = settingsService;
+        _appSettings = appSettings;
     }
 
     [RelayCommand]
@@ -28,5 +30,6 @@ public partial class SettingsViewModel : ObservableObject
     public async Task SaveAsync()
     {
         await _settingsService.UpsertAsync(Settings, CancellationToken.None);
+        await _appSettings.RefreshAsync();
     }
 }

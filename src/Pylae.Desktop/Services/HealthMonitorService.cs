@@ -10,28 +10,28 @@ namespace Pylae.Desktop.Services;
 /// </summary>
 public class HealthMonitorService : IDisposable
 {
-    private readonly ISettingsService _settingsService;
+    private readonly IAppSettings _appSettings;
     private readonly ILogger<HealthMonitorService> _logger;
     private readonly System.Threading.Timer _timer;
     private readonly int _intervalMinutes = 5;
     private bool _enabled;
 
-    public HealthMonitorService(ISettingsService settingsService, ILogger<HealthMonitorService> logger)
+    public HealthMonitorService(IAppSettings appSettings, ILogger<HealthMonitorService> logger)
     {
-        _settingsService = settingsService;
+        _appSettings = appSettings;
         _logger = logger;
         _timer = new System.Threading.Timer(OnTick, null, Timeout.Infinite, Timeout.Infinite);
     }
 
-    public async Task StartAsync()
+    public Task StartAsync()
     {
-        var settings = await _settingsService.GetAllAsync();
-        _enabled = settings.TryGetValue(SettingKeys.HealthLoggingEnabled, out var flag) && flag == "1";
+        _enabled = _appSettings.GetBool(SettingKeys.HealthLoggingEnabled);
         if (_enabled)
         {
             _timer.Change(TimeSpan.FromMinutes(_intervalMinutes), TimeSpan.FromMinutes(_intervalMinutes));
             _logger.LogInformation("Health monitor started. Interval: {Interval} minutes", _intervalMinutes);
         }
+        return Task.CompletedTask;
     }
 
     private void OnTick(object? _)

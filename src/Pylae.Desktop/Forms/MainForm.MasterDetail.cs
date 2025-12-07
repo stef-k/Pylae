@@ -52,6 +52,11 @@ public partial class MainForm
     private Button? _userSaveButton;
     private Button? _userNewButton;
     private Button? _userDeleteButton;
+    private TextBox? _userPasswordTextBox;
+    private TextBox? _userPasswordConfirmTextBox;
+    private TextBox? _userQuickCodeTextBox;
+    private TextBox? _userQuickCodeConfirmTextBox;
+    private Panel? _userCredentialsPanel;
 
     /// <summary>
     /// Sets up the Members tab with a master-detail layout.
@@ -171,9 +176,9 @@ public partial class MainForm
         // Auto-calculate expiry date when issue date changes (if BadgeValidityMonths > 0)
         _memberBadgeIssuePicker.ValueChanged += OnMemberBadgeIssueDateChanged;
 
-        // Checkboxes
-        _memberPermanentCheckBox = new CheckBox { Text = Strings.Member_PermanentStaff, Dock = DockStyle.Fill, Font = inputFont };
-        _memberActiveCheckBox = new CheckBox { Text = Strings.Member_Active, Dock = DockStyle.Fill, Font = inputFont, Checked = true };
+        // Checkboxes - use AutoSize for FlowLayoutPanel compatibility
+        _memberPermanentCheckBox = new CheckBox { Text = Strings.Member_PermanentStaff, AutoSize = true, Font = inputFont };
+        _memberActiveCheckBox = new CheckBox { Text = Strings.Member_Active, AutoSize = true, Font = inputFont, Checked = true };
 
         // Photo controls - PictureBox for portrait photos with click to enlarge
         _memberPhotoBox = new PictureBox
@@ -507,11 +512,16 @@ public partial class MainForm
         _memberPhotoPath = null;
         _memberPhotoBox!.Image = null;
 
-        // Set default badge dates for new member (today + validity months)
-        // Must set Checked first, then Value - ValueChanged event checks Checked flag
+        // Set default badge dates for new member
+        // For expiry: set Value first (for clean display), then Checked=false
+        // Important: Setting Value after Checked=false would re-enable it
+        _memberBadgeExpiryPicker!.Value = DateTime.Today;
+        _memberBadgeExpiryPicker.Checked = false;
+
+        // Set issue date - this triggers OnMemberBadgeIssueDateChanged which will
+        // auto-calculate expiry only if BadgeValidityMonths > 0
         _memberBadgeIssuePicker!.Checked = true;
         _memberBadgeIssuePicker.Value = DateTime.Today;
-        // OnMemberBadgeIssueDateChanged will auto-calculate expiry
     }
 
     private void OnMemberBadgeIssueDateChanged(object? sender, EventArgs e)
@@ -521,11 +531,10 @@ public partial class MainForm
         // Only auto-calculate if issue date is checked (has value)
         if (!_memberBadgeIssuePicker.Checked) return;
 
-        // Get BadgeValidityMonths from settings
-        var validityMonthsSetting = _settingsViewModel.Settings
-            .FirstOrDefault(s => s.Key == SettingKeys.BadgeValidityMonths)?.Value;
+        // Get BadgeValidityMonths from cached settings (-1 means no expiry)
+        var validityMonths = _appSettings.GetInt(SettingKeys.BadgeValidityMonths, -1);
 
-        if (!int.TryParse(validityMonthsSetting, out var validityMonths) || validityMonths <= 0)
+        if (validityMonths <= 0)
             return;
 
         // Auto-calculate expiry date
@@ -809,7 +818,7 @@ public partial class MainForm
             ColumnCount = 1,
             Padding = new Padding(10)
         };
-        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 220)); // Fixed form height - increased for buttons
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 300)); // Fixed form height - includes credentials rows
         mainLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 100));  // Grid takes rest
 
         // === TOP: User Form (fixed height) ===
@@ -842,7 +851,7 @@ public partial class MainForm
         var formLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
-            RowCount = 4,
+            RowCount = 5,
             ColumnCount = 4,
             Padding = new Padding(5),
             CellBorderStyle = TableLayoutPanelCellBorderStyle.None
@@ -855,8 +864,8 @@ public partial class MainForm
         formLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));   // Field 2
 
         // Row styles
-        for (int i = 0; i < 4; i++)
-            formLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 25));
+        for (int i = 0; i < 5; i++)
+            formLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 20));
 
         // Initialize controls
         _userUsernameTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
@@ -867,12 +876,18 @@ public partial class MainForm
         _userSharedLoginCheckBox = new CheckBox { Text = Strings.Users_IsShared, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
 
         // Auto-uppercase all text fields on leave
-        _userUsernameTextBox.Leave += OnTextBoxLeaveUppercase;
+        // Note: Username should NOT be auto-capitalized for security reasons
         _userFirstNameTextBox.Leave += OnTextBoxLeaveUppercase;
         _userLastNameTextBox.Leave += OnTextBoxLeaveUppercase;
 
         // Populate role combo box
         _userRoleComboBox.DataSource = Enum.GetValues(typeof(UserRole));
+
+        // Password and Quick Code fields (password masked, hidden by default)
+        _userPasswordTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F), UseSystemPasswordChar = true };
+        _userPasswordConfirmTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F), UseSystemPasswordChar = true };
+        _userQuickCodeTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F), UseSystemPasswordChar = true };
+        _userQuickCodeConfirmTextBox = new TextBox { Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F), UseSystemPasswordChar = true };
 
         // Action buttons - fixed height
         _userNewButton = new Button { Text = Strings.Button_New, Height = 33, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F, FontStyle.Bold), UseVisualStyleBackColor = true };
@@ -901,7 +916,39 @@ public partial class MainForm
         formLayout.Controls.Add(_userSharedLoginCheckBox, 2, 2);
         formLayout.SetColumnSpan(_userSharedLoginCheckBox, 2);
 
-        // Row 3: Action buttons
+        // Row 3: Password/QuickCode with confirmation (credentials panel - hidden by default for existing users)
+        _userCredentialsPanel = new Panel { Dock = DockStyle.Fill, Visible = false };
+        var credentialsLayout = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            RowCount = 2,
+            ColumnCount = 4,
+            Padding = new Padding(0)
+        };
+        credentialsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120)); // Label 1
+        credentialsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));   // Field 1
+        credentialsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 120)); // Label 2
+        credentialsLayout.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50));   // Field 2
+        credentialsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+        credentialsLayout.RowStyles.Add(new RowStyle(SizeType.Percent, 50));
+
+        // Row 0: Password | Quick Code
+        credentialsLayout.Controls.Add(new Label { Text = Strings.Users_Password + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) }, 0, 0);
+        credentialsLayout.Controls.Add(_userPasswordTextBox, 1, 0);
+        credentialsLayout.Controls.Add(new Label { Text = Strings.Users_QuickCode + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) }, 2, 0);
+        credentialsLayout.Controls.Add(_userQuickCodeTextBox, 3, 0);
+
+        // Row 1: Confirm Password | Confirm Quick Code
+        credentialsLayout.Controls.Add(new Label { Text = Strings.Users_ConfirmPassword + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) }, 0, 1);
+        credentialsLayout.Controls.Add(_userPasswordConfirmTextBox, 1, 1);
+        credentialsLayout.Controls.Add(new Label { Text = Strings.Users_ConfirmQuickCode + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) }, 2, 1);
+        credentialsLayout.Controls.Add(_userQuickCodeConfirmTextBox, 3, 1);
+
+        _userCredentialsPanel.Controls.Add(credentialsLayout);
+        formLayout.Controls.Add(_userCredentialsPanel, 0, 3);
+        formLayout.SetColumnSpan(_userCredentialsPanel, 4);
+
+        // Row 4: Action buttons
         var buttonLayout = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -917,7 +964,7 @@ public partial class MainForm
         buttonLayout.Controls.Add(_userSaveButton, 1, 0);
         buttonLayout.Controls.Add(_userDeleteButton, 2, 0);
 
-        formLayout.Controls.Add(buttonLayout, 0, 3);
+        formLayout.Controls.Add(buttonLayout, 0, 4);
         formLayout.SetColumnSpan(buttonLayout, 4);
 
         panel.Controls.Add(formLayout);
@@ -997,6 +1044,9 @@ public partial class MainForm
         if (usersGrid.CurrentRow?.DataBoundItem is User user)
         {
             PopulateUserForm(user);
+            // Hide credentials panel for existing users (password reset is separate)
+            if (_userCredentialsPanel != null)
+                _userCredentialsPanel.Visible = false;
         }
     }
 
@@ -1022,11 +1072,20 @@ public partial class MainForm
         _userRoleComboBox!.SelectedIndex = 0;
         _userActiveCheckBox!.Checked = true;
         _userSharedLoginCheckBox!.Checked = false;
+        _userPasswordTextBox?.Clear();
+        _userPasswordConfirmTextBox?.Clear();
+        _userQuickCodeTextBox?.Clear();
+        _userQuickCodeConfirmTextBox?.Clear();
     }
 
     private void OnUserNew(object? sender, EventArgs e)
     {
+        usersGrid.ClearSelection();
+        usersGrid.CurrentCell = null;
         ClearUserForm();
+        // Show credentials panel for new user
+        if (_userCredentialsPanel != null)
+            _userCredentialsPanel.Visible = true;
         _userUsernameTextBox?.Focus();
     }
 
@@ -1052,11 +1111,39 @@ public partial class MainForm
         {
             if (isNewUser)
             {
-                // New user - need password - open editor dialog
-                using var passwordDialog = new UserEditorForm(_usersViewModel);
-                if (await passwordDialog.ShowDialogAsync() != DialogResult.OK)
+                // New user - get password from form
+                var password = _userPasswordTextBox?.Text;
+                var passwordConfirm = _userPasswordConfirmTextBox?.Text;
+                var quickCode = _userQuickCodeTextBox?.Text;
+                var quickCodeConfirm = _userQuickCodeConfirmTextBox?.Text;
+
+                if (string.IsNullOrWhiteSpace(password))
+                {
+                    MessageBox.Show(Strings.Users_PasswordRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _userPasswordTextBox?.Focus();
                     return;
-                // User will be created via the dialog
+                }
+
+                if (password != passwordConfirm)
+                {
+                    MessageBox.Show(Strings.Users_PasswordMismatch, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _userPasswordConfirmTextBox?.Focus();
+                    return;
+                }
+
+                // Validate quick code confirmation only if quick code is provided
+                if (!string.IsNullOrWhiteSpace(quickCode) && quickCode != quickCodeConfirm)
+                {
+                    MessageBox.Show(Strings.Users_QuickCodeMismatch, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    _userQuickCodeConfirmTextBox?.Focus();
+                    return;
+                }
+
+                await _usersViewModel.SaveAsync(user, password, string.IsNullOrWhiteSpace(quickCode) ? null : quickCode);
+
+                // Hide credentials panel after successful save
+                if (_userCredentialsPanel != null)
+                    _userCredentialsPanel.Visible = false;
             }
             else
             {

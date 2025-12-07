@@ -13,7 +13,7 @@ namespace Pylae.Desktop.ViewModels;
 public partial class GateViewModel : ObservableObject
 {
     private readonly IVisitService _visitService;
-    private readonly ISettingsService _settingsService;
+    private readonly IAppSettings _appSettings;
     private readonly ILogger<GateViewModel>? _logger;
 
     [ObservableProperty]
@@ -36,10 +36,16 @@ public partial class GateViewModel : ObservableObject
 
     public BadgeStatus? LastBadgeStatus { get; private set; }
 
-    public GateViewModel(IVisitService visitService, ISettingsService settingsService, ILogger<GateViewModel>? logger = null)
+    public Member? LastLoggedMember { get; private set; }
+
+    public VisitDirection? LastLoggedDirection { get; private set; }
+
+    public DateTime? LastLoggedTime { get; private set; }
+
+    public GateViewModel(IVisitService visitService, IAppSettings appSettings, ILogger<GateViewModel>? logger = null)
     {
         _visitService = visitService;
-        _settingsService = settingsService;
+        _appSettings = appSettings;
         _logger = logger;
     }
 
@@ -52,6 +58,9 @@ public partial class GateViewModel : ObservableObject
 
         LastBadgeStatus = null;
         BadgeWarning = null;
+        LastLoggedMember = null;
+        LastLoggedDirection = null;
+        LastLoggedTime = null;
 
         if (!int.TryParse(MemberNumberInput, out var memberNumber))
         {
@@ -62,7 +71,7 @@ public partial class GateViewModel : ObservableObject
         try
         {
             IsBusy = true;
-            var (validityMonths, warningDays) = await LoadBadgeValidityAsync();
+            var (validityMonths, warningDays) = GetBadgeValidity();
 
             var result = await _visitService.LogVisitAsync(
                 memberNumber,
@@ -76,6 +85,9 @@ public partial class GateViewModel : ObservableObject
                 warningDays);
 
             LastBadgeStatus = result.BadgeStatus;
+            LastLoggedMember = result.Member;
+            LastLoggedDirection = SelectedDirection;
+            LastLoggedTime = result.Visit.TimestampUtc;
             LastResult = string.Format(
                 Strings.Gate_LogSuccess,
                 result.Member.FirstName,
@@ -100,22 +112,11 @@ public partial class GateViewModel : ObservableObject
         }
     }
 
-    private async Task<(int validityMonths, int warningDays)> LoadBadgeValidityAsync()
+    private (int validityMonths, int warningDays) GetBadgeValidity()
     {
-        var settings = await _settingsService.GetAllAsync();
-        var validityMonths = ParseIntSetting(settings, SettingKeys.BadgeValidityMonths, -1);
-        var warningDays = ParseIntSetting(settings, SettingKeys.BadgeExpiryWarningDays, 0);
+        var validityMonths = _appSettings.GetInt(SettingKeys.BadgeValidityMonths, -1);
+        var warningDays = _appSettings.GetInt(SettingKeys.BadgeExpiryWarningDays, 0);
         return (validityMonths, warningDays);
-    }
-
-    private static int ParseIntSetting(IDictionary<string, string> settings, string key, int defaultValue)
-    {
-        if (settings.TryGetValue(key, out var value) && int.TryParse(value, out var parsed))
-        {
-            return parsed;
-        }
-
-        return defaultValue;
     }
 
     private static string? BuildBadgeWarning(BadgeStatus status)

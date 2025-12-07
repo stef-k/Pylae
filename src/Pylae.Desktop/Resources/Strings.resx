@@ -52,7 +52,19 @@
     <value>Log visit</value>
   </data>
   <data name="Gate_LastResult" xml:space="preserve">
-    <value>Last result</value>
+    <value>Last Result</value>
+  </data>
+  <data name="Gate_Logged" xml:space="preserve">
+    <value>Logged</value>
+  </data>
+  <data name="Member_Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Member_BadgeStatus" xml:space="preserve">
+    <value>Badge Status</value>
+  </data>
+  <data name="Member_BadgeType" xml:space="preserve">
+    <value>Badge Type</value>
   </data>
   <data name="Gate_InvalidMemberNumber" xml:space="preserve">
     <value>Enter a valid member number.</value>
@@ -80,6 +92,9 @@
   </data>
   <data name="Settings_SiteIdentity" xml:space="preserve">
     <value>Site Identity</value>
+  </data>
+  <data name="Settings_PortableModeActive" xml:space="preserve">
+    <value>Portable mode active - all data stored in application folder</value>
   </data>
   <data name="Settings_SiteCode" xml:space="preserve">
     <value>Site Code</value>
@@ -295,6 +310,9 @@
   <data name="Button_Filter" xml:space="preserve">
     <value>Filter</value>
   </data>
+  <data name="Button_All" xml:space="preserve">
+    <value>All</value>
+  </data>
   <data name="Button_Catalogs" xml:space="preserve">
     <value>Member Types</value>
   </data>
@@ -370,6 +388,12 @@
   <data name="FirstRun_RequiredFields" xml:space="preserve">
     <value>Site code, display name, admin password, and encryption password are required.</value>
   </data>
+  <data name="FirstRun_PortableMode" xml:space="preserve">
+    <value>Portable mode</value>
+  </data>
+  <data name="FirstRun_PortableModeHint" xml:space="preserve">
+    <value>Store all data inside app folder (for restricted environments).</value>
+  </data>
   <data name="Button_Save" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -420,6 +444,9 @@
   </data>
   <data name="Users_DeactivateConfirm" xml:space="preserve">
     <value>Deactivate this user?</value>
+  </data>
+  <data name="Users_QuickCode" xml:space="preserve">
+    <value>Quick Code</value>
   </data>
   <data name="Users_QuickCodeNotAllowed" xml:space="preserve">
     <value>QuickCode is not allowed for admins.</value>
@@ -601,6 +628,18 @@
   <data name="Users_PasswordRequired" xml:space="preserve">
     <value>Password is required for new users.</value>
   </data>
+  <data name="Users_ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="Users_ConfirmQuickCode" xml:space="preserve">
+    <value>Confirm Quick Code</value>
+  </data>
+  <data name="Users_PasswordMismatch" xml:space="preserve">
+    <value>Passwords do not match.</value>
+  </data>
+  <data name="Users_QuickCodeMismatch" xml:space="preserve">
+    <value>Quick codes do not match.</value>
+  </data>
   <data name="Photo_None" xml:space="preserve">
     <value>No photo</value>
   </data>
@@ -682,6 +721,21 @@
   <data name="Member_PermanentStaff" xml:space="preserve">
     <value>Permanent Staff</value>
   </data>
+  <data name="Member_TemporaryStaff" xml:space="preserve">
+    <value>Temporary</value>
+  </data>
+  <data name="Member_Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Member_Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Member_IdentificationNumber" xml:space="preserve">
+    <value>Identification Number</value>
+  </data>
+  <data name="Member_OrganizationId" xml:space="preserve">
+    <value>Organization Identification</value>
+  </data>
   <data name="Member_ClearPhoto" xml:space="preserve">
     <value>Clear Photo</value>
   </data>
@@ -702,9 +756,6 @@
   </data>
   <data name="Member_Notes" xml:space="preserve">
     <value>Notes</value>
-  </data>
-  <data name="Member_Active" xml:space="preserve">
-    <value>Active</value>
   </data>
   <data name="Member_NumberRequired" xml:space="preserve">
     <value>Member number is required.</value>
@@ -938,6 +989,9 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   <data name="Menu_Visits" xml:space="preserve">
     <value>Visits</value>
   </data>
+  <data name="Menu_Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
   <data name="Menu_Exit" xml:space="preserve">
     <value>Exit</value>
   </data>
@@ -955,6 +1009,9 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   </data>
   <data name="Menu_Audit" xml:space="preserve">
     <value>Audit</value>
+  </data>
+  <data name="Menu_RemoteSites" xml:space="preserve">
+    <value>Remote Sites</value>
   </data>
   <data name="Menu_Help" xml:space="preserve">
     <value>Help</value>
@@ -978,6 +1035,12 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   </data>
   <data name="Gate_Exit" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="Visit_MethodScan" xml:space="preserve">
+    <value>Scan</value>
+  </data>
+  <data name="Visit_MethodManual" xml:space="preserve">
+    <value>Manual</value>
   </data>
   <data name="Gate_LogVisit" xml:space="preserve">
     <value>Log Visit</value>
@@ -1024,6 +1087,30 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   <data name="Status_UserDeleted" xml:space="preserve">
     <value>User deleted successfully</value>
   </data>
+  <data name="Status_VisitLogged" xml:space="preserve">
+    <value>Visit logged successfully</value>
+  </data>
+  <data name="Status_VisitsLoaded" xml:space="preserve">
+    <value>Visits loaded</value>
+  </data>
+  <data name="Status_Loading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="Status_BackupCreated" xml:space="preserve">
+    <value>Backup created successfully</value>
+  </data>
+  <data name="Status_BackupRestored" xml:space="preserve">
+    <value>Backup restored successfully</value>
+  </data>
+  <data name="Status_SettingsSaved" xml:space="preserve">
+    <value>Settings saved successfully</value>
+  </data>
+  <data name="Status_ExportComplete" xml:space="preserve">
+    <value>Export completed</value>
+  </data>
+  <data name="Status_DataFiltered" xml:space="preserve">
+    <value>Data filtered</value>
+  </data>
 
   <!-- Common strings -->
   <data name="Common_Yes" xml:space="preserve">
@@ -1031,6 +1118,12 @@ WARNING: Starting fresh will create a new database and you won't be able to acce
   </data>
   <data name="Common_No" xml:space="preserve">
     <value>No</value>
+  </data>
+  <data name="Sync_SelectSite" xml:space="preserve">
+    <value>Select Remote Site</value>
+  </data>
+  <data name="Sync_NoSitesConfigured" xml:space="preserve">
+    <value>No remote sites configured. Add sites in Settings.</value>
   </data>
 </root>
 

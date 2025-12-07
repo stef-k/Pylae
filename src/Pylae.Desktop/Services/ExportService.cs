@@ -74,24 +74,35 @@ public class ExportService : IExportService
     {
         using var workbook = new XLWorkbook();
         var ws = workbook.AddWorksheet("Visits");
-        ws.Cell(1, 1).Value = "TimestampUtc";
-        ws.Cell(1, 2).Value = "MemberNumber";
-        ws.Cell(1, 3).Value = "Name";
-        ws.Cell(1, 4).Value = "Direction";
-        ws.Cell(1, 5).Value = "SiteCode";
-        ws.Cell(1, 6).Value = "User";
-        ws.Cell(1, 7).Value = "Notes";
+
+        // Localized column headers
+        ws.Cell(1, 1).Value = Strings.Grid_Timestamp;
+        ws.Cell(1, 2).Value = Strings.Grid_MemberNumber;
+        ws.Cell(1, 3).Value = Strings.Grid_BusinessRank;
+        ws.Cell(1, 4).Value = Strings.Grid_FirstName;
+        ws.Cell(1, 5).Value = Strings.Grid_LastName;
+        ws.Cell(1, 6).Value = Strings.Grid_MemberType;
+        ws.Cell(1, 7).Value = Strings.Grid_VisitType;
+        ws.Cell(1, 8).Value = Strings.Grid_SiteCode;
+        ws.Cell(1, 9).Value = Strings.Grid_LoggedBy;
+        ws.Cell(1, 10).Value = Strings.Grid_Notes;
+
+        var culture = CultureInfo.CurrentCulture;
+        var dateTimeFormat = $"{culture.DateTimeFormat.ShortDatePattern} {culture.DateTimeFormat.ShortTimePattern}";
 
         var row = 2;
         foreach (var v in visits)
         {
-            ws.Cell(row, 1).Value = v.TimestampUtc;
+            ws.Cell(row, 1).Value = v.TimestampLocal.ToString(dateTimeFormat, culture);
             ws.Cell(row, 2).Value = v.MemberNumber;
-            ws.Cell(row, 3).Value = $"{v.MemberFirstName} {v.MemberLastName}";
-            ws.Cell(row, 4).Value = v.Direction.ToString();
-            ws.Cell(row, 5).Value = v.SiteCode;
-            ws.Cell(row, 6).Value = v.Username;
-            ws.Cell(row, 7).Value = v.Notes;
+            ws.Cell(row, 3).Value = v.MemberBusinessRank;
+            ws.Cell(row, 4).Value = v.MemberFirstName;
+            ws.Cell(row, 5).Value = v.MemberLastName;
+            ws.Cell(row, 6).Value = v.MemberTypeName;
+            ws.Cell(row, 7).Value = v.Direction == Core.Enums.VisitDirection.Entry ? Strings.Gate_Entry : Strings.Gate_Exit;
+            ws.Cell(row, 8).Value = v.SiteCode;
+            ws.Cell(row, 9).Value = v.UserDisplayName;
+            ws.Cell(row, 10).Value = v.Notes;
             row++;
         }
 

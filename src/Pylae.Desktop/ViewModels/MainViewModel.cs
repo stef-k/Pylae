@@ -9,7 +9,7 @@ namespace Pylae.Desktop.ViewModels;
 
 public partial class MainViewModel : ObservableObject
 {
-    private readonly ISettingsService _settingsService;
+    private readonly IAppSettings _appSettings;
 
     [ObservableProperty]
     private User? _currentUser;
@@ -23,29 +23,24 @@ public partial class MainViewModel : ObservableObject
     [ObservableProperty]
     private string? _siteDisplayName;
 
-    public MainViewModel(ISettingsService settingsService)
+    public MainViewModel(IAppSettings appSettings)
     {
-        _settingsService = settingsService;
+        _appSettings = appSettings;
     }
 
-    public async Task InitializeAsync(CancellationToken cancellationToken = default)
+    public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        var settings = await _settingsService.GetAllAsync(cancellationToken);
+        // Settings are already loaded in AppSettingsService during app warmup
+        SiteCode = _appSettings.GetValue(SettingKeys.SiteCode, "default");
+        SiteDisplayName = _appSettings.GetValue(SettingKeys.SiteDisplayName);
 
-        if (settings.TryGetValue(SettingKeys.SiteCode, out var siteCodeValue))
-        {
-            SiteCode = siteCodeValue;
-        }
-
-        if (settings.TryGetValue(SettingKeys.SiteDisplayName, out var siteDisplay))
-        {
-            SiteDisplayName = siteDisplay;
-        }
-
-        if (settings.TryGetValue(SettingKeys.PrimaryLanguage, out var culture))
+        var culture = _appSettings.GetValue(SettingKeys.PrimaryLanguage);
+        if (!string.IsNullOrEmpty(culture))
         {
             TryApplyCulture(culture);
         }
+
+        return Task.CompletedTask;
     }
 
     private static void TryApplyCulture(string cultureName)

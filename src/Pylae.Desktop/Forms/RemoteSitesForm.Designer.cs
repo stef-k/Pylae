@@ -21,12 +21,8 @@ partial class RemoteSitesForm
 
     private void InitializeComponent()
     {
-        hostLabel = new Label();
-        hostTextBox = new TextBox();
-        portLabel = new Label();
-        portNumeric = new NumericUpDown();
-        apiKeyLabel = new Label();
-        apiKeyTextBox = new TextBox();
+        siteLabel = new Label();
+        siteComboBox = new ComboBox();
         infoButton = new Button();
         infoTextBox = new TextBox();
         fetchVisitsButton = new Button();
@@ -43,61 +39,26 @@ partial class RemoteSitesForm
         statusTextBox = new TextBox();
         recentEventsLabel = new Label();
         recentEventsList = new ListBox();
-        ((System.ComponentModel.ISupportInitialize)portNumeric).BeginInit();
         SuspendLayout();
-        // 
-        // hostLabel
-        // 
-        hostLabel.AutoSize = true;
-        hostLabel.Location = new Point(12, 15);
-        hostLabel.Name = "hostLabel";
-        hostLabel.Size = new Size(32, 15);
-        hostLabel.TabIndex = 0;
-        hostLabel.Text = "Host";
         //
-        // hostTextBox
+        // siteLabel
         //
-        hostTextBox.Location = new Point(12, 33);
-        hostTextBox.Name = "hostTextBox";
-        hostTextBox.Size = new Size(250, 23);
-        hostTextBox.TabIndex = 1;
-        hostTextBox.Text = "localhost";
+        siteLabel.AutoSize = true;
+        siteLabel.Location = new Point(12, 15);
+        siteLabel.Name = "siteLabel";
+        siteLabel.Size = new Size(100, 15);
+        siteLabel.TabIndex = 0;
+        siteLabel.Text = "Remote Site";
         //
-        // portLabel
+        // siteComboBox
         //
-        portLabel.AutoSize = true;
-        portLabel.Location = new Point(280, 15);
-        portLabel.Name = "portLabel";
-        portLabel.Size = new Size(29, 15);
-        portLabel.TabIndex = 2;
-        portLabel.Text = "Port";
-        //
-        // portNumeric
-        //
-        portNumeric.Location = new Point(280, 33);
-        portNumeric.Maximum = new decimal(new int[] { 65535, 0, 0, 0 });
-        portNumeric.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
-        portNumeric.Name = "portNumeric";
-        portNumeric.Size = new Size(80, 23);
-        portNumeric.TabIndex = 3;
-        portNumeric.Value = new decimal(new int[] { 8080, 0, 0, 0 });
-        //
-        // apiKeyLabel
-        //
-        apiKeyLabel.AutoSize = true;
-        apiKeyLabel.Location = new Point(380, 15);
-        apiKeyLabel.Name = "apiKeyLabel";
-        apiKeyLabel.Size = new Size(47, 15);
-        apiKeyLabel.TabIndex = 4;
-        apiKeyLabel.Text = "API Key";
-        //
-        // apiKeyTextBox
-        //
-        apiKeyTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        apiKeyTextBox.Location = new Point(380, 33);
-        apiKeyTextBox.Name = "apiKeyTextBox";
-        apiKeyTextBox.Size = new Size(700, 23);
-        apiKeyTextBox.TabIndex = 5;
+        siteComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        siteComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        siteComboBox.FormattingEnabled = true;
+        siteComboBox.Location = new Point(12, 33);
+        siteComboBox.Name = "siteComboBox";
+        siteComboBox.Size = new Size(1068, 23);
+        siteComboBox.TabIndex = 1;
         //
         // infoButton
         //
@@ -278,12 +239,8 @@ partial class RemoteSitesForm
         Controls.Add(fetchVisitsButton);
         Controls.Add(infoTextBox);
         Controls.Add(infoButton);
-        Controls.Add(apiKeyTextBox);
-        Controls.Add(apiKeyLabel);
-        Controls.Add(portNumeric);
-        Controls.Add(portLabel);
-        Controls.Add(hostTextBox);
-        Controls.Add(hostLabel);
+        Controls.Add(siteComboBox);
+        Controls.Add(siteLabel);
         FormBorderStyle = FormBorderStyle.Sizable;
         MinimumSize = new Size(900, 510);
         MaximizeBox = true;
@@ -292,19 +249,14 @@ partial class RemoteSitesForm
         StartPosition = FormStartPosition.CenterParent;
         Text = "Remote Sites";
         Icon = new Icon(Path.Combine(AppContext.BaseDirectory, "Resources", "Images", "pylae_icon.ico"));
-        ((System.ComponentModel.ISupportInitialize)portNumeric).EndInit();
         ResumeLayout(false);
         PerformLayout();
     }
 
     #endregion
 
-    private Label hostLabel;
-    private TextBox hostTextBox;
-    private Label portLabel;
-    private NumericUpDown portNumeric;
-    private Label apiKeyLabel;
-    private TextBox apiKeyTextBox;
+    private Label siteLabel;
+    private ComboBox siteComboBox;
     private Button infoButton;
     private TextBox infoTextBox;
     private Button fetchVisitsButton;

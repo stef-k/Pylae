@@ -21,8 +21,10 @@ public partial class RemoteSitesForm : Form
     private readonly SyncHistoryService _history;
     private readonly IAuditService _auditService;
     private readonly ISettingsService _settingsService;
+    private readonly IRemoteSiteService _remoteSiteService;
+    private IReadOnlyList<RemoteSite> _remoteSites = Array.Empty<RemoteSite>();
 
-    public RemoteSitesForm(IRemoteSiteClient client, DatabaseOptions options, MasterMergeService mergeService, SyncHistoryService history, IAuditService auditService, ISettingsService settingsService)
+    public RemoteSitesForm(IRemoteSiteClient client, DatabaseOptions options, MasterMergeService mergeService, SyncHistoryService history, IAuditService auditService, ISettingsService settingsService, IRemoteSiteService remoteSiteService)
     {
         _client = client;
         _options = options;
@@ -30,12 +32,11 @@ public partial class RemoteSitesForm : Form
         _history = history;
         _auditService = auditService;
         _settingsService = settingsService;
+        _remoteSiteService = remoteSiteService;
         InitializeComponent();
 
         // Localize labels
-        hostLabel.Text = Strings.RemoteSite_Host;
-        portLabel.Text = Strings.RemoteSite_Port;
-        apiKeyLabel.Text = Strings.RemoteSite_ApiKey;
+        siteLabel.Text = Strings.Sync_SelectSite;
         fromLabel.Text = Strings.Sync_From;
         toLabel.Text = Strings.Sync_To;
         infoButton.Text = Strings.Sync_FetchInfo;
@@ -46,7 +47,7 @@ public partial class RemoteSitesForm : Form
         pullMasterButton.Text = Strings.Sync_PullMaster;
         statusLabel.Text = Strings.Sync_Status;
         recentEventsLabel.Text = Strings.Sync_RecentEvents;
-        Text = Strings.Button_RemoteSites;
+        Text = Strings.Menu_RemoteSites;
 
         // Apply selected UI culture date format to date pickers
         var culture = System.Threading.Thread.CurrentThread.CurrentUICulture;
@@ -57,6 +58,54 @@ public partial class RemoteSitesForm : Form
         toPicker.CustomFormat = format;
 
         LoadRecentHistory();
+        _ = LoadRemoteSitesAsync();
+    }
+
+    private async Task LoadRemoteSitesAsync()
+    {
+        try
+        {
+            _remoteSites = await _remoteSiteService.GetAllAsync();
+            siteComboBox.Items.Clear();
+
+            if (_remoteSites.Count == 0)
+            {
+                siteComboBox.Items.Add(Strings.Sync_NoSitesConfigured);
+                siteComboBox.SelectedIndex = 0;
+                siteComboBox.Enabled = false;
+                SetSyncButtonsEnabled(false);
+                return;
+            }
+
+            foreach (var site in _remoteSites)
+            {
+                var displayText = string.IsNullOrWhiteSpace(site.DisplayName)
+                    ? $"{site.SiteCode} ({site.Host}:{site.Port})"
+                    : $"{site.DisplayName} ({site.Host}:{site.Port})";
+                siteComboBox.Items.Add(displayText);
+            }
+
+            siteComboBox.SelectedIndex = 0;
+            siteComboBox.Enabled = true;
+            SetSyncButtonsEnabled(true);
+        }
+        catch (Exception)
+        {
+            siteComboBox.Items.Clear();
+            siteComboBox.Items.Add(Strings.Sync_NoSitesConfigured);
+            siteComboBox.SelectedIndex = 0;
+            siteComboBox.Enabled = false;
+            SetSyncButtonsEnabled(false);
+        }
+    }
+
+    private void SetSyncButtonsEnabled(bool enabled)
+    {
+        infoButton.Enabled = enabled;
+        fetchVisitsButton.Enabled = enabled;
+        pushMasterButton.Enabled = enabled;
+        downloadVisitsButton.Enabled = enabled;
+        pullMasterButton.Enabled = enabled;
     }
 
     private async void OnFetchInfoClick(object sender, EventArgs e)
@@ -64,9 +113,9 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
-            if (string.IsNullOrWhiteSpace(config.Host))
+            if (config is null)
             {
-                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.Sync_NoSitesConfigured, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -104,9 +153,9 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
-            if (string.IsNullOrWhiteSpace(config.Host))
+            if (config is null)
             {
-                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.Sync_NoSitesConfigured, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -132,9 +181,9 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
-            if (string.IsNullOrWhiteSpace(config.Host))
+            if (config is null)
             {
-                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.Sync_NoSitesConfigured, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -164,9 +213,9 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
-            if (string.IsNullOrWhiteSpace(config.Host))
+            if (config is null)
             {
-                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.Sync_NoSitesConfigured, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -201,13 +250,22 @@ public partial class RemoteSitesForm : Form
         }
     }
 
-    private RemoteSiteConfig BuildConfig()
+    private RemoteSiteConfig? BuildConfig()
     {
+        var index = siteComboBox.SelectedIndex;
+        if (index < 0 || index >= _remoteSites.Count)
+        {
+            return null;
+        }
+
+        var site = _remoteSites[index];
         return new RemoteSiteConfig
         {
-            Host = hostTextBox.Text.Trim(),
-            Port = (int)portNumeric.Value,
-            ApiKey = apiKeyTextBox.Text.Trim()
+            Host = site.Host,
+            Port = site.Port,
+            ApiKey = site.ApiKey,
+            SiteCode = site.SiteCode,
+            DisplayName = site.DisplayName
         };
     }
 
@@ -319,9 +377,9 @@ public partial class RemoteSitesForm : Form
         try
         {
             var config = BuildConfig();
-            if (string.IsNullOrWhiteSpace(config.Host))
+            if (config is null)
             {
-                MessageBox.Show(Strings.Sync_HostRequired, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Strings.Sync_NoSitesConfigured, Strings.App_Title, MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
