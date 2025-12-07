@@ -334,14 +334,14 @@ public partial class MainForm : Form
 
     private async Task RefreshRecentLogsAsync()
     {
-        // Load last 6 visits for the recent logs grid
+        // Load last 10 visits for the recent logs grid
         var todayStart = DateTime.UtcNow.Date;
         var todayEnd = todayStart.AddDays(1);
         await _visitsViewModel.LoadAsync(todayStart, todayEnd);
 
         var recentLogs = _visitsViewModel.Visits
             .OrderByDescending(v => v.TimestampUtc)
-            .Take(6)
+            .Take(10)
             .Select(v => new
             {
                 DateTime = v.TimestampLocal,

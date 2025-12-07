@@ -311,7 +311,7 @@ public partial class MainForm
         layout.RowStyles.Add(new RowStyle(SizeType.Absolute, 40)); // Search bar
         layout.RowStyles.Add(new RowStyle(SizeType.Percent, 100)); // Grid
 
-        // Search bar - narrower search, compact buttons
+        // Search bar - search label 150px, buttons 150px each, search box takes remaining space
         var searchPanel = new TableLayoutPanel
         {
             Dock = DockStyle.Fill,
@@ -320,11 +320,11 @@ public partial class MainForm
             Padding = new Padding(5, 0, 5, 0),
             BackColor = SystemColors.Control
         };
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 70));  // Label
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Label
         searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));  // Search box (takes remaining space)
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); // Export
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130)); // Badge PDF
-        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 110)); // Select All
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Export
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Badge PDF
+        searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Select All
         searchPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 150)); // Batch Badges
 
         var searchLabel = new Label { Text = Strings.Search + ":", TextAlign = ContentAlignment.MiddleRight, Dock = DockStyle.Fill, Font = new Font("Segoe UI", 10F) };
