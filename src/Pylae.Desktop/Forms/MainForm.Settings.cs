@@ -218,28 +218,37 @@ public partial class MainForm
         AddFormField3Col(mainLayout, Strings.Settings_LogRetention, _logRetentionNumeric, labelFont, row, 2);
         row++;
 
-        // === Backup Section - all in one row with compact inputs ===
+        // === Backup Section - two rows ===
         AddSectionHeader3Col(mainLayout, Strings.Settings_Backup, headerFont, ref row);
 
-        // Row with all backup settings
-        var backupRow = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
+        // Row 1: Auto backup, Include photos, Interval
+        var backupRow1 = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
         _autoBackupCheckBox = new CheckBox { Text = Strings.Settings_AutoBackupEnabled, AutoSize = true, Font = inputFont };
         _backupIncludePhotosCheckBox = new CheckBox { Text = Strings.Settings_BackupIncludePhotos, AutoSize = true, Font = inputFont, Margin = new Padding(15, 0, 0, 0) };
         _backupIntervalNumeric = new NumericUpDown { Width = 60, Font = inputFont, Minimum = 1, Maximum = 168, Value = 24 };
+
+        backupRow1.Controls.Add(_autoBackupCheckBox);
+        backupRow1.Controls.Add(_backupIncludePhotosCheckBox);
+        backupRow1.Controls.Add(new Label { Text = Strings.Settings_BackupInterval + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
+        backupRow1.Controls.Add(_backupIntervalNumeric);
+
+        mainLayout.Controls.Add(backupRow1, 0, row);
+        mainLayout.SetColumnSpan(backupRow1, 6);
+        row++;
+        mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
+
+        // Row 2: Retention, Path
+        var backupRow2 = new FlowLayoutPanel { Dock = DockStyle.Fill, FlowDirection = FlowDirection.LeftToRight, WrapContents = false };
         _backupRetentionNumeric = new NumericUpDown { Width = 50, Font = inputFont, Minimum = 1, Maximum = 100, Value = 7 };
-        _backupPathTextBox = new TextBox { Width = 300, Font = inputFont };
+        _backupPathTextBox = new TextBox { Width = 400, Font = inputFont };
         _browseBackupPathButton = new Button { Text = "...", Font = inputFont, Width = 28, Height = 23 };
         _browseBackupPathButton.Click += OnBrowseBackupPathClick;
 
-        backupRow.Controls.Add(_autoBackupCheckBox);
-        backupRow.Controls.Add(_backupIncludePhotosCheckBox);
-        backupRow.Controls.Add(new Label { Text = Strings.Settings_BackupInterval + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
-        backupRow.Controls.Add(_backupIntervalNumeric);
-        backupRow.Controls.Add(new Label { Text = Strings.Settings_BackupRetention + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
-        backupRow.Controls.Add(_backupRetentionNumeric);
-        backupRow.Controls.Add(new Label { Text = Strings.Settings_BackupPath + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
-        backupRow.Controls.Add(_backupPathTextBox);
-        backupRow.Controls.Add(_browseBackupPathButton);
+        backupRow2.Controls.Add(new Label { Text = Strings.Settings_BackupRetention + ":", AutoSize = true, Font = labelFont, Margin = new Padding(0, 4, 5, 0) });
+        backupRow2.Controls.Add(_backupRetentionNumeric);
+        backupRow2.Controls.Add(new Label { Text = Strings.Settings_BackupPath + ":", AutoSize = true, Font = labelFont, Margin = new Padding(15, 4, 5, 0) });
+        backupRow2.Controls.Add(_backupPathTextBox);
+        backupRow2.Controls.Add(_browseBackupPathButton);
 
         // In portable mode, make backup path read-only to guarantee all data stays in app folder
         if (IsPortableMode())
@@ -248,8 +257,8 @@ public partial class MainForm
             _browseBackupPathButton.Enabled = false;
         }
 
-        mainLayout.Controls.Add(backupRow, 0, row);
-        mainLayout.SetColumnSpan(backupRow, 6);
+        mainLayout.Controls.Add(backupRow2, 0, row);
+        mainLayout.SetColumnSpan(backupRow2, 6);
         row++;
         mainLayout.RowStyles.Add(new RowStyle(SizeType.Absolute, 32));
 
